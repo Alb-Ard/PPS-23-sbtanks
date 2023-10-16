@@ -1,7 +1,7 @@
 package org.aas.sbtanks.entities.tank.behaviours
 
-trait TankMovementBehaviour:
-    private var position = (0, 0)
+trait TankMovementBehaviour(startingX: Int = 0, startingY: Int = 0):
+    private var position = (startingX, startingY)
 
     def positionX: Int = position(0)
 
