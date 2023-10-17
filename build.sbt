@@ -7,4 +7,7 @@ lazy val sbtanks = (project in file(".")).
     name := "scalatest-example"
   )
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % Test
+libraryDependencies ++= Seq(
+  "org.scalatest" %% "scalatest" % "3.2.9" % Test,
+  "org.scalafx" %% "scalafx" % "20.0.0-R31"
+)
