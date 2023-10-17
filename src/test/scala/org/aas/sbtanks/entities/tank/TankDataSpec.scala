@@ -19,7 +19,7 @@ class TankDataSpec extends AnyFlatSpec with Matchers {
     it should "be possible to update health and speed" in {
 
         dynamicTankData.updateHealth(_ + 1)
-          .updateSpeed(_ + 1) should be DynamicTankData(11, 21)
+          .updateSpeed(_ + 1) should be (DynamicTankData(11, 21))
     }
 
 
@@ -30,13 +30,12 @@ class TankDataSpec extends AnyFlatSpec with Matchers {
         """ shouldNot compile
     }
 
-    "A modifiable tank data" should "always return a modifiable tank data when modified" in {
+
+    "As modifiable tank data" should "never return an unmodifiable tank data when modified" in {
         dynamicTankData.updateHealth(_ + 1)
-          .updateSpeed(_ + 1) should be DynamicTankData(11, 21)
+          .updateSpeed(_ + 1) shouldBe a[ModifiableTankData]
     }
 
-    "A modifiable tank data" should "never return an unmodifiable tank data when modified" in {
-        dynamicTankData.updateHealth(_ + 1)
-          .updateSpeed(_ + 1) should not be FixedTankData(11, 21)
-    }
+
+
 }
