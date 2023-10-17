@@ -8,7 +8,7 @@ class TankMovementSpec extends AnyFlatSpec with Matchers:
     def withTankMovement(test: (movementBehaviour: TankMovementBehaviour) => Any) =
         test(new Object() with TankMovementBehaviour)
 
-    def testMovement(movementBehaviour: TankMovementBehaviour, amountX: Int, amountY: Int) =
+    def testMovement(movementBehaviour: TankMovementBehaviour, amountX: Double, amountY: Double) =
         val previousPositionX = movementBehaviour.positionX
         val previousPositionY = movementBehaviour.positionY
         movementBehaviour.move(amountX, amountY)
