@@ -4,10 +4,19 @@ import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.GivenWhenThen
 import org.aas.sbtanks.entities.tank.behaviours.TankMovementBehaviour
 import org.scalatest.matchers.should.Matchers
+import org.aas.sbtanks.player.scalafx.JFXPlayerInputController
+import javafx.scene.input.KeyEvent
+import _root_.scalafx.scene.input.KeyCode.W
+import _root_.scalafx.Includes
+import _root_.scalafx.scene.input.KeyCode.S
+import _root_.scalafx.scene.input.KeyCode.A
+import _root_.scalafx.scene.input.KeyCode.D
 
-class PlayerMovementControlSpec extends AnyFeatureSpec with GivenWhenThen with Matchers:
-    class MockPlayerInputController extends PlayerInputEvents:
-        def simulateMoveInput(amountX: Int, amountY: Int) = invokeListeners(movementInputListeners) { listener => listener(amountX, amountY) }
+class PlayerMovementControlSpec extends AnyFeatureSpec with GivenWhenThen with Matchers with Includes:
+    val moveUpInput = KeyEvent(KeyEvent.KEY_PRESSED, "w", "w", W, false, false, false, false)
+    val moveDownInput = KeyEvent(KeyEvent.KEY_PRESSED, "s", "s", S, false, false, false, false)
+    val moveLeftInput = KeyEvent(KeyEvent.KEY_PRESSED, "a", "a", A, false, false, false, false)
+    val moveRightInput = KeyEvent(KeyEvent.KEY_PRESSED, "d", "d", D, false, false, false, false)
 
     info("As a player")
     info("I want to control the movement of my tank")
@@ -16,7 +25,7 @@ class PlayerMovementControlSpec extends AnyFeatureSpec with GivenWhenThen with M
     Feature("Player controller") {
         Scenario("The player presses a directional movement input") {
             Given("A player controller")
-            val controller = MockPlayerInputController()
+            val controller = JFXPlayerInputController()
 
             And("A player controlled tank with a movement behaviour starting at position (0, 0)")
             val startingPosition = (0, 0)
@@ -26,7 +35,7 @@ class PlayerMovementControlSpec extends AnyFeatureSpec with GivenWhenThen with M
             controller.movementInputListeners.addOne(playerTank.move)
 
             When("The player presses a movement input")
-            controller.simulateMoveInput(1, 0)
+            controller.handleKeyPressEvent(moveRightInput)
 
             Then("The tank should move in the requested direction")
             (playerTank.positionX - startingPosition(0)) should be (1)
