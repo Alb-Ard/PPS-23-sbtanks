@@ -12,18 +12,18 @@ sealed trait TankTypeData:
 
 
 object TankTypeData:
-    case object BasicTank extends TankTypeData:
+    case object BasicTankData extends TankTypeData:
         override def supplyData = new TankData(1, 1) with TankDataUpdater
 
-    case object FastTank extends TankTypeData:
+    case object FastTankData extends TankTypeData:
       override def supplyData = new TankData(1, 3) with TankDataUpdater
 
 
-    case object PowerTank extends TankTypeData:
+    case object PowerTankData extends TankTypeData:
       override def supplyData = new TankData(1, 2) with TankDataUpdater
 
 
-    case object ArmorTank extends TankTypeData:
+    case object ArmorTankData extends TankTypeData:
       override def supplyData = new TankData(4, 2) with TankDataUpdater
 
 
