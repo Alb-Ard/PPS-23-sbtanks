@@ -13,6 +13,9 @@ class JFXTankView(image: Image) extends ImageView(image)
     with TankView
     with Includes:
 
+    override def look(rotation: Double): Unit = 
+        rotate = rotation
+
     override def move(positionX: Double, positionY: Double): Unit =
         x = positionX
         y = positionY

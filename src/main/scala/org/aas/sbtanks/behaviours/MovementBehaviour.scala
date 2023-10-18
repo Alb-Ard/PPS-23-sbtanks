@@ -7,9 +7,9 @@ trait MovementBehaviour(startingX: Double = 0, startingY: Double = 0):
 
     private var position = (startingX, startingY)
 
-    def positionX: Double = position(0)
+    def positionX = position(0)
 
-    def positionY: Double = position(1)
+    def positionY = position(1)
 
     def moveAbsolute(x: Double, y: Double) = 
         position = (x, y)
