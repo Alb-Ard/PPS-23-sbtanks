@@ -1,21 +1,38 @@
 package org.aas.sbtanks.entities.tank
 
-trait TankData:
-    def health: Int
 
-    def speed: Int
-
-trait ModifiableTankData extends TankData :
-
-    protected def getInstance(health: Int, speed: Int): ModifiableTankData
-
-    def updateHealth(f: Int => Int): ModifiableTankData = getInstance(f(health), speed)
-
-    def updateSpeed(f: Int => Int): ModifiableTankData = getInstance(health, f(speed))
-
-case class DynamicTankData(override val health: Int, override val speed: Int) extends ModifiableTankData :
-    override def getInstance(health: Int, speed: Int): ModifiableTankData = DynamicTankData(health, speed)
+case class TankData(health: Int, speed: Int)
 
 
-case class FixedTankData(override val health: Int, override val speed: Int) extends TankData
+
+trait TankDataUpdater {
+    self: TankData =>
+
+    def updateHealth(f: Int => Int): TankData & TankDataUpdater = new TankData(f(health), speed) with TankDataUpdater
+    def updateSpeed(f: Int => Int): TankData & TankDataUpdater = new TankData(health, f(speed)) with TankDataUpdater
+}
+
+
+
+
+
+
+
+
+object TankExample extends App:
+
+    var initialTankData: TankData = TankData(100, 50)
+
+
+    val modifiableTank = new TankData(initialTankData.health, initialTankData.speed) with TankDataUpdater
+
+    // Update tank data
+    val updatedTank = modifiableTank
+      .updateHealth(_ + 20)
+      .updateSpeed(_ * 2)
+
+
+    println(s"Initial Tank Data: $initialTankData")
+    println(s"Updated Tank Data: $updatedTank")
+
 
