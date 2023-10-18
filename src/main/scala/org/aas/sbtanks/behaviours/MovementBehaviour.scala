@@ -1,4 +1,4 @@
-package org.aas.sbtanks.entities.tank.behaviours
+package org.aas.sbtanks.behaviours
 
 trait TankMovementBehaviour(startingX: Double = 0, startingY: Double = 0):
     private var position = (startingX, startingY)

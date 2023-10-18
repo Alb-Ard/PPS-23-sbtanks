@@ -1,7 +1,7 @@
 package org.aas.sbtanks.entities.tanks.behaviours
 
 import org.scalatest.flatspec.AnyFlatSpec
-import org.aas.sbtanks.entities.tank.behaviours.TankMovementBehaviour
+import org.aas.sbtanks.behaviours.TankMovementBehaviour
 import org.scalatest.matchers.should.Matchers
 
 class TankMovementSpec extends AnyFlatSpec with Matchers:

@@ -2,7 +2,7 @@ package org.aas.sbtanks.player
 
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.GivenWhenThen
-import org.aas.sbtanks.entities.tank.behaviours.TankMovementBehaviour
+import org.aas.sbtanks.behaviours.TankMovementBehaviour
 import org.scalatest.matchers.should.Matchers
 import org.aas.sbtanks.player.scalafx.JFXPlayerInputController
 import javafx.scene.input.KeyEvent

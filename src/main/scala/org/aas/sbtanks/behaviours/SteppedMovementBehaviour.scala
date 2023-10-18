@@ -1,4 +1,4 @@
-package org.aas.sbtanks.entities.tank.behaviours
+package org.aas.sbtanks.behaviours
 
 trait SteppedTankMovementBehaviour(stepSpeed: Double = 1) 
     extends TankMovementBehaviour

@@ -1,9 +1,9 @@
 package org.aas.sbtanks.entities.tanks.behaviours
 
 import org.scalatest.flatspec.AnyFlatSpec
-import org.aas.sbtanks.entities.tank.behaviours.TankMovementBehaviour
+import org.aas.sbtanks.behaviours.TankMovementBehaviour
 import org.scalatest.matchers.should.Matchers
-import org.aas.sbtanks.entities.tank.behaviours.SteppedTankMovementBehaviour
+import org.aas.sbtanks.behaviours.SteppedTankMovementBehaviour
 
 class SteppedTankMovementSpec extends AnyFlatSpec with Matchers:
     val stepSpeed = 1
