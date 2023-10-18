@@ -1,32 +1,39 @@
 package org.aas.sbtanks.entities.tanks.behaviours
 
 import org.scalatest.flatspec.AnyFlatSpec
-import org.aas.sbtanks.behaviours.TankMovementBehaviour
+import org.aas.sbtanks.behaviours.MovementBehaviour
 import org.scalatest.matchers.should.Matchers
 
 class TankMovementSpec extends AnyFlatSpec with Matchers:
-    def withTankMovement(test: (movementBehaviour: TankMovementBehaviour) => Any) =
-        test(new Object() with TankMovementBehaviour)
+    def withMovement(test: (movementBehaviour: MovementBehaviour) => Any) =
+        test(new Object() with MovementBehaviour)
 
-    def testMovement(movementBehaviour: TankMovementBehaviour, amountX: Double, amountY: Double) =
-        val previousPositionX = movementBehaviour.positionX
-        val previousPositionY = movementBehaviour.positionY
-        movementBehaviour.move(amountX, amountY)
-        (movementBehaviour.positionX - previousPositionX) should be (amountX)
-        (movementBehaviour.positionY - previousPositionY) should be (amountY)
-
-    "A movement behaviour" should "be able to move up" in withTankMovement { movementBehaviour =>
-        testMovement(movementBehaviour, 0, 1)
+    "A movement behaviour" should "be able to move up" in withMovement { movementBehaviour =>
+        movementBehaviour.moveRelative(0, 1)
+        movementBehaviour.positionX should be (0)
+        movementBehaviour.positionY should be (1)
     }
 
-    it should "be able to move down" in withTankMovement { movementBehaviour =>
-        testMovement(movementBehaviour, 0, -1)
+    it should "be able to move down" in withMovement { movementBehaviour =>
+        movementBehaviour.moveRelative(0, -1)
+        movementBehaviour.positionX should be (0)
+        movementBehaviour.positionY should be (-1)
     }
 
-    it should "be able to move left" in withTankMovement { movementBehaviour =>
-        testMovement(movementBehaviour, -1, 0)    
+    it should "be able to move left" in withMovement { movementBehaviour =>
+        movementBehaviour.moveRelative(-1, 0)
+        movementBehaviour.positionX should be (-1)
+        movementBehaviour.positionY should be (0)
     }
 
-    it should "be able to move right" in withTankMovement { movementBehaviour =>
-        testMovement(movementBehaviour, 1, 0)    
+    it should "be able to move right" in withMovement { movementBehaviour =>
+        movementBehaviour.moveRelative(1, 0)
+        movementBehaviour.positionX should be (1)
+        movementBehaviour.positionY should be (0)
+    }
+
+    it should "be able to move to an absolute position" in withMovement { movementBehaviour =>
+        movementBehaviour.moveAbsolute(3, -2)
+        movementBehaviour.positionX should be (3)
+        movementBehaviour.positionY should be (-2)
     }

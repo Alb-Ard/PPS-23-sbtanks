@@ -8,16 +8,13 @@ import scalafx.scene.input.KeyCode.A
 import scalafx.scene.input.KeyCode.D
 
 class JFXPlayerInputController extends PlayerInputEvents:
-    private def receiveMove(amountX: Int, amountY: Int): Unit = 
-        invokeListeners(movementInputListeners) { listener => listener(amountX, amountY) }
-
     def handleKeyPressEvent(event: KeyEvent): Unit =
         event.code match
-            case W => receiveMove(0, -1)
-            case S => receiveMove(0, 1)
-            case A => receiveMove(-1, 0)
-            case D => receiveMove(1, 0)
+            case W => moved(0, -1)
+            case S => moved(0, 1)
+            case A => moved(-1, 0)
+            case D => moved(1, 0)
             case _ => ()
     
     def handleKeyReleasedEvent(event: KeyEvent): Unit =
-        receiveMove(0, 0)
+        moved(0, 0)

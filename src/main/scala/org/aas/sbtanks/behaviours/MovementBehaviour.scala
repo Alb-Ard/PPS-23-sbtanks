@@ -1,11 +1,19 @@
 package org.aas.sbtanks.behaviours
 
-trait TankMovementBehaviour(startingX: Double = 0, startingY: Double = 0):
+import org.aas.sbtanks.event.EventSource
+
+trait MovementBehaviour(startingX: Double = 0, startingY: Double = 0):
+    val moved = EventSource[(Double, Double)]
+
     private var position = (startingX, startingY)
 
     def positionX: Double = position(0)
 
     def positionY: Double = position(1)
 
-    def move(amountX: Double, amountY: Double) = 
-        position = (position(0) + amountX, position(1) + amountY)
+    def moveAbsolute(x: Double, y: Double) = 
+        position = (x, y)
+        moved(position)
+
+    def moveRelative(amountX: Double, amountY: Double) =
+        moveAbsolute(position(0) + amountX, position(1) + amountY)
