@@ -21,17 +21,17 @@ object Tank extends App:
     import org.aas.sbtanks.entities.tank.factories.TankTypeData.*
 
     class BasicTank extends Tank:
-        override def tankTypeData(supplier: () => TankData & TankDataUpdater) : TankData & TankDataUpdater = BasicTank.supplyData
+        override def tankTypeData(supplier: () => TankData & TankDataUpdater) : TankData & TankDataUpdater = BasicTankData.supplyData
 
 
     class FastTank extends Tank:
-        override def tankTypeData(supplier: () => TankData & TankDataUpdater) : TankData & TankDataUpdater = FastTank.supplyData
+        override def tankTypeData(supplier: () => TankData & TankDataUpdater) : TankData & TankDataUpdater = FastTankData.supplyData
 
     class ArmorTank extends Tank:
-        override def tankTypeData(supplier: () => TankData & TankDataUpdater) : TankData & TankDataUpdater = ArmorTank.supplyData
+        override def tankTypeData(supplier: () => TankData & TankDataUpdater) : TankData & TankDataUpdater = ArmorTankData.supplyData
 
     class PowerTank extends Tank:
-        override def tankTypeData(supplier: () => TankData & TankDataUpdater) : TankData & TankDataUpdater = PowerTank.supplyData
+        override def tankTypeData(supplier: () => TankData & TankDataUpdater) : TankData & TankDataUpdater = PowerTankData.supplyData
 
 
   //import org.aas.sbtanks.entities.tank.structure.Tank.PowerTank
