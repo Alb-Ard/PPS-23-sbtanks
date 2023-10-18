@@ -15,7 +15,7 @@ class TankMovementSpec extends AnyFlatSpec with Matchers:
         (movementBehaviour.positionX - previousPositionX) should be (amountX)
         (movementBehaviour.positionY - previousPositionY) should be (amountY)
 
-    "A Tank" should "be able to move up" in withTankMovement { movementBehaviour =>
+    "A movement behaviour" should "be able to move up" in withTankMovement { movementBehaviour =>
         testMovement(movementBehaviour, 0, 1)
     }
 

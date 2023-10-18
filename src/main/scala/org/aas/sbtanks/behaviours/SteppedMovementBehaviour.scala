@@ -6,7 +6,7 @@ trait SteppedTankMovementBehaviour(stepSpeed: Double = 1)
 
     private var moveDirection = (0D, 0D)
 
-    def step(delta: Double): Unit = 
+    def step(delta: Double): Unit =
         super.move(moveDirection(0) * delta * stepSpeed, moveDirection(1) * delta * stepSpeed)
 
     override def move(amountX: Double, amountY: Double): Unit = 

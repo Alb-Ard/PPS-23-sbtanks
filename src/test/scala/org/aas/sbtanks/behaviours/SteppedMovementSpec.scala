@@ -21,7 +21,7 @@ class SteppedTankMovementSpec extends AnyFlatSpec with Matchers:
             (movementBehaviour.positionY - previousPositionY) should be (amountY * delta * stepSpeed +- 0.0001)
         }
 
-    "A Tank with stepped movement" should "be able to move up for a certain amount of steps with a given delta time" in withTankMovement { movementBehaviour =>
+    "A stepped movement behaviour" should "be able to move up for a certain amount of steps with a given delta time" in withTankMovement { movementBehaviour =>
         testMovement(movementBehaviour, 0, 1)(10, 0.01)
     }
 
