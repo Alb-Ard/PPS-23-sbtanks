@@ -3,7 +3,7 @@ package org.aas.sbtanks.behaviours
 import org.aas.sbtanks.event.EventSource
 
 trait PositionBehaviour(startingX: Double = 0, startingY: Double = 0):
-    val moved = EventSource[(Double, Double)]
+    val positionChanged = EventSource[(Double, Double)]
     
     private var position = (startingX, startingY)
 
@@ -12,4 +12,4 @@ trait PositionBehaviour(startingX: Double = 0, startingY: Double = 0):
     
     def setPosition(x: Double, y: Double) = 
         position = (x, y)
-        moved(position)
+        positionChanged(position)

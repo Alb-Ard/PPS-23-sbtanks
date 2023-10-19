@@ -25,8 +25,8 @@ class JFXPlayerInputController extends PlayerInputEvents:
 
     private def invokeMoved():  Unit =
         inputX match
-            case 0 => moved(0, inputY)
-            case x => moved(x, 0)
+            case 0 => moveDirectionChanged(0, inputY)
+            case x => moveDirectionChanged(x, 0)
             
     private def axisValue(event: KeyEvent, negative: KeyCode, positive: KeyCode): Double =
         event.code match
