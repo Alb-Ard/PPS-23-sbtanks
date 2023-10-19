@@ -13,7 +13,7 @@ class SteppedTankMovementSpec extends AnyFlatSpec with Matchers:
     "A stepped directional movement behaviour" should "be able to move in a given direction with a given delta time" in withDirectionMovement { movementBehaviour =>
         val stepDeltaTime = 0.01
         movementBehaviour.moveTowards(-2, 3)
-        movementBehaviour.stepMoved += { (x, y) => 
+        movementBehaviour.directionStepped += { (x, y) => 
             x should be (-2 * stepDeltaTime * stepSpeed)
             y should be (3 * stepDeltaTime * stepSpeed)
         }

@@ -15,7 +15,7 @@ class PlayerInputControllerSpec extends AnyFlatSpec with Matchers with Includes:
     "A Player Controller" should "respond with a move event when receiving a movement input" in {
         val controller = JFXPlayerInputController()
         var eventReceived = false
-        controller.moved += { (x, y) =>
+        controller.moveDirectionChanged += { (x, y) =>
             x should be (0)
             y should be (-1)
             eventReceived = true

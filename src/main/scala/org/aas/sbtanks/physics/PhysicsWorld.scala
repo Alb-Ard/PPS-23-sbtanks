@@ -8,6 +8,9 @@ object PhysicsWorld:
     def registerCollider(collider: Collider) =
         colliders = collider :: colliders
 
+    def hasCollider(collider: Collider) = 
+        colliders contains collider
+
     def unregisterCollider(collider: Collider) =
         colliders = colliders.filterNot(collider.equals)
 
