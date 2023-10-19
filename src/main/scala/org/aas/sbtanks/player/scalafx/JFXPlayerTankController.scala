@@ -8,8 +8,8 @@ import scalafx.stage.Stage
 import scalafx.scene.input.KeyEvent
 import scalafx.Includes
 
-class JFXPlayerTankController(tank: ControllableTank, view: TankView)
-    extends PlayerTankController(tank, view, JFXPlayerInputController())
+class JFXPlayerTankController(tank: ControllableTank, view: TankView, viewScale: Double)
+    extends PlayerTankController(tank, view, viewScale, JFXPlayerInputController())
     with Includes:
 
     def registerSceneEventHandlers(stage: Stage) =

@@ -26,7 +26,7 @@ class PlayerMovementControlSpec extends AnyFeatureSpec with GivenWhenThen with M
     val moveLeftInput = KeyEvent(KeyEvent.KEY_PRESSED, "a", "a", A, false, false, false, false)
     val moveRightInput = KeyEvent(KeyEvent.KEY_PRESSED, "d", "d", D, false, false, false, false)
 
-    class MockJFXPlayerTankController(tank: ControllableTank) extends JFXPlayerTankController(tank, JFXTankView(null)):
+    class MockJFXPlayerTankController(tank: ControllableTank) extends JFXPlayerTankController(tank, JFXTankView(null), 1):
         def simulateInput(event: KeyEvent) = inputEvents.handleKeyPressEvent(event)
 
     info("As a player")
