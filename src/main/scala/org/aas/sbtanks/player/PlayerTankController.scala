@@ -10,7 +10,10 @@ import org.aas.sbtanks.entities.tank.view.TankView.lookInDirection
 type ControllableTank = SteppedMovementDirectionBehaviour & MovementBehaviour & PositionBehaviour
 
 abstract class PlayerTankController[A <: PlayerInputEvents](tank: ControllableTank, view: TankView, protected val inputEvents: A) extends SteppedBehaviour:
-    tank.stepMoved += tank.moveRelative
+    tank.stepMoved += { (x, y) =>
+        tank.moveRelative(x, y)
+        view.isMoving(x != 0 || y != 0)
+    }
     tank.directionChanged += view.lookInDirection
     tank.moved += view.move
     inputEvents.moved += tank.moveTowards

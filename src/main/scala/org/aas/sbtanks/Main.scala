@@ -26,8 +26,9 @@ object Main extends JFXApp3 with scalafx.Includes:
             with MovementBehaviour 
             with SteppedMovementDirectionBehaviour(20)
             with CollisionBehaviour(16, 16)
-        val testTankImage = Image("entities/tank/basic/tank_basic_up_1.png", 64, 64, true, false)
-        val testTankView = JFXTankView(testTankImage)
+        val testTankImage1 = Image("entities/tank/basic/tank_basic_up_1.png", 64, 64, true, false)
+        val testTankImage2 = Image("entities/tank/basic/tank_basic_up_2.png", 64, 64, true, false)
+        val testTankView = JFXTankView(Seq(testTankImage1, testTankImage2), 4)
         val testTankController = JFXPlayerTankController(testTank, testTankView)
 
         stage = new JFXApp3.PrimaryStage {

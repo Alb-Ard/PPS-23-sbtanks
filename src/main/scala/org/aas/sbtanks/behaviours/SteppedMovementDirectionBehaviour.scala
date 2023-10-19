@@ -20,6 +20,6 @@ trait SteppedMovementDirectionBehaviour(private var stepSpeed: Double = 1D) exte
 
     def moveTowards(directionX: Double, directionY: Double): Unit = 
         moveDirection = (directionX, directionY)
-        if directionX != 0 && directionY != 0 then
+        if directionX != 0 || directionY != 0 then
             lastDirection = moveDirection
             directionChanged(direction)

@@ -5,6 +5,8 @@ trait TankView:
 
     def look(rotation: Double): Unit
 
+    def isMoving(value: Boolean): Unit
+
 object TankView:
     extension (tankView: TankView)
         def lookInDirection(x: Double, y: Double): Unit =   
