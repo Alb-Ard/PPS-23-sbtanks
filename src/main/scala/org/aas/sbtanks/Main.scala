@@ -14,12 +14,18 @@ import org.aas.sbtanks.entities.tank.view.TankView
 import org.aas.sbtanks.behaviours.SteppedMovementDirectionBehaviour
 import org.aas.sbtanks.behaviours.MovementBehaviour
 import org.aas.sbtanks.player.scalafx.JFXPlayerTankController
+import org.aas.sbtanks.behaviours.CollisionBehaviour
+import org.aas.sbtanks.behaviours.PositionBehaviour
 
 object Main extends JFXApp3 with scalafx.Includes:
     val inputController = JFXPlayerInputController()
 
     override def start(): Unit = 
-        val testTank = new Object() with MovementBehaviour(0, 0) with SteppedMovementDirectionBehaviour(20)
+        val testTank = new Object()
+            with PositionBehaviour(0, 0)
+            with MovementBehaviour 
+            with SteppedMovementDirectionBehaviour(20)
+            with CollisionBehaviour(16, 16)
         val testTankImage = Image("entities/tank/basic/tank_basic_up_1.png", 64, 64, true, false)
         val testTankView = JFXTankView(testTankImage)
         val testTankController = JFXPlayerTankController(testTank, testTankView)

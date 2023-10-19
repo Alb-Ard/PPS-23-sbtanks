@@ -1,19 +1,20 @@
 package org.aas.sbtanks.behaviours
 
 import org.aas.sbtanks.event.EventSource
+import org.aas.sbtanks.physics.AABB.checkOverlap
 
-trait MovementBehaviour(startingX: Double = 0, startingY: Double = 0):
-    val moved = EventSource[(Double, Double)]
-
-    private var position = (startingX, startingY)
-
-    def positionX = position(0)
-
-    def positionY = position(1)
-
-    def moveAbsolute(x: Double, y: Double) = 
-        position = (x, y)
-        moved(position)
+trait MovementBehaviour:
+    this: PositionBehaviour =>
 
     def moveRelative(amountX: Double, amountY: Double) =
-        moveAbsolute(position(0) + amountX, position(1) + amountY)
+        setPosition(positionX + amountX, positionY + amountY)
+
+trait ConstrainedMovementBehaviour extends MovementBehaviour:
+    this: PositionBehaviour with CollisionBehaviour =>
+
+    override def moveRelative(amountX: Double, amountY: Double) =
+        val previousX = positionX
+        val previousY = positionY
+        moveRelative(amountX, amountY)
+        if overlapsAnything then
+            setPosition(previousX, previousY)

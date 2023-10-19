@@ -18,6 +18,7 @@ import org.aas.sbtanks.behaviours.MovementBehaviour
 import org.aas.sbtanks.behaviours.SteppedMovementDirectionBehaviour
 import org.aas.sbtanks.player.scalafx.JFXPlayerTankController
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
+import org.aas.sbtanks.behaviours.PositionBehaviour
 
 class PlayerMovementControlSpec extends AnyFeatureSpec with GivenWhenThen with Matchers with Includes:
     val moveUpInput = KeyEvent(KeyEvent.KEY_PRESSED, "w", "w", W, false, false, false, false)
@@ -37,7 +38,10 @@ class PlayerMovementControlSpec extends AnyFeatureSpec with GivenWhenThen with M
             Given("A tank with a movement behaviour starting at position (0, 0) with a step speed of 1")
             val startingPosition = (0, 0)
             val stepSpeed = 1
-            val playerTank = new Object() with MovementBehaviour(startingPosition(0), startingPosition(1)) with SteppedMovementDirectionBehaviour(stepSpeed)
+            val playerTank = new Object()
+                with PositionBehaviour(startingPosition(0), startingPosition(1))
+                with MovementBehaviour
+                with SteppedMovementDirectionBehaviour(stepSpeed)
             playerTank.positionX should be (startingPosition(0))
             playerTank.positionY should be (startingPosition(1))
 

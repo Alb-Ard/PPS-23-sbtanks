@@ -9,7 +9,7 @@ class EventSource[A]:
         listeners = callback :: listeners
 
     def -= (callback: EventCallback) = 
-        listeners = listeners.filterNot(c => c != callback)
+        listeners = listeners.filterNot(c => c == callback)
 
     def apply(param: A): Unit =
         invoke(param)
