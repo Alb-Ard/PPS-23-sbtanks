@@ -6,29 +6,24 @@ import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 
 
 
+object PowerUp:
 
-trait PowerUp[E](f: E => E):
-    def apply(entity: E): Option[E] = Some(f(entity))
-
-
-
-trait PowerUpConstraint[E](predicate: E => Boolean) extends PowerUp[E]:
-    override def apply(entity: E): Option[E] = Some(entity).filter(predicate).flatMap(super.apply)
+    trait PowerUp[E](f: E => E):
+        def apply(entity: E): E = f(entity)
 
 
 
+    trait PowerUpConstraint[E](predicate: E => Boolean) extends PowerUp[E]:
+        override def apply(entity: E): E = Some(entity).filter(predicate).map(super.apply).getOrElse(entity)
 
-object PowerUp extends App:
 
-    val tank = new BasicTank()
 
-    println(tank.tankData.health)
 
-    val healthPowerUp = new PowerUp[Tank](tank => {
-        tank updateTankData(tank.tankData.updateHealth(_ + 10));
-        tank
-    })
-        with PowerUpConstraint[Tank](_.tankData.health < 2)
+    object PowerUp extends App:
+        def applytoAll[E](powerUp: PowerUp[E])(entities: E*): Seq[E] = entities.map(powerUp.apply)
+
+
+
 
 
 
