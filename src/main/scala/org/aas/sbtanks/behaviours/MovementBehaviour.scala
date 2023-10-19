@@ -15,6 +15,6 @@ trait ConstrainedMovementBehaviour extends MovementBehaviour:
     override def moveRelative(amountX: Double, amountY: Double) =
         val previousX = positionX
         val previousY = positionY
-        moveRelative(amountX, amountY)
+        super.moveRelative(amountX, amountY)
         if overlapsAnything then
             setPosition(previousX, previousY)
