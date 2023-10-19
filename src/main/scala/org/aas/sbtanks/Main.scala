@@ -16,6 +16,8 @@ import org.aas.sbtanks.behaviours.MovementBehaviour
 import org.aas.sbtanks.player.scalafx.JFXPlayerTankController
 import org.aas.sbtanks.behaviours.CollisionBehaviour
 import org.aas.sbtanks.behaviours.PositionBehaviour
+import org.aas.sbtanks.physics.CollisionLayer
+import org.aas.sbtanks.behaviours.ConstrainedMovementBehaviour
 
 object Main extends JFXApp3 with scalafx.Includes:
     val inputController = JFXPlayerInputController()
@@ -23,11 +25,11 @@ object Main extends JFXApp3 with scalafx.Includes:
     override def start(): Unit = 
         val testTank = new Object()
             with PositionBehaviour(0, 0)
-            with MovementBehaviour 
-            with SteppedMovementDirectionBehaviour(20)
-            with CollisionBehaviour(16, 16)
         val testTankImage1 = Image("entities/tank/basic/tank_basic_up_1.png", 64, 64, true, false)
         val testTankImage2 = Image("entities/tank/basic/tank_basic_up_2.png", 64, 64, true, false)
+            with ConstrainedMovementBehaviour 
+            with SteppedMovementDirectionBehaviour(4 * viewScale)
+            with CollisionBehaviour(16, 16, CollisionLayer.TanksLayer, Seq(CollisionLayer.BulletsLayer, CollisionLayer.WallsLayer))
         val testTankView = JFXTankView(Seq(testTankImage1, testTankImage2), 4)
         val testTankController = JFXPlayerTankController(testTank, testTankView)
 

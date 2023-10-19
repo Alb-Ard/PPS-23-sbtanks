@@ -9,10 +9,7 @@ object PhysicsWorld:
         colliders = collider :: colliders
 
     def unregisterCollider(collider: Collider) =
-        colliders = colliders filterNot(c => c == collider)
+        colliders = colliders.filterNot(collider.equals)
 
-    def checkOverlap(collider: Collider):Boolean =
-        checkOverlap(collider.boundingBox, collider)
-        
-    def checkOverlap(boundingBox: AABB, exclusion: Collider):Boolean =
-        colliders.filterNot(c => c == exclusion).forall(c => c.boundingBox.checkOverlap(boundingBox))
+    def checkOverlap(collider: Collider) =
+        !colliders.filterNot(collider.equals).forall(c => !c.boundingBox.checkOverlap(collider.boundingBox) || !collider.layerMasks.contains(c.layer))
