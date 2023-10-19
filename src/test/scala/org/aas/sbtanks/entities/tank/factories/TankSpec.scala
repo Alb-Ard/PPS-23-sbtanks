@@ -7,7 +7,7 @@ import org.scalatest.matchers.should.Matchers
 import scala.language.postfixOps
 
 class TankSpec extends AnyFlatSpec with Matchers:
-    import org.aas.sbtanks.entities.tank.factories.TankTypeData.*
+    import org.aas.sbtanks.entities.tank.factories.* 
     import org.aas.sbtanks.entities.tank.structure.Tank.*
 
     val basicTank = new BasicTank()
