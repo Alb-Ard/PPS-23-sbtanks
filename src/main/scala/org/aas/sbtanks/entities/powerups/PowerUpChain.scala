@@ -1,8 +1,7 @@
 package org.aas.sbtanks.entities.powerups
 import org.aas.sbtanks.entities.powerups.PowerUp.*
 
-import scala.collection.mutable
-import scala.annotation.tailrec
+
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.*
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
@@ -14,25 +13,29 @@ class PowerUpChain[E](powerUps: Seq[PowerUp[E]]) extends PowerUp[E]:
     override def apply(entity: E): E =
         powerUps.foldLeft(entity)((acc, powerUp) => powerUp.apply(acc))
 
+
     def combine(next: PowerUp[E]): PowerUpChain[E] = PowerUpChain(powerUps :+ next)
 
 
 
-class DispatchabePowerUpChain[E] extends PowerUpChain[E](Seq.empty):
-    case class EntityBinding(val provider: () => E, val consumer: E => Any)
+class DispatchablePowerUpChain[E] extends PowerUpChain[E](Seq.empty):
+    case class EntityBinding(supplier: () => E, consumer: E => Unit)
+
+    private object EntityBinding:
+        def apply(e: E): EntityBinding = new EntityBinding(() => e, _ => {})
 
     private var entities = Seq.empty[EntityBinding]
 
-    def subscribe(entityProvider: () => E, entityConsumer: (entity: E) => Any): Unit =
-        entities = entities :+ EntityBinding(entityProvider, entityConsumer)
-        //super.apply(entityProvider())
 
-    def unsubscribe(entity: () => E): Unit = 
-        entities = entities
-            .filterNot(e => e.provider() == entity())
+    def subscribe(entity: E): Unit =
+        entities = entities :+ EntityBinding(entity)
+    def unsubscribe(entity: E): Unit =
+        entities = entities.collect:
+            case e if e.supplier() != entity => e
 
-    override def combine(next: PowerUp[E]): PowerUpChain[E] = 
-        entities.foreach(e => e.consumer(next(e.provider())))
+
+    override def combine(next: PowerUp[E]): PowerUpChain[E] =
+        entities.foreach(e => e.consumer(next(e.supplier())))
         super.combine(next)
 
 
@@ -42,38 +45,36 @@ class DispatchabePowerUpChain[E] extends PowerUpChain[E](Seq.empty):
 object PowerUpChain extends App:
 
 
-    val persChainer = new DispatchabePowerUpChain[Tank]
+    val persChainer = DispatchablePowerUpChain[Tank]
 
     val tank = BasicTank()
-    persChainer.subscribe(() => tank, t => tank)
+    val tank2 = BasicTank()
 
-    persChainer.combine(new FuncPowerUp(t => {t updateTankData (
-            t.tankData.updateHealth(_ + 10)
+    persChainer.subscribe(tank)
+
+    persChainer.combine(FuncPowerUp(t => {t updateTankData (
+        t.tankData.updateHealth(_ + 10)
         ); t}   ))
 
-    
+
+
+    persChainer.subscribe(tank2)
+
 
     println(tank.tankData.health)
     tank updateTankData {tank.tankData.updateHealth(_ + 10)}
     println(tank.tankData.health)
 
-    persChainer.unsubscribe(() => tank)
+    persChainer.unsubscribe(tank)
+    persChainer.unsubscribe(tank2)
 
-    persChainer.combine(new FuncPowerUp(t => {t updateTankData (
-            t.tankData.updateHealth(_ + 10)
+    persChainer.combine(FuncPowerUp(t => {t updateTankData (
+        t.tankData.updateHealth(_ + 10)
         ); t}   ))
+
+    println(tank2.tankData.health)
     println(tank.tankData.health)
 
     
-
-
-    
-
-
-
-
-
-
-
 
 
