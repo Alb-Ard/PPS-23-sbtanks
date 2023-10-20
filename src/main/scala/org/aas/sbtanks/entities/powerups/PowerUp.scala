@@ -8,15 +8,16 @@ import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 
 object PowerUp:
 
-    trait PowerUp[E](f: E => E):
-        def apply(entity: E): E = f(entity)
-
+    trait PowerUp[E]:
+        def apply(entity: E): E
 
 
     trait PowerUpConstraint[E](predicate: E => Boolean) extends PowerUp[E]:
-        override def apply(entity: E): E = Some(entity).filter(predicate).map(super.apply).getOrElse(entity)
+        abstract override def apply(entity: E): E = Some(entity).filter(predicate).map(super.apply).getOrElse(entity)
 
 
+    case class FuncPowerUp[E](f: E => E) extends PowerUp[E]:
+        override def apply(entity: E): E = f(entity)
 
 
     object PowerUp extends App:
