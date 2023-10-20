@@ -15,7 +15,7 @@ class JFXTankView(private val images: Seq[Image], animationSpeed: Double = 1) ex
     with Includes:
 
     private val movingAnimation = AnimationTimer { now =>
-        image = images(((now / 1000D / 1000D / 1000D) * animationSpeed % 2D).asInstanceOf[Int])
+        image = images(((now / 1000D / 1000D / 1000D) * animationSpeed % images.length).asInstanceOf[Int])
     }
 
     override def look(rotation: Double): Unit = 
