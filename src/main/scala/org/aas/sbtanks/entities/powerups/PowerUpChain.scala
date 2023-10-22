@@ -21,31 +21,27 @@ class PowerUpChain[E](powerUps: Seq[PowerUp[E]]) extends PowerUp[E]:
 
     def unchain(last: PowerUp[E]): PowerUpChain[E] = PowerUpChain(powerUps.filter(_ != last))
 
-    //def unchain(last: PowerUp[E]): PowerUpChain[E] = PowerUpChain(powerUps.filter(_ != last))
-
-/*
-trait PowerUpDispatcher[E, P <: PowerUp[E]]:
-    def subscribe(entity: E): Unit
-    def unsubscribe(entity: E): Unit
-
-    def publish(next: PowerUp[E]): P
-*/
 
 
-class DispatchablePowerUpChain[E] extends PowerUpChain[E](Seq.empty):
+trait PowerUpBinder[E, P <: PowerUp[E]]:
     case class EntityBinding(supplier: () => E, consumer: E => Unit)
 
     private object EntityBinding:
         def apply(e: E): EntityBinding = new EntityBinding(() => e, _ => {})
 
-    private var entities = Seq.empty[EntityBinding]
+    protected var entities = Seq.empty[EntityBinding]
 
-
-    def subscribe(entity: E): Unit =
+    def bind(entity: E): Unit =
         entities = entities :+ EntityBinding(entity)
-    def unsubscribe(entity: E): Unit =
+    def unbind(entity: E): Unit =
         entities = entities.collect:
             case e if e.supplier() != entity => e
+
+
+
+
+
+class DispatchablePowerUpChain[E] extends PowerUpChain[E](Seq.empty) with PowerUpBinder[E, PowerUpChain[E]]:
 
     override def chain(next: PowerUp[E]): PowerUpChain[E] =
         entities.foreach(e => e.consumer(
@@ -80,7 +76,7 @@ object PowerUpChain extends App:
             ); t}
     )
 
-    persChainer.subscribe(tank)
+    persChainer.bind(tank)
 
 
     persChainer.chain(healthUp)
@@ -88,14 +84,14 @@ object PowerUpChain extends App:
     persChainer.unchain(healthUp)
 
 
-    persChainer.subscribe(tank2)
+    persChainer.unbind(tank2)
 
 
     println(tank.tankData.health)
     tank updateTankData {tank.tankData.updateHealth(_ + 10)}
     println(tank.tankData.health)
 
-    persChainer.unsubscribe(tank)
+    persChainer.unbind(tank)
 
     persChainer.chain(healthUp)
 
