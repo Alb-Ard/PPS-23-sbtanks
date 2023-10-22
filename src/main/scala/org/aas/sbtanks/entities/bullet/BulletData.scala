@@ -1,16 +1,21 @@
 package org.aas.sbtanks.entities.bullet
 
-trait BulletData:
-  def speed: Int
+case class BulletData(speed: Int)
 
-trait ModifiableBulletData extends BulletData :
+trait BulletSpeedUpdater extends BulletData :
 
-  protected def getInstance(speed: Int): ModifiableTankData
+    self: BulletData =>
+    def doubleSpeed(): BulletData & BulletSpeedUpdater = new BulletData(speed * 2) with BulletSpeedUpdater
 
-  def updateSpeed(f: Int => Int): ModifiableBulletData = getInstance(f(speed))
+object BulletExample extends App:
 
-case class DynamicBulletData(override val speed: Int) extends ModifiableBulletData :
-  override def getInstance(speed: Int): ModifiableBulletData = DynamicBulletData(speed)
+    var normalBullet = new BulletData(50)
+
+    var doubleSpeedBullet = new BulletData(normalBullet.speed) with BulletSpeedUpdater
+
+    doubleSpeedBullet.doubleSpeed()
 
 
-case class FixedBulletData(override val speed: Int) extends BulletData
+    println(s"Normal Bullet Speed: $normalBullet")
+    println(s"Doubled Bulled Speed: $doubleSpeedBullet")
+
