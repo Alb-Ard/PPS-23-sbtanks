@@ -23,7 +23,7 @@ class PowerUpChain[E](powerUps: Seq[PowerUp[E]]) extends PowerUp[E]:
 
 
 
-trait PowerUpBinder[E, P <: PowerUp[E]]:
+trait DualBinder[E]:
     case class EntityBinding(supplier: () => E, consumer: E => Unit)
 
     private object EntityBinding:
@@ -41,7 +41,7 @@ trait PowerUpBinder[E, P <: PowerUp[E]]:
 
 
 
-class DispatchablePowerUpChain[E] extends PowerUpChain[E](Seq.empty) with PowerUpBinder[E, PowerUpChain[E]]:
+class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E]:
 
     override def chain(next: PowerUp[E]): PowerUpChain[E] =
         entities.foreach(e => e.consumer(
@@ -62,7 +62,7 @@ class DispatchablePowerUpChain[E] extends PowerUpChain[E](Seq.empty) with PowerU
 object PowerUpChain extends App:
 
 
-    val persChainer = DispatchablePowerUpChain[Tank]
+    val persChainer = PowerUpChainBinder[Tank]
 
     val tank = BasicTank()
     val tank2 = BasicTank()
