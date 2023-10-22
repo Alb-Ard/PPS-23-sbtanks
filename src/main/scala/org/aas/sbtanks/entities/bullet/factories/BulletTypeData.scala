@@ -5,13 +5,13 @@ import org.aas.sbtanks.entities.bullet.*
 trait BulletTypeData:
     def apply() = getBulletData()
 
-    def getBulletData: BulletData & BulletSpeedUpdater
+    def getBulletData: BulletData & DoubleSpeedBullet
 
 
 case object BasicBullet extends BulletTypeData:
     override def getBulletData = new BulletData(1)
 
 case object DoubleSpeedBullet extends BulletTypeData:
-    override def getBulletData = new BulletData(1) with BulletSpeedUpdater
+    override def getBulletData = new BulletData(1) with DoubleSpeedBullet
 
 

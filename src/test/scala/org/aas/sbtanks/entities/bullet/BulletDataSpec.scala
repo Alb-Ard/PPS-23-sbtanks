@@ -5,7 +5,7 @@ import org.scalatest.matchers.should.Matchers
 
 class BulletDataSpec extends AnyFlatSpec with Matchers {
 
-    val doubleSpeedBullet: BulletData & BulletSpeedUpdater = new BulletData(20) with BulletSpeedUpdater
+    val doubleSpeedBullet: BulletData & BulletSpeedUpdater = new BulletData(20) with DoubleSpeedBullet
     val fixedSpeedBullet: BulletData = BulletData(20)
 
     "a bullet" should "be created with proper speed" in {
@@ -17,14 +17,14 @@ class BulletDataSpec extends AnyFlatSpec with Matchers {
     }
 
 
-    it should "not be possible to update health and speed if the TankData is not modifiable" in {
+    it should "not be possible to update speed if the BulletData is not modifiable" in {
         """
-        fixedBulletSpeed.doubleSpeed() should be (BulletData(40))
+        fixedSpeedBullet.doubleSpeed() should be (BulletData(40))
         """ shouldNot compile
     }
 
 
-    "As modifiable bullet speed data" should "never return an unmodifiable speed bullet data when modified" in {  
-        doubleSpeedBullet.doubleSpeed() shouldBe a[BulletSpeedUpdater] 
+    "As double speed bullet" should "never return an unmodifiable speed bullet data when modified" in {
+        doubleSpeedBullet.doubleSpeed() shouldBe a[BulletSpeedUpdater]
     }
 }
