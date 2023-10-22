@@ -9,7 +9,7 @@ trait BulletSpeedUpdater extends BulletData :
 
 object BulletExample extends App:
 
-    var normalBullet = new BulletData(50)
+    var normalBullet = BulletData(50)
 
     var doubleSpeedBullet = new BulletData(normalBullet.speed) with BulletSpeedUpdater
 
