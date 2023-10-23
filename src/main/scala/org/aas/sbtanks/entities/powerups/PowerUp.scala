@@ -14,10 +14,11 @@ object PowerUp:
 
 
 
+
     trait PowerUpConstraint[E](predicate: E => Boolean, reversePredicate: E => Boolean) extends PowerUp[E]:
         abstract override def apply(entity: E): E = Some(entity).filter(predicate).map(super.apply).getOrElse(entity)
 
-        abstract override def revert(entity: E): E =  Some(entity).filter(predicate).map(super.apply).getOrElse(entity)
+        abstract override def revert(entity: E): E =  Some(entity).filter(reversePredicate).map(super.revert).getOrElse(entity)
 
 
 

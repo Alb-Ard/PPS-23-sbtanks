@@ -43,20 +43,22 @@ trait DualBinder[E]:
 
 class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E]:
 
-    override def chain(next: PowerUp[E]): PowerUpChain[E] =
+    override def chain(next: PowerUp[E]): PowerUpChainBinder[E] =
         entities.foreach(e => e.consumer(
             next(e.supplier()))
         )
         super.chain(next)
+        this
 
-    override def unchain(last: PowerUp[E]): PowerUpChain[E] =
+    override def unchain(last: PowerUp[E]): PowerUpChainBinder[E] =
         entities.foreach(e => e.consumer(
             last.revert(e.supplier()))
         )
         super.unchain(last)
+        this
 
 
-
+trait Obstacle
 
 
 object PowerUpChain extends App:
@@ -65,8 +67,20 @@ object PowerUpChain extends App:
     val persChainer = PowerUpChainBinder[Tank]
 
     val tank = BasicTank()
-    val tank2 = BasicTank()
 
+    persChainer.bind(tank)
+
+    persChainer.chain(HealthUp).chain(SpeedUp)
+
+    persChainer.unchain(HealthUp)
+
+
+    println(tank.tankData.health)
+    println(tank.tankData.speed)
+
+    //val tank2 = BasicTank()
+
+    /*
      val healthUp: PowerUp[Tank] = FuncPowerUp(
         t => {t updateTankData (
             t.tankData.updateHealth(_ + 10)
@@ -74,17 +88,18 @@ object PowerUpChain extends App:
           t => {t updateTankData (
                 t.tankData.updateHealth(_ - 10)
             ); t}
-    )
+    ) */
 
+    /*
     persChainer.bind(tank)
 
 
-    persChainer.chain(healthUp)
+    persChainer.chain(HealthUp).chain(SpeedUp)
 
-    persChainer.unchain(healthUp)
+    persChainer.unchain(HealthUp)
 
 
-    persChainer.unbind(tank2)
+    //persChainer.unbind(tank2)
 
 
     println(tank.tankData.health)
@@ -93,11 +108,12 @@ object PowerUpChain extends App:
 
     persChainer.unbind(tank)
 
-    persChainer.chain(healthUp)
+    persChainer.chain(HealthUp)
 
-    println(tank2.tankData.health)
+    //println(tank2.tankData.health)
     println(tank.tankData.health)
-
+    println(tank.tankData.speed)
+    */
     
 
 
