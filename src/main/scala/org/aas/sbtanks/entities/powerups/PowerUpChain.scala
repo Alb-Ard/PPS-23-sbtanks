@@ -1,10 +1,11 @@
 package org.aas.sbtanks.entities.powerups
 import org.aas.sbtanks.entities.powerups.PowerUp.*
-
-
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.*
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
+
+import scala.annotation.targetName
+import scala.language.postfixOps
 
 class PowerUpChain[E](powerUps: Seq[PowerUp[E]]) extends PowerUp[E]:
     def apply(powerUps: PowerUp[E]*): PowerUpChain[E] =
@@ -20,6 +21,8 @@ class PowerUpChain[E](powerUps: Seq[PowerUp[E]]) extends PowerUp[E]:
     def chain(next: PowerUp[E]): PowerUpChain[E] = PowerUpChain(powerUps :+ next)
 
     def unchain(last: PowerUp[E]): PowerUpChain[E] = PowerUpChain(powerUps.filter(_ != last))
+
+
 
 
 
@@ -43,14 +46,14 @@ trait DualBinder[E]:
 
 class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E]:
 
-    override def chain(next: PowerUp[E]): PowerUpChainBinder[E] =
+    override def chain(next: PowerUp[E]): PowerUpChain[E] =
         entities.foreach(e => e.consumer(
             next(e.supplier()))
         )
         super.chain(next)
         this
 
-    override def unchain(last: PowerUp[E]): PowerUpChainBinder[E] =
+    override def unchain(last: PowerUp[E]): PowerUpChain[E] =
         entities.foreach(e => e.consumer(
             last.revert(e.supplier()))
         )
@@ -58,19 +61,31 @@ class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E
         this
 
 
-trait Obstacle
 
 
 object PowerUpChain extends App:
 
-
-    val persChainer = PowerUpChainBinder[Tank]
+    extension (powerUp: PowerUp[Tank])
+        def +(next: PowerUp[Tank]): PowerUpChain[Tank] = PowerUpChain(Seq(powerUp, next))
 
     val tank = BasicTank()
 
+
+    /*
+    val persChainer = PowerUpChainBinder[Tank]
+
+
+    val tank = BasicTank()
+
+
+
     persChainer.bind(tank)
 
-    persChainer.chain(HealthUp).chain(SpeedUp)
+
+
+
+    persChainer.chain(HealthUp + SpeedUp)
+
 
     persChainer.unchain(HealthUp)
 
@@ -90,7 +105,7 @@ object PowerUpChain extends App:
             ); t}
     ) */
 
-    /*
+
     persChainer.bind(tank)
 
 
@@ -113,6 +128,7 @@ object PowerUpChain extends App:
     //println(tank2.tankData.health)
     println(tank.tankData.health)
     println(tank.tankData.speed)
+
     */
     
 
