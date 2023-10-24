@@ -13,3 +13,4 @@ trait PositionBehaviour(startingX: Double = 0, startingY: Double = 0):
     def setPosition(x: Double, y: Double) = 
         position = (x, y)
         positionChanged(position)
+        this
