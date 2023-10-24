@@ -1,4 +1,4 @@
-package org.aas.sbtanks.player
+package org.aas.sbtanks.player.controller
 
 import org.aas.sbtanks.behaviours.SteppedMovementDirectionBehaviour
 import org.aas.sbtanks.behaviours.MovementBehaviour
@@ -15,7 +15,7 @@ type ControllableTank = SteppedMovementDirectionBehaviour
     with PositionBehaviour
     with CollisionBehaviour
 
-abstract class PlayerTankController[A <: PlayerInputEvents](tank: ControllableTank, view: TankView, viewScale: Double, protected val inputEvents: A) extends SteppedBehaviour:
+abstract class PlayerTankController[A <: PlayerInputEvents](tank: ControllableTank, view: TankView, viewScale: Double, protected val inputEvents: A) extends SteppedBehaviour[PlayerTankController[A]]:
     tank.directionStepped += { (x, y) =>
         tank.moveRelative(x, y)
         view.isMoving(x != 0 || y != 0)
@@ -24,5 +24,6 @@ abstract class PlayerTankController[A <: PlayerInputEvents](tank: ControllableTa
     tank.positionChanged += { (x, y) => view.move(x * viewScale, y * viewScale) }
     inputEvents.moveDirectionChanged += tank.moveTowards
 
-    override def step(delta: Double): Unit = 
+    override def step(delta: Double) = 
         tank.step(delta)
+        this

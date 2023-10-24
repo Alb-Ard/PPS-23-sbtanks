@@ -13,11 +13,12 @@ import _root_.scalafx.scene.input.KeyCode.A
 import _root_.scalafx.scene.input.KeyCode.D
 import _root_.scalafx.scene.image.Image
 
-import org.aas.sbtanks.player.scalafx.JFXPlayerInputController
+import org.aas.sbtanks.player.controller.scalafx.JFXPlayerInputController
+import org.aas.sbtanks.player.controller.scalafx.JFXPlayerTankController
+import org.aas.sbtanks.player.controller.ControllableTank
+import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 import org.aas.sbtanks.behaviours.MovementBehaviour
 import org.aas.sbtanks.behaviours.SteppedMovementDirectionBehaviour
-import org.aas.sbtanks.player.scalafx.JFXPlayerTankController
-import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 import org.aas.sbtanks.behaviours.PositionBehaviour
 import org.aas.sbtanks.behaviours.CollisionBehaviour
 import org.aas.sbtanks.physics.CollisionLayer

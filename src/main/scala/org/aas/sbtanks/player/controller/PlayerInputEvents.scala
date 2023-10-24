@@ -1,4 +1,4 @@
-package org.aas.sbtanks.player
+package org.aas.sbtanks.player.controller
 
 import org.aas.sbtanks.event.EventSource
 

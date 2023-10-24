@@ -1,6 +1,6 @@
-package org.aas.sbtanks.player.scalafx
+package org.aas.sbtanks.player.controller.scalafx
 
-import org.aas.sbtanks.player.PlayerInputEvents
+import org.aas.sbtanks.player.controller.PlayerInputEvents
 
 import scalafx.scene.input.KeyEvent
 import scalafx.scene.input.KeyCode
