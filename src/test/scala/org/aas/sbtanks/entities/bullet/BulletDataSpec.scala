@@ -3,28 +3,35 @@ package org.aas.sbtanks.entities.bullet
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
+
 class BulletDataSpec extends AnyFlatSpec with Matchers {
+    import org.aas.sbtanks.entities.tank.structure.Tank.{FastTank, BasicTank}
+    import org.aas.sbtanks.entities.tank.{TankData, TankDataUpdater}
+    import org.aas.sbtanks.entities.tank.factories.TankTypeData
 
-    val doubleSpeedBullet: BulletData & BulletSpeedUpdater = new BulletData(20) with DoubleSpeedBullet
-    val fixedSpeedBullet: BulletData = BulletData(20)
 
-    "a bullet" should "be created with proper speed" in {
-        fixedSpeedBullet.speed should be (20)
+    val basicTank = new BasicTank()
+    val fastTank = new FastTank()
+    val basicBullet = basicTank.shoot((1, 0))
+    val directionOfBullet = basicBullet.position
+
+    "a bullet" should "be created when a tank shoots" in {
+        basicTank.shoot() should be (new Bullet())
     }
 
-    it should "be possible to double speed of bullet" in {
-        doubleSpeedBullet.doubleSpeed() should be (new BulletData(20 * 2) with BulletSpeedUpdater)
+    it should "have the same speed as the tank that shot it" in {
+        basicBullet.speed should equal(basicTank.tankData.speed)
     }
 
 
-    it should "not be possible to update speed if the BulletData is not modifiable" in {
-        """
-        fixedSpeedBullet.doubleSpeed() should be (BulletData(40))
-        """ shouldNot compile
+    it should "continue to move in one direction once shot" in {
+        basicBullet.move()
+        basicBullet.move()
+        basicBullet.position should equal((directionOfBullet.x + 2, directionOfBullet.y))
     }
 
 
-    "As double speed bullet" should "never return an unmodifiable speed bullet data when modified" in {
-        doubleSpeedBullet.doubleSpeed() shouldBe a[BulletSpeedUpdater]
+    it should "stop existing when it collides with something" in {
+
     }
 }
