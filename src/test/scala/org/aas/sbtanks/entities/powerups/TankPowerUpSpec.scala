@@ -1,6 +1,6 @@
 package org.aas.sbtanks.entities.powerups
 
-import org.aas.sbtanks.entities.tank.TankData
+import org.aas.sbtanks.entities.tank.{TankData, structure}
 import org.aas.sbtanks.entities.tank.factories.BasicTankData
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
@@ -9,7 +9,7 @@ import org.scalatest.matchers.should.Matchers
 import org.aas.sbtanks.entities.powerups.PowerUpChain.*
 import org.scalatest.BeforeAndAfterEach
 
-class TankPowerUpSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach {
+class TankPowerUpSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
 
 
     val defaultHealth: Int = BasicTankData.supplyData.health
@@ -29,6 +29,8 @@ class TankPowerUpSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach 
     "Whenever a power-up is applied it" should "be possible to revert its effect" in {
         (HealthUp revert HealthUp(tank)).tankData.health should be (defaultHealth)
         (SpeedUp revert SpeedUp(tank)).tankData.speed should be (defaultSpeed)
+
+        (HealthUp + SpeedUp).unchain(HealthUp).apply(tank).tankData should be (TankData(defaultHealth, defaultSpeed + 10))
     }
 
     "It" should "be possible to combine the effect of multiple power-ups (operator api)" in {
@@ -45,6 +47,3 @@ class TankPowerUpSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach 
     }
 
 
-
-
-}

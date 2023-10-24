@@ -29,7 +29,7 @@ class PowerUpChain[E](powerUps: Seq[PowerUp[E]]) extends PowerUp[E]:
 trait DualBinder[E]:
     case class EntityBinding(supplier: () => E, consumer: E => Unit)
 
-    private object EntityBinding:
+    protected object EntityBinding:
         def apply(e: E): EntityBinding = new EntityBinding(() => e, _ => {})
 
     protected var entities = Seq.empty[EntityBinding]
@@ -46,7 +46,13 @@ trait DualBinder[E]:
 
 class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E]:
 
+    private var powerUpBindings: Map[PowerUp[E], Seq[EntityBinding]] = Map.empty
+
     override def chain(next: PowerUp[E]): PowerUpChain[E] =
+        val currentBindings = entities.map(_.supplier()).map(EntityBinding(_))
+
+        powerUpBindings += (next -> currentBindings)
+
         entities.foreach(e => e.consumer(
             next(e.supplier()))
         )
@@ -54,9 +60,13 @@ class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E
         this
 
     override def unchain(last: PowerUp[E]): PowerUpChain[E] =
-        entities.foreach(e => e.consumer(
+        val validBindings = powerUpBindings.getOrElse(last, Seq.empty)
+
+        validBindings.foreach(e => e.consumer(
             last.revert(e.supplier()))
         )
+        entities = entities.filterNot(b => validBindings.exists(_.supplier() == b.supplier()))
+
         super.unchain(last)
         this
 
@@ -68,11 +78,41 @@ object PowerUpChain extends App:
     extension (powerUp: PowerUp[Tank])
         def +(next: PowerUp[Tank]): PowerUpChain[Tank] = PowerUpChain(Seq(powerUp, next))
 
-    val tank = BasicTank()
 
+    val binder = PowerUpChainBinder[Tank]
+
+    val tank1 = BasicTank()
+    val tank2= BasicTank()
+
+    val healthSpeedPowerUp: PowerUpChain[Tank] = SpeedUp + HealthUp
+
+    binder.bind(tank1)
+
+    binder.chain(HealthUp)
+
+    println(tank1.tankData)
+    println(tank2.tankData)
+
+    binder.bind(tank2)
+
+    binder.chain(SpeedUp)
+
+    println(tank1.tankData)
+    println(tank2.tankData)
+
+
+    binder.unchain(HealthUp)
+
+    println(tank1.tankData)
+    println(tank2.tankData)
+
+    //tank1.tankData should be((TankData(defaultHealth + 10, defaultSpeed + 10)))
+    //tank2.tankData should be((TankData(defaultHealth, defaultSpeed)))
 
     /*
     val persChainer = PowerUpChainBinder[Tank]
+
+
 
 
     val tank = BasicTank()
