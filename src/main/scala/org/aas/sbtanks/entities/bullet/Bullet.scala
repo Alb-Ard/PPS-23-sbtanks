@@ -7,4 +7,4 @@ case class Bullet(speed: Int, direction: (Double, Double), position: (Double, Do
 
     val bulletSpeed: Int = speed
     val bulletDirection: (Double, Double) = direction.direction
-    val bulletInitialPosition: position + bulletDirection
+    val bulletInitialPosition:(Double, Double) = position + bulletDirection
