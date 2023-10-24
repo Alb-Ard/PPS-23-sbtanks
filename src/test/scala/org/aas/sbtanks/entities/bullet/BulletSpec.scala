@@ -4,7 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 
-class BulletDataSpec extends AnyFlatSpec with Matchers {
+class BulletSpec extends AnyFlatSpec with Matchers {
     import org.aas.sbtanks.entities.tank.structure.Tank.{FastTank, BasicTank}
     import org.aas.sbtanks.entities.tank.{TankData, TankDataUpdater}
     import org.aas.sbtanks.entities.tank.factories.TankTypeData
