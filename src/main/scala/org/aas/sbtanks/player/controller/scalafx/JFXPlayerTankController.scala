@@ -1,8 +1,8 @@
-package org.aas.sbtanks.player.scalafx
+package org.aas.sbtanks.player.controller.scalafx
 
-import org.aas.sbtanks.player.PlayerTankController
+import org.aas.sbtanks.player.controller.PlayerTankController
 import org.aas.sbtanks.entities.tank.view.TankView
-import org.aas.sbtanks.player.ControllableTank
+import org.aas.sbtanks.player.controller.ControllableTank
 
 import scalafx.stage.Stage
 import scalafx.scene.input.KeyEvent

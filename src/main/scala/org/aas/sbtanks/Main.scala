@@ -9,40 +9,40 @@ import scalafx.scene.image.Image
 import scalafx.scene.image.ImageView
 import scalafx.animation.AnimationTimer
 
-import org.aas.sbtanks.player.scalafx.JFXPlayerInputController
+import org.aas.sbtanks.player.controller.scalafx.JFXPlayerInputController
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 import org.aas.sbtanks.entities.tank.view.TankView
 import org.aas.sbtanks.behaviours.SteppedMovementDirectionBehaviour
 import org.aas.sbtanks.behaviours.MovementBehaviour
-import org.aas.sbtanks.player.scalafx.JFXPlayerTankController
+import org.aas.sbtanks.player.controller.scalafx.JFXPlayerTankController
 import org.aas.sbtanks.behaviours.CollisionBehaviour
 import org.aas.sbtanks.behaviours.PositionBehaviour
 import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.behaviours.ConstrainedMovementBehaviour
 import org.aas.sbtanks.obstacles.LevelObstacle
+import org.aas.sbtanks.player.PlayerTankBuilder
+import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 
 object Main extends JFXApp3 with scalafx.Includes:
     val inputController = JFXPlayerInputController()
     val viewScale = 4D
 
     override def start(): Unit = 
-        val testTank = new Object()
-            with PositionBehaviour(0, 0)
-            with ConstrainedMovementBehaviour 
-            with SteppedMovementDirectionBehaviour(4 * viewScale)
-            with CollisionBehaviour(16, 16, CollisionLayer.TanksLayer, Seq(CollisionLayer.BulletsLayer, CollisionLayer.WallsLayer))
-        val testTankImage1 = Image("entities/tank/basic/tank_basic_up_1.png", 16 * viewScale, 16 * viewScale, true, false)
-        val testTankImage2 = Image("entities/tank/basic/tank_basic_up_2.png", 16 * viewScale, 16 * viewScale, true, false)
+        val testTank = PlayerTankBuilder()
+            .setPosition(0, 0)
+            .build()
+        val testTankImage1 = JFXImageLoader.loadFromResources("entities/tank/basic/tank_basic_up_1.png", viewScale)
+        val testTankImage2 = JFXImageLoader.loadFromResources("entities/tank/basic/tank_basic_up_2.png", viewScale)
         val testTankView = JFXTankView(Seq(testTankImage1, testTankImage2), 4)
-        val testTankController = JFXPlayerTankController(testTank, testTankView, viewScale)
+        val testTankController = JFXPlayerTankController(testTank, testTankView, viewScale * 16)
 
         val testWall = LevelObstacle.BrickWall(32, 32)
-        val testWallView = ImageView(Image(testWall.imagePath, 16 * viewScale, 16 * viewScale, true, false))
+        val testWallView = ImageView(JFXImageLoader.loadFromResources(testWall.imagePath, viewScale))
         testWallView.x = testWall.positionX * viewScale
         testWallView.y = testWall.positionY * viewScale
 
         val testTrees = LevelObstacle.Trees(32, 48)
-        val testTreesView = ImageView(Image(testTrees.imagePath, 16 * viewScale, 16 * viewScale, true, false))
+        val testTreesView = ImageView(JFXImageLoader.loadFromResources(testTrees.imagePath, viewScale))
         testTreesView.x = testTrees.positionX * viewScale
         testTreesView.y = testTrees.positionY * viewScale
 

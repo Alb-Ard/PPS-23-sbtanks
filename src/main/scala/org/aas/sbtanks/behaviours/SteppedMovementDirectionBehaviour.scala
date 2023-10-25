@@ -11,15 +11,17 @@ trait SteppedMovementDirectionBehaviour(private var stepSpeed: Double = 1D) exte
 
     def direction = lastDirection
 
-    def setSpeed(newSpeed: Double): SteppedMovementDirectionBehaviour = 
+    def setSpeed(newSpeed: Double) = 
         stepSpeed = newSpeed
         this
 
-    def step(delta: Double): Unit =
+    def step(delta: Double) =
         directionStepped(moveDirection(0) * delta * stepSpeed, moveDirection(1) * delta * stepSpeed)
+        this
 
-    def moveTowards(directionX: Double, directionY: Double): Unit = 
+    def moveTowards(directionX: Double, directionY: Double) = 
         moveDirection = (directionX, directionY)
         if directionX != 0 || directionY != 0 then
             lastDirection = moveDirection
             directionChanged(direction)
+        this

@@ -8,6 +8,7 @@ trait MovementBehaviour:
 
     def moveRelative(amountX: Double, amountY: Double) =
         setPosition(positionX + amountX, positionY + amountY)
+        this
 
 trait ConstrainedMovementBehaviour extends MovementBehaviour:
     this: PositionBehaviour with CollisionBehaviour =>
@@ -18,3 +19,4 @@ trait ConstrainedMovementBehaviour extends MovementBehaviour:
         super.moveRelative(amountX, amountY)
         if overlapsAnything then
             setPosition(previousX, previousY)
+        this
