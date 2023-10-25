@@ -2,7 +2,7 @@ package org.aas.sbtanks.behaviours
 
 import org.aas.sbtanks.event.EventSource
 
-trait SteppedMovementDirectionBehaviour(private var stepSpeed: Double = 1D) extends SteppedBehaviour[SteppedMovementDirectionBehaviour]:
+trait SteppedMovementDirectionBehaviour(private var stepSpeed: Double = 1D) extends SteppedBehaviour:
     val directionStepped = EventSource[(Double, Double)]
     val directionChanged = EventSource[(Double, Double)]
 

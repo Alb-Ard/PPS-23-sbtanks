@@ -6,13 +6,14 @@ import org.aas.sbtanks.behaviours.SteppedMovementDirectionBehaviour
 import org.aas.sbtanks.behaviours.CollisionBehaviour
 import org.aas.sbtanks.behaviours.ConstrainedMovementBehaviour
 import org.aas.sbtanks.physics.CollisionLayer
+import org.aas.sbtanks.entities.tank.factories.TankTypeData
 
-case class PlayerTankBuilder(private val x: Double = 0, private val y: Double = 0):
+case class PlayerTankBuilder(private val tankTypeData: TankTypeData = PlayerTankData, private val x: Double = 0, private val y: Double = 0):
     def setPosition(x: Double = x, y: Double = y) =
         copy(x = x, y = y)
     
     def build() =
-        new Tank(PlayerTankData)
+        new Tank(tankTypeData)
             with PositionBehaviour(x, y)
             with ConstrainedMovementBehaviour 
             with SteppedMovementDirectionBehaviour(PlayerTankData().speed)
