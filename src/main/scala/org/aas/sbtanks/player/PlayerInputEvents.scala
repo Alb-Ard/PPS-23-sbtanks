@@ -1,9 +1,7 @@
 package org.aas.sbtanks.player
 
-import scala.collection.mutable
+import org.aas.sbtanks.event.EventSource
 
 trait PlayerInputEvents:
-    val movementInputListeners = mutable.ListBuffer[(amountX: Int, amountY: Int) => Any]()
-
-    protected def invokeListeners[A](listeners: mutable.ListBuffer[A])(invoker: A => Any) =
-        listeners.foreach(invoker)
+    val moveDirectionChanged = EventSource[(Double, Double)]
+    val shootPerfomed = EventSource[Unit]
