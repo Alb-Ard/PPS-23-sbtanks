@@ -28,29 +28,32 @@ object Main extends JFXApp3 with scalafx.Includes:
     val inputController = JFXPlayerInputController()
     val viewScale = 4D
     val tileSize = 16D
-    val tankUnitMoveSpeed = 1 / tileSize
+    val tankUnitMoveSpeed = 1D / tileSize
 
     override def start(): Unit = 
         val testTank = PlayerTankBuilder()
             .setPosition(0, 0)
-            .setCollisionSize(1 - tankUnitMoveSpeed, 1 - tankUnitMoveSpeed)
+            .setCollisionSize(1D - tankUnitMoveSpeed, 1D - tankUnitMoveSpeed)
             .build()
-        val testTankImages = JFXImageLoader.loadFromResources(Seq("entities/tank/basic/tank_basic_up_1.png", "entities/tank/basic/tank_basic_up_2.png"), viewScale)
+        val testTankImages = JFXImageLoader.loadFromResources(Seq("entities/tank/basic/tank_basic_up_1.png", "entities/tank/basic/tank_basic_up_2.png"), tileSize, viewScale)
         val testTankView = JFXTankView(testTankImages, tileSize)
         val testTankController = JFXPlayerTankController(testTank, tankUnitMoveSpeed, testTankView, viewScale * tileSize)
 
-        val testWall = LevelObstacle.BrickWall(2, 2)
-        val testWallView = ImageView(JFXImageLoader.loadFromResources(testWall.imagesPath(0), viewScale))
-        testWallView.x = testWall.positionX * tileSize * viewScale
-        testWallView.y = testWall.positionY * tileSize * viewScale
+        val testWalls = LevelObstacle.BrickWall(2, 2)
+        val testWallViews = testWalls.map(w =>
+                val view = ImageView(JFXImageLoader.loadFromResources(w.imagesPath(0), tileSize / 4, viewScale))
+                view.x = w.positionX * tileSize * viewScale
+                view.y = w.positionY * tileSize * viewScale
+                view
+            )
 
-        val testTrees = LevelObstacle.Trees(2, 3)
-        val testTreesView = ImageView(JFXImageLoader.loadFromResources(testTrees.imagesPath(0), viewScale))
+        val testTrees = LevelObstacle.Trees(2, 3)(0)
+        val testTreesView = ImageView(JFXImageLoader.loadFromResources(testTrees.imagesPath(0), tileSize, viewScale))
         testTreesView.x = testTrees.positionX * tileSize * viewScale
         testTreesView.y = testTrees.positionY * tileSize * viewScale
         
-        val testWater = LevelObstacle.Water(2, 4)
-        val testWaterImages = JFXImageLoader.loadFromResources(testWater.imagesPath, viewScale)
+        val testWater = LevelObstacle.Water(2, 4)(0)
+        val testWaterImages = JFXImageLoader.loadFromResources(testWater.imagesPath, tileSize, viewScale)
         val testWaterView = new ImageView(testWaterImages(0))
             with JFXImageViewAnimator(testWaterImages, 2)
         testWaterView.startAnimation()
@@ -70,7 +73,7 @@ object Main extends JFXApp3 with scalafx.Includes:
                     fill = Color.LIGHTGREY
                 }
                 content.add(testTankView)
-                content.add(testWallView)
+                testWallViews.foreach(w => content.add(w))
                 content.add(testTreesView)
                 content.add(testWaterView)
             }
