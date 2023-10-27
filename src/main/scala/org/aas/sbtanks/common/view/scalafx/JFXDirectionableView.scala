@@ -1,6 +1,6 @@
 package org.aas.sbtanks.common.view
 
-import scalafx.scene.Node
+import _root_.scalafx.scene.Node
 
 trait JFXDirectionableView extends DirectionableView:
     this: Node =>
