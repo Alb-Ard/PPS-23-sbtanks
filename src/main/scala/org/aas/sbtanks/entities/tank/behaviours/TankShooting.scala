@@ -1,15 +1,18 @@
 package org.aas.sbtanks.entities.tank.behaviours
 
 import org.aas.sbtanks.entities.bullet.Bullet
-import org.aas.sbtanks.behaviours.{PositionBehaviour, SteppedMovementDirectionBehaviour}
+import org.aas.sbtanks.behaviours.{CollisionBehaviour, DirectionBehaviour, PositionBehaviour}
+import org.aas.sbtanks.physics.CollisionLayer
+import org.aas.sbtanks.entities.tank.structure.Tank
 
 //trait TankShootingBehaviour(speedData: Int, moveInfo: (Double, Double),
 //                                posX: Double, posY: Double):
-trait TankShootingBehaviour(speedData: Int, direction: SteppedMovementDirectionBehaviour,
-                            posX: Double, posY: Double):
-    self: PositionBehaviour with SteppedMovementDirectionBehaviour
 
-    private var position: (Double, Double) = (posX, posY)
+//private var position: (Double, Double) = (posX, posY)
+trait TankShootingBehaviour:
+    self: Tank with PositionBehaviour with DirectionBehaviour =>
 
-    def shoot(): Bullet with SteppedMovementDirectionBehaviour =
-        Bullet(speedData, direction.direction, position)  with direction
+    def shoot(): Bullet with PositionBehaviour with DirectionBehaviour with CollisionBehaviour =
+        new Bullet() with PositionBehaviour() with DirectionBehaviour
+                    with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
+                                            Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))
