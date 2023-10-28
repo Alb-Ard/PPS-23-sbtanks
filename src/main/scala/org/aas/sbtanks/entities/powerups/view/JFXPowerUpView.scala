@@ -9,29 +9,15 @@ import scalafx.scene.{Node, Scene}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.util.Duration
 import javafx.scene.image as jfxsi
+import org.aas.sbtanks.entities.powerups.view.scalaFx.JFXIntermittentVisibleNode
 
 
 
+class JFXPowerUpView(private val image: Image) extends jfxsi.ImageView(image) with PowerUpView with JFXIntermittentVisibleNode:
 
+    override def show(): Unit = this.activate()
 
-
-
-class JFXPowerUpView(private val image: Image) extends jfxsi.ImageView(image) with IntermittentVisible[javafx.scene.Node]:
-
-    private val isVisibleOnScene: BooleanProperty = BooleanProperty(true)
-
-    this.visibleProperty().bind(isVisibleOnScene)
-
-    private val timeLine: Timeline = new Timeline:
-        keyFrames = Seq(
-            KeyFrame(Duration(500), onFinished = _ => isVisibleOnScene.value = !isVisibleOnScene.value)
-        )
-        cycleCount = 10
-        onFinished = _ => isVisibleOnScene.value = false
-
-
-    override def activate(): Unit =
-        timeLine.play()
+    override def isTaken: Boolean = ???
 
 
 

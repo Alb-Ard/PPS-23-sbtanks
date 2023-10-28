@@ -1,9 +1,8 @@
 package org.aas.sbtanks.entities.powerups.view
 
-import scalafx.util.Duration
 
-trait IntermittentVisible[E]:
-    this: E =>
+
+trait IntermittentVisible:
     def activate(): Unit
 
 
