@@ -1,6 +1,6 @@
-package org.aas.sbtanks.player.scalafx
+package org.aas.sbtanks.player.controller.scalafx
 
-import org.aas.sbtanks.player.PlayerInputEvents
+import org.aas.sbtanks.entities.tank.controller.TankInputEvents
 
 import scalafx.scene.input.KeyEvent
 import scalafx.scene.input.KeyCode
@@ -10,7 +10,7 @@ import scalafx.scene.input.KeyCode.A
 import scalafx.scene.input.KeyCode.D
 import scalafx.scene.input.KeyCode.Space
 
-class JFXPlayerInputController extends PlayerInputEvents:
+class JFXPlayerInputController extends TankInputEvents:
     private var inputX = 0D
     private var inputY = 0D
     private var shootPressed = false

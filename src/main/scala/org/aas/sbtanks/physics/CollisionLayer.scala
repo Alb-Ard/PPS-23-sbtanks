@@ -6,3 +6,4 @@ object CollisionLayer:
     case object TanksLayer extends CollisionLayer
     case object BulletsLayer extends CollisionLayer
     case object WallsLayer extends CollisionLayer
+    case object NonWalkableLayer extends CollisionLayer

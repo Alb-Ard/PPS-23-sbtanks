@@ -1,6 +1,6 @@
 package org.aas.sbtanks.player
 
-import org.aas.sbtanks.player.scalafx.JFXPlayerInputController
+import org.aas.sbtanks.player.controller.scalafx.JFXPlayerInputController
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
