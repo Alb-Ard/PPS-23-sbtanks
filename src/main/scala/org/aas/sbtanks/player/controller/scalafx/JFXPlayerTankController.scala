@@ -1,15 +1,15 @@
 package org.aas.sbtanks.player.controller.scalafx
 
-import org.aas.sbtanks.player.controller.PlayerTankController
 import org.aas.sbtanks.entities.tank.view.TankView
-import org.aas.sbtanks.player.controller.ControllableTank
+import org.aas.sbtanks.entities.tank.controller.TankController
+import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 
 import scalafx.stage.Stage
 import scalafx.scene.input.KeyEvent
 import scalafx.Includes
 
-class JFXPlayerTankController(tank: ControllableTank, view: TankView, viewScale: Double)
-    extends PlayerTankController(tank, view, viewScale, JFXPlayerInputController())
+class JFXPlayerTankController(tank: ControllableTank, speedMultiplier: Double, view: TankView, viewScale: Double)
+    extends TankController(tank, speedMultiplier, view, viewScale, JFXPlayerInputController())
     with Includes:
 
     def registerSceneEventHandlers(stage: Stage) =

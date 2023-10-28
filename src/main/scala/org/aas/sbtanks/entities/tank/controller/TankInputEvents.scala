@@ -1,7 +1,7 @@
-package org.aas.sbtanks.player.controller
+package org.aas.sbtanks.entities.tank.controller
 
 import org.aas.sbtanks.event.EventSource
 
-trait PlayerInputEvents:
+trait TankInputEvents:
     val moveDirectionChanged = EventSource[(Double, Double)]
     val shootPerfomed = EventSource[Unit]

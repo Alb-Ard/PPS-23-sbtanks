@@ -1,6 +1,6 @@
 package org.aas.sbtanks.common.view
 
-import scalafx.delegate.PositionDelegate
+import _root_.scalafx.delegate.PositionDelegate
 
 trait JFXMoveableView[J <: PositionDelegate[?]] extends MoveableView:
     this: J =>
