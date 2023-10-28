@@ -14,7 +14,7 @@ class BulletSpec extends AnyFlatSpec with Matchers {
     import org.aas.sbtanks.entities.tank.structure.Tank
 
 
-    val basicTank = new BasicTank() with TankShootingBehaviour()
+    val basicTank = new BasicTank() with PositionBehaviour() with DirectionBehaviour with TankShootingBehaviour()
     val fastTank = new FastTank()
     val basicBullet = basicTank.shoot()
 
