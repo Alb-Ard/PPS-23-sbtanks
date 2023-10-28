@@ -12,7 +12,6 @@ trait Tank(dataSupplier: TankTypeData):
 
     def updateTankData(newData: TankData & TankDataUpdater): Unit = tankData = newData
 
-
     var tankData: TankData & TankDataUpdater = dataSupplier()
 
 

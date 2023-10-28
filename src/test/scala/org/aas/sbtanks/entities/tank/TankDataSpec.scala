@@ -6,8 +6,8 @@ import org.scalatest.matchers.should.Matchers
 class TankDataSpec extends AnyFlatSpec with Matchers {
 
 
-    val tankData: TankData & TankDataUpdater = new TankData(10, 20) with TankDataUpdater
-    val fixedTankData: TankData = TankData(11, 21)
+    val tankData: TankData & TankDataUpdater = new TankData(10, 20, 30) with TankDataUpdater
+    val fixedTankData: TankData = TankData(11, 21, 31)
 
 
 
@@ -22,21 +22,24 @@ class TankDataSpec extends AnyFlatSpec with Matchers {
     it should "be possible to update health and speed" in {
 
         tankData.updateHealth(_ + 1)
-          .updateSpeed(_ + 1) should be (new TankData(10 + 1, 20 + 1) with TankDataUpdater)
+          .updateSpeed(_ + 1)
+          .updateBulletSpeed(_ + 1) should be (new TankData(10 + 1, 20 + 1, 30 + 1) with TankDataUpdater)
     }
 
 
     it should "not be possible to update health and speed if the TankData is not modifiable" in {
         """
         fixedTankData.updateHealth(_ + 1)
-          .updateSpeed(_ + 1) should be (TankData(10, 20))
+          .updateSpeed(_ + 1)
+          .updateBulletSpeed(_ + 1) should be (TankData(12, 22, 33))
         """ shouldNot compile
     }
 
 
     "As modifiable tank data" should "never return an unmodifiable tank data when modified" in {
         tankData.updateHealth(_ + 1)
-          .updateSpeed(_ + 1) shouldBe a[TankDataUpdater]
+          .updateSpeed(_ + 1)
+          .updateBulletSpeed(_ + 1) shouldBe a[TankDataUpdater]
     }
 
 
