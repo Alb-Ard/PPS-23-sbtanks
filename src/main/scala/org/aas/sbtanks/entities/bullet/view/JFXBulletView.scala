@@ -9,7 +9,7 @@ import scalafx.scene.shape.Rectangle
 import scalafx.scene.Node
 import scalafx.scene.image.Image
 
-//class JFXBulletView(image: Image, animationSpeed: Double = 1) extends ImageView with JFXMoveableView with JFXDirectionableView:
+class JFXBulletView(image: Image, animationSpeed: Double = 1) extends ImageView with JFXMoveableView with JFXDirectionableView:
 
     /*
     val animation = Animation { now =>
