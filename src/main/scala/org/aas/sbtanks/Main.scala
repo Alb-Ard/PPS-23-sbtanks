@@ -23,6 +23,7 @@ import org.aas.sbtanks.obstacles.LevelObstacle
 import org.aas.sbtanks.player.PlayerTankBuilder
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import org.aas.sbtanks.common.view.scalafx.JFXImageViewAnimator
+import org.aas.sbtanks.obstacles.view.scalafx.JFXObstacleView
 
 object Main extends JFXApp3 with scalafx.Includes:
     val inputController = JFXPlayerInputController()
@@ -41,22 +42,20 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         val testWalls = LevelObstacle.BrickWall(2, 2)
         val testWallViews = testWalls.map(w =>
-                val view = ImageView(JFXImageLoader.loadFromResources(w.imagesPath(0), tileSize / 4, viewScale))
+                val view = JFXObstacleView.create(JFXImageLoader.loadFromResources(w.imagesPath(0), tileSize / 4, viewScale))
                 view.x = w.positionX * tileSize * viewScale
                 view.y = w.positionY * tileSize * viewScale
                 view
             )
 
         val testTrees = LevelObstacle.Trees(2, 3)(0)
-        val testTreesView = ImageView(JFXImageLoader.loadFromResources(testTrees.imagesPath(0), tileSize, viewScale))
+        val testTreesView = JFXObstacleView.create(JFXImageLoader.loadFromResources(testTrees.imagesPath(0), tileSize, viewScale))
         testTreesView.x = testTrees.positionX * tileSize * viewScale
         testTreesView.y = testTrees.positionY * tileSize * viewScale
         
         val testWater = LevelObstacle.Water(2, 4)(0)
-        val testWaterImages = JFXImageLoader.loadFromResources(testWater.imagesPath, tileSize, viewScale)
-        val testWaterView = new ImageView(testWaterImages(0))
-            with JFXImageViewAnimator(testWaterImages, 2)
-        testWaterView.startAnimation()
+        val testWaterView = JFXObstacleView.createAnimated(JFXImageLoader.loadFromResources(testWater.imagesPath, tileSize, viewScale), 2.0)
+            .startAnimation()
         testWaterView.x = testWater.positionX * tileSize * viewScale
         testWaterView.y = testWater.positionY * tileSize * viewScale
 
