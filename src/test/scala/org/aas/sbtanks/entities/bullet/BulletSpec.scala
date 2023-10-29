@@ -19,20 +19,22 @@ class BulletSpec extends AnyFlatSpec with Matchers {
     val basicBullet = basicTank.shoot()
 
     "a bullet" should "be created when a tank shoots" in {
-        basicTank.shoot() should be(new Bullet() with PositionBehaviour() with DirectionBehaviour
+        basicTank.shoot() should be(new Bullet(basicTank.tankData.bulletSpeed) with PositionBehaviour(basicTank.positionX + basicTank.directionX,
+                                    basicTank.positionY + basicTank.directionY) with DirectionBehaviour
                                     with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
                                     Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer)))
     }
 
     it should "have the same speed as the tank that shot it" in {
-        basicBullet should equal(basicTank.tankData.speed)
+        basicBullet.speed should equal(basicTank.tankData.bulletSpeed)
     }
 
 
     it should "continue to move in one direction once shot" in {
-        //basicBullet.move()
-        //basicBullet.move()
-        //basicBullet.position should equal((directionOfBullet.x + 2, directionOfBullet.y))
+        basicBullet.positionChanged(basicBullet.positionX + (basicBullet.directionX * basicBullet.speed),
+                                    basicBullet.positionY + (basicBullet.directionY * basicBullet.speed))
+        basicBullet.positionX should equal((basicTank.positionX + basicTank.directionX) * 2)
+        basicBullet.positionY should equal((basicTank.positionY + basicTank.directionY) * 2)
     }
 
 
