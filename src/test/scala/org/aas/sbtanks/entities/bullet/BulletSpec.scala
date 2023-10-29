@@ -15,26 +15,35 @@ class BulletSpec extends AnyFlatSpec with Matchers {
 
 
     val basicTank = new BasicTank() with PositionBehaviour() with DirectionBehaviour with TankShootingBehaviour()
-    val fastTank = new FastTank()
+    val fastTank = new FastTank() with PositionBehaviour() with DirectionBehaviour with TankShootingBehaviour()
     val basicBullet = basicTank.shoot()
+    val fastBullet = fastTank.shoot()
 
     "a bullet" should "be created when a tank shoots" in {
         basicTank.shoot() should be(new Bullet(basicTank.tankData.bulletSpeed, false) with PositionBehaviour(basicTank.positionX + basicTank.directionX,
                                     basicTank.positionY + basicTank.directionY) with DirectionBehaviour
                                     with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
                                     Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer)))
+        fastTank.shoot() should be(new Bullet(fastTank.tankData.bulletSpeed, false) with PositionBehaviour(fastTank.positionX + fastTank.directionX,
+                                    fastTank.positionY + fastTank.directionY) with DirectionBehaviour
+                                    with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
+                                    Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer)))
+
     }
 
     it should "have the same speed as the tank that shot it" in {
         basicBullet.speed should equal(basicTank.tankData.bulletSpeed)
+        fastBullet.speed should equal(fastTank.tankData.bulletSpeed)
     }
 
 
     it should "continue to move in one direction once shot" in {
         basicBullet.positionChanged(basicBullet.positionX + (basicBullet.directionX * basicBullet.speed),
                                     basicBullet.positionY + (basicBullet.directionY * basicBullet.speed))
-        basicBullet.positionX should equal((basicTank.positionX + basicTank.directionX) * 2)
-        basicBullet.positionY should equal((basicTank.positionY + basicTank.directionY) * 2)
+        basicBullet.positionChanged(basicBullet.positionX + (basicBullet.directionX * basicBullet.speed),
+                                    basicBullet.positionY + (basicBullet.directionY * basicBullet.speed))
+        basicBullet.positionX should equal((basicTank.positionX + basicTank.directionX) * 3)
+        basicBullet.positionY should equal((basicTank.positionY + basicTank.directionY) * 3)
     }
 
 
