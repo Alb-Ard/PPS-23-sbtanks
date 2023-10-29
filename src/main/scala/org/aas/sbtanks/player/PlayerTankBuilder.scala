@@ -12,7 +12,9 @@ case class PlayerTankBuilder(private val tankTypeData: TankTypeData = PlayerTank
     private val x: Double = 0, 
     private val y: Double = 0,
     private val collisionSizeX: Double = 1,
-    private val collisionSizeY: Double = 1):
+    private val collisionSizeY: Double = 1,
+    private val collisionLayer: CollisionLayer = CollisionLayer.TanksLayer,
+    private val collisionMask: Set[CollisionLayer] = PlayerTankBuilder.defaultCollisionMask):
 
     def setTankType(tankType: TankTypeData) =
         copy(tankTypeData = tankType)    
@@ -23,13 +25,26 @@ case class PlayerTankBuilder(private val tankTypeData: TankTypeData = PlayerTank
     def setCollisionSize(x: Double = x, y: Double = y) =
         copy(collisionSizeX = x, collisionSizeY = y)
 
+    def setCollisionLayer(layer: CollisionLayer) =
+        copy(collisionLayer = layer)
+
+    def setCollisionMaskLayer(layer: CollisionLayer, active: Boolean = true) =
+        copy(collisionMask = active match
+            case true => collisionMask + layer
+            case _ => collisionMask.filterNot(layer.equals)
+        )
+
     def build() =
         new Tank(tankTypeData)
             with PositionBehaviour(x, y)
             with ConstrainedMovementBehaviour
             with DirectionBehaviour
-            with CollisionBehaviour(collisionSizeX, collisionSizeY, CollisionLayer.TanksLayer, Seq(
-                CollisionLayer.BulletsLayer,
-                CollisionLayer.WallsLayer,
-                CollisionLayer.NonWalkableLayer
-            ))
+            with CollisionBehaviour(collisionSizeX, collisionSizeY, collisionLayer, collisionMask.toSeq)
+
+
+object PlayerTankBuilder:
+    val defaultCollisionMask: Set[CollisionLayer] = Set(
+        CollisionLayer.BulletsLayer,
+        CollisionLayer.WallsLayer,
+        CollisionLayer.NonWalkableLayer
+    )

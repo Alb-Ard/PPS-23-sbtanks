@@ -17,8 +17,14 @@ import org.aas.sbtanks.player.controller.scalafx.JFXPlayerInputController
 import org.aas.sbtanks.player.controller.scalafx.JFXPlayerTankController
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
+import org.aas.sbtanks.entities.tank.view.TankView
 
-class MockJFXPlayerTankController(tank: ControllableTank) extends JFXPlayerTankController(tank, 1 / 16D, JFXTankView(Seq()), 1):
+class MockTankView extends TankView:
+    override def isMoving(value: Boolean): Unit = ()
+    override def look(rotation: Double): Unit = ()
+    override def move(x: Double, y: Double): Unit = ()
+
+class MockJFXPlayerTankController(tank: ControllableTank) extends JFXPlayerTankController(tank, 1 / 16D, MockTankView(), 1):
     def simulateInput(event: KeyEvent) = inputEvents.handleKeyPressEvent(event)
 
 object MockJFXPlayerTankController:
