@@ -20,4 +20,4 @@ trait JFXIntermittentVisibleNode extends IntermittentVisible:
         cycleCount = 10
         onFinished = _ => isVisibleOnScene.value = false
 
-    override def activate(): Unit = this.timeLine.play()
+    override def animate(): Unit = this.timeLine.play()

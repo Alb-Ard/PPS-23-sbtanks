@@ -15,9 +15,9 @@ import org.aas.sbtanks.entities.powerups.view.scalaFx.JFXIntermittentVisibleNode
 
 class JFXPowerUpView(private val image: Image) extends jfxsi.ImageView(image) with PowerUpView with JFXIntermittentVisibleNode:
 
-    override def show(): Unit = this.activate()
+    override def show(): Unit = this.animate()
 
-    override def isTaken: Boolean = ???
+    override def destroy(): Unit = ???
 
 
 
@@ -35,7 +35,7 @@ object PowerUpViewTest extends JFXApp3:
     override def start(): Unit =
         val view =  JFXPowerUpView("entities/powerups/powerup_star.png")
 
-        view.activate()
+        view.animate()
 
         stage = new PrimaryStage:
             title = "Power-Up View"
