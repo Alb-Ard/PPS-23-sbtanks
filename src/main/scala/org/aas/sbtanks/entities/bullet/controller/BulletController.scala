@@ -7,16 +7,16 @@ import org.aas.sbtanks.obstacles.LevelObstacle
 import org.aas.sbtanks.behaviours.{CollisionBehaviour, DirectionBehaviour, PositionBehaviour}
 import org.aas.sbtanks.physics.Collider
 
-trait BulletController(bullet: Bullet with PositionBehaviour with DirectionBehaviour with CollisionBehaviour) extends Bullet:
+trait BulletController(bullet: Bullet with PositionBehaviour with DirectionBehaviour with CollisionBehaviour, collider: Collider) extends Bullet:
 
     private def update(): Unit =
-      checkCollision()
+      checkCollision(collider)
+      bullet.positionChanged((bullet.positionX + (bullet.directionX * bullet.speed),
+                              bullet.positionY + (bullet.directionY * bullet.speed)))
 
     private def checkCollision(colliders: Seq[Collider]): Unit =
       if(bullet.isPlayerBullet)
-          colliders.toList match {
-            case Bullet | Tank | LevelObstacle =>
-          }
+          colliders.toList
 
 
       //val now: Int = Calendar.getInstance().get(Calendar.SECOND)
