@@ -1,32 +1,26 @@
 package org.aas.sbtanks.entities.bullet.controller
 
-//import java.util.Calendar
 import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.obstacles.LevelObstacle
 import org.aas.sbtanks.behaviours.{CollisionBehaviour, DirectionBehaviour, PositionBehaviour}
-import org.aas.sbtanks.physics.Collider
+import org.aas.sbtanks.physics.{Collider, CollisionLayer}
+import org.aas.sbtanks.common.Steppable
 
-trait BulletController(bullet: Bullet with PositionBehaviour with DirectionBehaviour with CollisionBehaviour, collider: Collider) extends Bullet:
+trait BulletController(bullet: Bullet with PositionBehaviour with DirectionBehaviour with CollisionBehaviour) extends Steppable :
 
-    private def update(): Unit =
-      checkCollision(collider)
-      bullet.positionChanged((bullet.positionX + (bullet.directionX * bullet.speed),
-                              bullet.positionY + (bullet.directionY * bullet.speed)))
+    override def step(delta: Double): Steppable =
+        checkCollision()
+        bullet.positionChanged((bullet.positionX + (bullet.directionX * bullet.speed),
+            bullet.positionY + (bullet.directionY * bullet.speed)))
+        this
 
-    private def checkCollision(colliders: Seq[Collider]): Unit =
-      if(bullet.isPlayerBullet)
-          colliders.toList
+    //differenze tra bullet tank e bullet player:
+    //bullet tank colpisce altri bullets di tutti i tipi, ostacoli e il player
+    //bullet player colpisce gli altri tank, gli ostacoli e i proiettili di tutti i tipi
+    private def checkCollision(): Unit =
+        if(bullet.overlapsAnything) then
+            val collider = bullet.overlappedColliders.filter(el => el.layer == CollisionLayer.BulletsLayer ||
+                                                el.layer == CollisionLayer.WallsLayer || el.layer == CollisionLayer.TanksLayer)
+            //if(collider.length == 1 && collider.contains(CollisionLayer.BulletsLayer))
 
-
-      //val now: Int = Calendar.getInstance().get(Calendar.SECOND)
-      /*
-      def move(): Bullet =
-        //Thread.sleep(2000);
-        bullet.bulletPosition = (bullet.bulletPosition._1 +
-                                        (bullet.bulletDirection._1 * bullet.speed),
-                                        bullet.bulletPosition._2 +
-                                        (bullet.bulletDirection._2 * bullet.speed))
-        bullet
-
-       */
