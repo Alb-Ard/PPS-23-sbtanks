@@ -24,21 +24,28 @@ import org.aas.sbtanks.player.PlayerTankBuilder
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import org.aas.sbtanks.common.view.scalafx.JFXImageViewAnimator
 import org.aas.sbtanks.obstacles.view.scalafx.JFXObstacleView
+import org.aas.sbtanks.entities.tank.repository.scalafx.JFXEntityMvcRepositoryContainer
+import org.aas.sbtanks.entities.tank.structure.Tank
+import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 
 object Main extends JFXApp3 with scalafx.Includes:
     val inputController = JFXPlayerInputController()
     val viewScale = 4D
     val tileSize = 16D
     val tankUnitMoveSpeed = 1D / tileSize
+    val entityRepository = JFXEntityMvcRepositoryContainer()
 
     override def start(): Unit = 
+        entityRepository.registerControllerFactory[ControllableTank, JFXTankView](classOf[ControllableTank], (m, v) => JFXPlayerTankController(m, tankUnitMoveSpeed, v, viewScale * tileSize))
+
         val testTank = PlayerTankBuilder()
             .setPosition(0, 0)
             .setCollisionSize(1D - tankUnitMoveSpeed, 1D - tankUnitMoveSpeed)
             .build()
         val testTankImages = JFXImageLoader.loadFromResources(Seq("entities/tank/basic/tank_basic_up_1.png", "entities/tank/basic/tank_basic_up_2.png"), tileSize, viewScale)
         val testTankView = JFXTankView(testTankImages, tileSize)
-        val testTankController = JFXPlayerTankController(testTank, tankUnitMoveSpeed, testTankView, viewScale * tileSize)
+        //val testTankController = JFXPlayerTankController(testTank, tankUnitMoveSpeed, testTankView, viewScale * tileSize)
+        entityRepository.addModelView(testTank, testTankView)//.addController(testTankController)
 
         val testWalls = LevelObstacle.BrickWall(2, 2)
         val testWallViews = testWalls.map(w =>
