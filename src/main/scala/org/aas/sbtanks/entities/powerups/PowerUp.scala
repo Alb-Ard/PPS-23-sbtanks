@@ -12,6 +12,9 @@ object PowerUp:
         def apply(entity: E): E
         def revert(entity: E): E
 
+        def combineWith(others: Seq[PowerUp[E]]): Seq[PowerUp[E]] = others :+ this
+
+
 
 
 
@@ -22,17 +25,14 @@ object PowerUp:
 
 
 
-    /*
-    trait CombinablePowerUp[E] extends PowerUp[E]:
-        def combine(other: CombinablePowerUp[E]): CombinablePowerUp[E] = CombinablePowerUp.combine(this, other)
-    */
 
-    //trait PowerUpTank[E <: Tank] extends PowerUpConstraint[E](entity => entity.isInstanceOf[Tank]):
+
 
 
     case class FuncPowerUp[E](f: E => E, g: E => E) extends PowerUp[E]:
         override def apply(entity: E): E = f(entity)
         override def revert(entity: E): E = g(entity)
+
 
 
 

@@ -1,6 +1,6 @@
 package org.aas.sbtanks.entities.powerups
 
-import org.aas.sbtanks.entities.powerups.PowerUp.{FuncPowerUp, PowerUpConstraint}
+import org.aas.sbtanks.entities.powerups.PowerUp.{ FuncPowerUp, PowerUp, PowerUpConstraint}
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 
@@ -25,8 +25,10 @@ val sb: Tank => Tank = t => {t updateTankData(t.tankData.updateBulletSpeed(_ + 1
 val sb2: Tank => Tank = t => {t updateTankData(t.tankData.updateBulletSpeed(_ - 10)); t}
 
 object SpeedBulletUp extends FuncPowerUp[Tank](sb, sb2) with PowerUpConstraint[Tank](entity => entity.isInstanceOf[Tank], _ => true)
+    
 
-
+object a extends App:
+    println("CSACSCAS")
 
 
 

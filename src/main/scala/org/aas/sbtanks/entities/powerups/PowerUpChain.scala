@@ -18,7 +18,7 @@ class PowerUpChain[E](powerUps: Seq[PowerUp[E]]) extends PowerUp[E]:
         powerUps.foldRight(entity)((powerUp, acc) => powerUp.revert(acc))
 
 
-    def chain(next: PowerUp[E]): PowerUpChain[E] = PowerUpChain(powerUps :+ next)
+    def chain(next: PowerUp[E]): PowerUpChain[E] = PowerUpChain(next combineWith powerUps )
 
     def unchain(last: PowerUp[E]): PowerUpChain[E] = PowerUpChain(powerUps.filter(_ != last))
 
