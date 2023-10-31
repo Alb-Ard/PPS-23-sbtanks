@@ -30,7 +30,7 @@ class PlayerObstacleInteractionSpec extends AnyFeatureSpec with GivenWhenThen wi
             obstacle.positionY should be (2)
             
             When("The player moves towards the obstacle")
-            playerController.simulateInput(MockJFXPlayerTankController.moveDownInput)
+            playerController.simulateInput(MockJFXPlayerTankController.MOVE_DOWN_INPUT)
 
             And("Enough game steps happen")
             for step <- (0 until 100) do playerController.step(1)
@@ -60,7 +60,7 @@ class PlayerObstacleInteractionSpec extends AnyFeatureSpec with GivenWhenThen wi
             obstacle.positionY should be (2)
 
             When("The player moves towards the obstacle")
-            playerController.simulateInput(MockJFXPlayerTankController.moveDownInput)
+            playerController.simulateInput(MockJFXPlayerTankController.MOVE_DOWN_INPUT)
 
             And("Enough game steps happen")
             for step <- (0 until 300) do playerController.step(1)

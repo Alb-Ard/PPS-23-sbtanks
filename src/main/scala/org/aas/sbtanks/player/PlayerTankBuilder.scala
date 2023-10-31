@@ -8,16 +8,14 @@ import org.aas.sbtanks.behaviours.CollisionBehaviour
 import org.aas.sbtanks.behaviours.ConstrainedMovementBehaviour
 import org.aas.sbtanks.physics.CollisionLayer
 
-case class PlayerTankBuilder(private val tankTypeData: TankTypeData = PlayerTankData,
-    private val x: Double = 0, 
+case class PlayerTank() extends Tank(PlayerTankData)
+
+case class PlayerTankBuilder(private val x: Double = 0, 
     private val y: Double = 0,
     private val collisionSizeX: Double = 1,
     private val collisionSizeY: Double = 1,
     private val collisionLayer: CollisionLayer = CollisionLayer.TanksLayer,
-    private val collisionMask: Set[CollisionLayer] = PlayerTankBuilder.defaultCollisionMask):
-
-    def setTankType(tankType: TankTypeData) =
-        copy(tankTypeData = tankType)    
+    private val collisionMask: Set[CollisionLayer] = PlayerTankBuilder.DEFAULT_COLLISION_MASK):
 
     def setPosition(x: Double = x, y: Double = y) =
         copy(x = x, y = y)
@@ -35,7 +33,7 @@ case class PlayerTankBuilder(private val tankTypeData: TankTypeData = PlayerTank
         )
 
     def build() =
-        new Tank(tankTypeData)
+        new PlayerTank()
             with PositionBehaviour(x, y)
             with ConstrainedMovementBehaviour
             with DirectionBehaviour
@@ -43,7 +41,7 @@ case class PlayerTankBuilder(private val tankTypeData: TankTypeData = PlayerTank
 
 
 object PlayerTankBuilder:
-    val defaultCollisionMask: Set[CollisionLayer] = Set(
+    val DEFAULT_COLLISION_MASK: Set[CollisionLayer] = Set(
         CollisionLayer.BulletsLayer,
         CollisionLayer.WallsLayer,
         CollisionLayer.NonWalkableLayer

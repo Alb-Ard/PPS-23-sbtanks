@@ -18,7 +18,7 @@ abstract class TankController[+A <: TankInputEvents](tank: ControllableTank, spe
         view.isMoving(tank.directionX != 0 || tank.directionY != 0)
     }
     tank.positionChanged += { (x, y) => view.move(x * viewScale, y * viewScale) }
-    inputEvents.moveDirectionChanged += tank.setDirection
+    inputEvents.moveDirectionChanged += tank.setDirection 
 
     override def step(delta: Double) = 
         tank.moveRelative(tank.directionX * tank.tankData.speed * speedMultiplier, tank.directionY * tank.tankData.speed * speedMultiplier)
