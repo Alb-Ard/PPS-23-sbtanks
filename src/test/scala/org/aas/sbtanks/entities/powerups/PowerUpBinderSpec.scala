@@ -17,6 +17,7 @@ class PowerUpBinderSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEac
 
     val defaultHealth: Int = BasicTankData.supplyData.health
     val defaultSpeed: Int = BasicTankData.supplyData.speed
+    val defaultBulletSpeed: Int = BasicTankData.supplyData.bulletSpeed
 
     override def beforeEach(): Unit = {
         binder = PowerUpChainBinder[Tank]
@@ -25,22 +26,14 @@ class PowerUpBinderSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEac
 
     "A PowerUpBinder" should "bind a powerup to a tank" in {
 
-        val healthSpeedPowerUp: PowerUpChain[Tank] = SpeedUp + HealthUp
+        val healthSpeedPowerUp: PowerUpChain[Tank] = SpeedUp + HealthUp + SpeedBulletUp
 
         binder.bind(tank)
 
         binder.chain(healthSpeedPowerUp)
 
-        tank.tankData should be (TankData(defaultHealth + 10, defaultSpeed + 10))
+        tank.tankData should be (TankData(defaultHealth + 10, defaultSpeed + 10, defaultBulletSpeed + 10))
 
-        /*
-        binder.bind(tank2)
-
-        binder.unchain(HealthUp).unchain(SpeedUp)
-
-        tank1.tankData should be ((TankData(defaultHealth, defaultSpeed)))
-        tank2.tankData should be ((TankData(defaultHealth, defaultSpeed)))
-        */
     }
 
     "It" should "be possible to bind and unbind a tank" in {
@@ -49,25 +42,26 @@ class PowerUpBinderSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEac
 
         binder.chain(HealthUp)
 
-        tank.tankData should be (TankData(defaultHealth + 10, defaultSpeed))
+        tank.tankData should be (TankData(defaultHealth + 10, defaultSpeed, defaultBulletSpeed))
 
         binder.unbind(tank)
 
         binder.chain(SpeedUp)
 
-        tank.tankData should be ((TankData(defaultHealth + 10, defaultSpeed)))
+        tank.tankData should be ((TankData(defaultHealth + 10, defaultSpeed, defaultBulletSpeed)))
 
     }
 
-    "The powerUps" should "be applied only to entities already binded when the power-up is added" in {
+    "The powerUps" should "be applied only to entities already binded when the power-up was added" in {
         binder.chain(HealthUp)
 
         binder.bind(tank)
+        
 
         binder.unchain(HealthUp)
         binder.unchain(SpeedUp)
 
-        tank.tankData should be ((TankData(defaultHealth, defaultSpeed)))
+        tank.tankData should be (TankData(defaultHealth, defaultSpeed, defaultBulletSpeed))
     }
 
 

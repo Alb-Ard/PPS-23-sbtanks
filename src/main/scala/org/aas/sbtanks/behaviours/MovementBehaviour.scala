@@ -6,7 +6,7 @@ import org.aas.sbtanks.physics.AABB.checkOverlap
 trait MovementBehaviour:
     this: PositionBehaviour =>
 
-    def moveRelative(amountX: Double, amountY: Double) =
+    def moveRelative(amountX: Double, amountY: Double) = 
         setPosition(positionX + amountX, positionY + amountY)
 
 trait ConstrainedMovementBehaviour extends MovementBehaviour:
@@ -18,3 +18,4 @@ trait ConstrainedMovementBehaviour extends MovementBehaviour:
         super.moveRelative(amountX, amountY)
         if overlapsAnything then
             setPosition(previousX, previousY)
+        this

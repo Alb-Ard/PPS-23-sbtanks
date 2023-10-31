@@ -7,7 +7,6 @@ import org.scalatest.matchers.should.Matchers
 import scala.language.postfixOps
 
 class TankSpec extends AnyFlatSpec with Matchers:
-    import org.aas.sbtanks.entities.tank.factories.* 
     import org.aas.sbtanks.entities.tank.structure.Tank.*
 
     val basicTank = new BasicTank()
@@ -29,6 +28,8 @@ class TankSpec extends AnyFlatSpec with Matchers:
         tanks.foreach(tank => {
             tank updateTankData (tank.tankData.updateSpeed(_ * 2)
                 .updateHealth(_ + 5))
+                .updateBulletSpeed(_ + 5)
+            
 
         })
     }
