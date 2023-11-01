@@ -49,11 +49,11 @@ object Main extends JFXApp3 with scalafx.Includes:
             height = 720
             scene = new Scene:
                 content = new Rectangle:
-                    x = 10
-                    y = 10
-                    width = 1260
-                    height = 700
-                    fill = Color.LIGHTGREY
+                    x = 0
+                    y = 0
+                    width = 1280
+                    height = 720
+                    fill = Color.BLACK
 
         given EntityRepositoryContext[Stage] = EntityRepositoryContext(stage)
         val entityRepository = new JFXEntityMvRepositoryContainer()

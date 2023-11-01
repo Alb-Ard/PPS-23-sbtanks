@@ -4,7 +4,7 @@ import scalafx.animation.AnimationTimer
 import scalafx.scene.image.Image
 import scalafx.scene.image.ImageView
 
-trait JFXImageViewAnimator(images: Seq[Image], speed: Double, private var running: Boolean = false):
+trait JFXImageViewAnimator(private var images: Seq[Image], speed: Double, private var running: Boolean = false):
     this: ImageView =>
 
     private val animationTimer = AnimationTimer { now =>
@@ -23,4 +23,6 @@ trait JFXImageViewAnimator(images: Seq[Image], speed: Double, private var runnin
         animationTimer.stop()
         this
 
-
+    def setImages(images: Seq[Image]) =
+        this.images = images
+        image = images(0)

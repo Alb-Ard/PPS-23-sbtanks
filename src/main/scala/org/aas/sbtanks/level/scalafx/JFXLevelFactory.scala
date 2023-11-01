@@ -18,32 +18,40 @@ import org.aas.sbtanks.player.PlayerTankBuilder
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 
 final case class JFXLevelFactory(tileSize: Double, viewScale: Double, tileAnimationSpeed: Double) extends LevelFactory[AnyRef, Node]:
-    override protected def createEntityVm(entity: StringEntity, x: Double, y: Double): Seq[(AnyRef, Node)] = 
+    val pixelSize = 1D / tileSize
+
+    override protected def createEntityMv(entity: StringEntity, x: Double, y: Double): Seq[(AnyRef, Node)] = 
         entity match
-            case StringBrickWall => LevelObstacle.BrickWall(x, y).map(b => ((
-                b,
-                JFXObstacleView.create(JFXImageLoader.loadFromResources(b.imagesPath(0), tileSize / 4, viewScale))
-            )))
-            case StringSteelWall => LevelObstacle.SteelWall(x, y).map(s => ((
-                s,
-                JFXObstacleView.create(JFXImageLoader.loadFromResources(s.imagesPath(0), tileSize, viewScale))
-            )))
-            case StringWater => LevelObstacle.Water(x, y).map(w => ((
-                w,
-                JFXObstacleView.createAnimated(JFXImageLoader.loadFromResources(w.imagesPath, tileSize, viewScale), tileAnimationSpeed)
-            )))
-            case StringTrees => LevelObstacle.Trees(x, y).map(t => ((
-                t,
-                JFXObstacleView.create(JFXImageLoader.loadFromResources(t.imagesPath(0), tileSize, viewScale))
-            )))
+            case StringBrickWall => createObstaclesMv(LevelObstacle.BrickWall(x, y))
+            case StringSteelWall => createObstaclesMv(LevelObstacle.SteelWall(x, y))
+            case StringWater => createAnimatedObstaclesMv(LevelObstacle.Water(x, y))
+            case StringTrees => createObstaclesMv(LevelObstacle.Trees(x, y))
             case StringBase => ???
             case StringIce => ???
-            case StringPlayer => 
-                val player = PlayerTankBuilder().setPosition(x, y).build()
-                val playerImages = JFXImageLoader.loadFromResources(Seq("entities/tank/basic/tank_basic_up_1.png", "entities/tank/basic/tank_basic_up_2.png"), tileSize, viewScale)
-                val playerView = JFXTankView(playerImages, tileSize)
-                Seq((player, playerView))
-            case StringIndestructibleWall => LevelObstacle.IndestructibleWall(x, y).map(t => ((
-                t,
-                JFXObstacleView.create(JFXImageLoader.loadFromResources(t.imagesPath(0), tileSize, viewScale))
-            )))
+            case StringPlayer => createTankMv(x, y, "player", Seq("slow", "basic"))
+            case StringIndestructibleWall => createObstaclesMv(LevelObstacle.IndestructibleWall(x, y))
+    
+    private def createObstaclesMv(obstacles: Seq[LevelObstacle]) = obstacles.map(o => ((
+            o,
+            JFXObstacleView.create(JFXImageLoader.loadFromResources(o.imagesPath(0), tileSize / Math.sqrt(obstacles.size), viewScale))
+        )))
+
+    private def createAnimatedObstaclesMv(obstacles: Seq[LevelObstacle]) = obstacles.map(o => ((
+            o,
+            JFXObstacleView.createAnimated(JFXImageLoader.loadFromResources(o.imagesPath, tileSize, viewScale), tileAnimationSpeed)
+        )))
+
+    private def createTankMv(x: Double, y: Double, tankType: String, tankAttributes: Seq[String]) =
+        val tank = PlayerTankBuilder()
+                .setPosition(x, y)
+                .setCollisionSize(x = 1D - pixelSize)
+                .build()
+        val attributeString = tankAttributes.fold("")((c, n) => c + n + "_")
+        val images = Seq("up", "right", "down", "left").map(d => JFXImageLoader.loadFromResources(Seq(
+                    s"entities/tank/$tankType/${tankType}_tank_${attributeString}${d}_1.png", 
+                    s"entities/tank/$tankType/${tankType}_tank_${attributeString}${d}_2.png"),
+                tileSize - pixelSize,
+                tileSize,
+                viewScale))
+        val playerView = JFXTankView(images, tileSize)
+        Seq((tank, playerView))

@@ -19,12 +19,12 @@ abstract class LevelFactory[M, V]():
             x <- (0 until levelEdgeSize)
         do
             stringEntityFromChar(levelString(x + y * levelEdgeSize))
-                .map(e => createEntityVm(e, x, y))
+                .map(e => createEntityMv(e, x, y))
                 .getOrElse(Seq.empty)
                 .foreach((m, v) => entityRepository.addModelView(m, Option(v)))
         LevelContainer(entityRepository)
 
-    protected def createEntityVm(entity: LevelFactory.StringEntity, x: Double, y: Double): Seq[(M, V)]
+    protected def createEntityMv(entity: LevelFactory.StringEntity, x: Double, y: Double): Seq[(M, V)]
 
 object LevelFactory:
     enum StringEntity(val char: Char):
