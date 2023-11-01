@@ -3,6 +3,7 @@ package org.aas.sbtanks.obstacles
 import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.behaviours.PositionBehaviour
 import org.aas.sbtanks.behaviours.CollisionBehaviour
+import org.aas.sbtanks.behaviours.DamageableBehaviour
 
 case class LevelObstacle(val imagesPath: Seq[String])
 
@@ -38,6 +39,9 @@ object LevelObstacle:
                         layer,
                         Seq.empty
                     )
+                    with DamageableBehaviour:
+                        override def damage(): Unit = 
+                            destroyed(())
                 )
 
     case object BrickWall extends LevelObstacleProvider("obstacles/brick_wall_1.png", "obstacles/brick_wall_2.png")

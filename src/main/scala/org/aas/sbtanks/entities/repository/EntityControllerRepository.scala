@@ -3,6 +3,11 @@ package org.aas.sbtanks.entities.repository
 import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer
 import org.aas.sbtanks.common.Steppable
 
+/**
+  * Adds the ability to (un)register controller factories, to automatically create controllers from models
+  *
+  * @param context The context that will be passed to the controller factories
+  */
 trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext[?]](using context: Context) extends Steppable:
     this: EntityMvRepositoryContainer[Model, View] =>
 
