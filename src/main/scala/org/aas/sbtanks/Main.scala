@@ -35,6 +35,7 @@ import org.aas.sbtanks.entities.repository.EntityRepositoryContextAware
 import org.aas.sbtanks.player.PlayerTankData
 import org.aas.sbtanks.player.PlayerTank
 import org.aas.sbtanks.obstacles.LevelObstacleController
+import org.aas.sbtanks.level.scalafx.JFXLevelFactory
 
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
@@ -63,29 +64,8 @@ object Main extends JFXApp3 with scalafx.Includes:
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize))
                 .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory[Stage](viewScale * tileSize))
 
-        val testTank = PlayerTankBuilder()
-                .setPosition(0, 0)
-                .setCollisionSize(1D - tankUnitMoveSpeed, 1D - tankUnitMoveSpeed)
-                .build()
-        val testTankImages = JFXImageLoader.loadFromResources(Seq("entities/tank/basic/tank_basic_up_1.png", "entities/tank/basic/tank_basic_up_2.png"), tileSize, viewScale)
-        val testTankView = JFXTankView(testTankImages, tileSize)
-        entityRepository.addModelView(testTank, Option(testTankView))
-
-        val testWalls = LevelObstacle.BrickWall(2, 2)
-        val testWallViews = testWalls.map(w =>
-                val view = JFXObstacleView.create(JFXImageLoader.loadFromResources(w.imagesPath(0), tileSize / 4, viewScale))
-                entityRepository.addModelView(w, Option(view))
-                view
-            )
-
-        val testTrees = LevelObstacle.Trees(2, 3)(0)
-        val testTreesView = JFXObstacleView.create(JFXImageLoader.loadFromResources(testTrees.imagesPath(0), tileSize, viewScale))
-        entityRepository.addModelView(testTrees, Option(testTreesView))
-        
-        val testWater = LevelObstacle.Water(2, 4)(0)
-        val testWaterView = JFXObstacleView.createAnimated(JFXImageLoader.loadFromResources(testWater.imagesPath, tileSize, viewScale), 2.0)
-            .startAnimation()
-        entityRepository.addModelView(testWater, Option(testWaterView))
+        val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
+        levelFactory.createFromString("UUUUUUUP--WUU---WUUWWWWUUWWWWUUUUUUU", 6, entityRepository)
 
         var lastTimeNanos = System.nanoTime().doubleValue
         val updateTimer = AnimationTimer(_ => {

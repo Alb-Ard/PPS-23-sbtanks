@@ -6,13 +6,10 @@ import org.aas.sbtanks.common.Steppable
 trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext[?]](using context: Context) extends Steppable:
     this: EntityMvRepositoryContainer[Model, View] =>
 
-    private case class ControllerWithViewFactory(validModelPredicate: ControllerPredicate, provider: (Context, Model, View) => Controller)
-    private case class ControllerWithoutViewFactory(validModelPredicate: ControllerPredicate, provider: (Context, Model) => Controller)
-
     type Controller = Steppable
 
-    type ControllerPredicate = Model => Boolean
-    type ControllerWithoutViewProvider[M <: Model] = (Context, M) => Controller
+    private case class ControllerWithViewFactory(validModelPredicate: Model => Boolean, provider: (Context, Model, View) => Controller)
+    private case class ControllerWithoutViewFactory(validModelPredicate: Model => Boolean, provider: (Context, Model) => Controller)
 
     private var controllers = Seq.empty[Controller]
     private var modelControllers = Map.empty[Model, Controller]
@@ -29,11 +26,11 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
         controllers = controllers map { c => c.step(delta) }
         this
 
-    def registerControllerFactory[M <: Model, V <: View](validPredicate: ControllerPredicate, factory: (Context, M, V) => Controller): this.type =
+    def registerControllerFactory[M <: Model, V <: View](validPredicate: Model => Boolean, factory: (Context, M, V) => Controller): this.type =
         controllerWithViewFactories = controllerWithViewFactories :+ ControllerWithViewFactory(validPredicate, (c, m, v) => factory(c, m.asInstanceOf[M], v.asInstanceOf[V]))
         this
 
-    def registerControllerFactory[M <: Model, V <: View](validPredicate: ControllerPredicate, factory: (Context, M) => Controller): this.type =
+    def registerControllerFactory[M <: Model, V <: View](validPredicate: Model => Boolean, factory: (Context, M) => Controller): this.type =
         controllerWithoutViewFactories = controllerWithoutViewFactories :+ ControllerWithoutViewFactory(validPredicate, (c, m) => factory(c, m.asInstanceOf[M]))
         this
 
