@@ -58,3 +58,7 @@ object LevelObstacle:
     
     case object IndestructibleWall extends LevelObstacleProvider("obstacles/indestructible_wall.png")
         with CollidableLevelObstacle(1, 1, CollisionLayer.WallsLayer)
+
+    case object PlayerBase extends LevelObstacleProvider("obstacles/player_base_1.png")
+        with CollidableLevelObstacle(1, 1, CollisionLayer.WallsLayer)
+        with DestroyableLevelObstacle(1, false)

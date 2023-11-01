@@ -27,8 +27,8 @@ final case class JFXLevelFactory(tileSize: Double, viewScale: Double, tileAnimat
             case StringSteelWall => createObstaclesMv(LevelObstacle.SteelWall(x, y))
             case StringWater => createAnimatedObstaclesMv(LevelObstacle.Water(x, y))
             case StringTrees => createObstaclesMv(LevelObstacle.Trees(x, y))
-            case StringBase => ???
-            case StringIce => ???
+            case StringBase => createObstaclesMv(LevelObstacle.PlayerBase(x, y))
+            case StringIce => Seq.empty // Ice is not implemented
             case StringPlayer => createTankMv(x, y, "player", Seq("slow", "basic"))
             case StringIndestructibleWall => createObstaclesMv(LevelObstacle.IndestructibleWall(x, y))
             case StringEmpty => Seq.empty
@@ -46,7 +46,7 @@ final case class JFXLevelFactory(tileSize: Double, viewScale: Double, tileAnimat
     private def createTankMv(x: Double, y: Double, tankType: String, tankAttributes: Seq[String]) =
         val tank = PlayerTankBuilder()
                 .setPosition(x, y)
-                .setCollisionSize(x = 1D - pixelSize)
+                .setCollisionSize(x = 1D - pixelSize, y = 1D - pixelSize)
                 .build()
         val attributeString = tankAttributes.fold("")((c, n) => c + n + "_")
         val images = Seq("up", "right", "down", "left").map(d => JFXImageLoader.loadFromResources(Seq(

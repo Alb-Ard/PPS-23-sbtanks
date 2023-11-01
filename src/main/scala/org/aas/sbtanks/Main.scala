@@ -68,7 +68,13 @@ object Main extends JFXApp3 with scalafx.Includes:
                 .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory[Stage](viewScale * tileSize))
 
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
-        levelFactory.createFromString("UUUUUU UP--WU U---WU UWWWWU UWWWWU UUUUUU", 6, entityRepository)
+        levelFactory.createFromString("UUUUUUU" +
+                                      "U-----U" +
+                                      "U-SwS-U" +
+                                      "U--P--U" +
+                                      "U-WWW-U" +
+                                      "U-WBW-U" +
+                                      "UUUUUUU", 7, entityRepository)
 
         var lastTimeNanos = System.nanoTime().doubleValue
         val updateTimer = AnimationTimer(_ => {
