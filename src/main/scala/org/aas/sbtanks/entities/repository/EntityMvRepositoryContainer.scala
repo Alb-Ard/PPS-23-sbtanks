@@ -33,11 +33,11 @@ abstract class EntityMvRepositoryContainer[Model, View]:
         modelRepository = modelRepository.filterNot(model.equals)
         viewRepository = modelReferences.getOrElse(model, null) match
             case null =>
-                modelAdded(model)
+                modelRemoved(model)
                 viewRepository
             case v => 
                 viewRepository.filterNot(v.equals)
+                modelReferences = modelReferences - model
                 modelViewRemoved(model, v.asInstanceOf[View])
                 viewRepository
-        modelReferences = modelReferences - model
         this
