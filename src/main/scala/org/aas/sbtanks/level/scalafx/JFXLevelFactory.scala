@@ -14,6 +14,7 @@ import org.aas.sbtanks.level.LevelFactory.StringEntity.StringBase
 import org.aas.sbtanks.level.LevelFactory.StringEntity.StringIce
 import org.aas.sbtanks.level.LevelFactory.StringEntity.StringIndestructibleWall
 import org.aas.sbtanks.level.LevelFactory.StringEntity.StringPlayer
+import org.aas.sbtanks.level.LevelFactory.StringEntity.StringEmpty
 import org.aas.sbtanks.player.PlayerTankBuilder
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 
@@ -30,6 +31,7 @@ final case class JFXLevelFactory(tileSize: Double, viewScale: Double, tileAnimat
             case StringIce => ???
             case StringPlayer => createTankMv(x, y, "player", Seq("slow", "basic"))
             case StringIndestructibleWall => createObstaclesMv(LevelObstacle.IndestructibleWall(x, y))
+            case StringEmpty => Seq.empty
     
     private def createObstaclesMv(obstacles: Seq[LevelObstacle]) = obstacles.map(o => ((
             o,

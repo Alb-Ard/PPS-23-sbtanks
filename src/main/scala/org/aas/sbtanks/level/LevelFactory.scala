@@ -6,7 +6,8 @@ import org.aas.sbtanks.level.LevelFactory.stringEntityFromChar
 abstract class LevelFactory[M, V]():
     /**
       * Creates a level from a given level string.
-      * The string format is: W = brick wall, S = steel wall, w = water, T = trees, B = player base, I = ice, U = indestructible wall, P = player (max one per level), any other char = empty
+      * The string format is: W = brick wall, S = steel wall, w = water, T = trees, B = player base, 
+      * I = ice, U = indestructible wall, P = player (max one per level), - = empty, any other char = ignored
       *
       * @param levelString The level string
       * @param levelEdgeSize The size of the level edge (in tiles)
@@ -14,11 +15,12 @@ abstract class LevelFactory[M, V]():
       * @return A LevelContainer that contains the created level
       */
     def createFromString(levelString: String, levelEdgeSize: Int, entityRepository: EntityMvRepositoryContainer[M, V]) = 
+        val levelEntityStrings = levelString.map(stringEntityFromChar).filter(e => e.isDefined)
         for 
             y <- (0 until levelEdgeSize)
             x <- (0 until levelEdgeSize)
         do
-            stringEntityFromChar(levelString(x + y * levelEdgeSize))
+            levelEntityStrings(x + y * levelEdgeSize)
                 .map(e => createEntityMv(e, x, y))
                 .getOrElse(Seq.empty)
                 .foreach((m, v) => entityRepository.addModelView(m, Option(v)))
@@ -36,6 +38,7 @@ object LevelFactory:
         case StringIce extends StringEntity('I')
         case StringIndestructibleWall extends StringEntity('U')
         case StringPlayer extends StringEntity('P')
+        case StringEmpty extends StringEntity('-')
 
     def stringEntityFromChar(char: Char) =
         StringEntity.values.find(e => e.char == char)
