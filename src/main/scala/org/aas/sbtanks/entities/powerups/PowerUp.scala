@@ -8,7 +8,7 @@ import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 
 object PowerUp:
 
-    trait PowerUp[E]:
+    abstract class PowerUp[E]:
         def apply(entity: E): E
         def revert(entity: E): E
 
@@ -18,10 +18,9 @@ object PowerUp:
 
 
 
-    trait PowerUpConstraint[E](predicate: E => Boolean, reversePredicate: E => Boolean) extends PowerUp[E]:
+    trait PowerUpConstraint[E](predicate: E => Boolean) extends PowerUp[E]:
         abstract override def apply(entity: E): E = Some(entity).filter(predicate).map(super.apply).getOrElse(entity)
 
-        abstract override def revert(entity: E): E =  Some(entity).filter(reversePredicate).map(super.revert).getOrElse(entity)
 
 
 
@@ -29,7 +28,7 @@ object PowerUp:
 
 
 
-    case class FuncPowerUp[E](f: E => E, g: E => E) extends PowerUp[E]:
+    trait FuncPowerUp[E](f: E => E, g: E => E) extends PowerUp[E]:
         override def apply(entity: E): E = f(entity)
         override def revert(entity: E): E = g(entity)
 
