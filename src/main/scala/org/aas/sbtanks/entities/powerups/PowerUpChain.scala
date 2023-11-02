@@ -11,10 +11,10 @@ class PowerUpChain[E](powerUps: Seq[PowerUp[E]]) extends PowerUp[E]:
     def apply(powerUps: PowerUp[E]*): PowerUpChain[E] =
         PowerUpChain(powerUps)
 
-    override def apply(entity: E): E =
+    override def apply[A <: E](entity: A): A =
         powerUps.foldLeft(entity)((acc, powerUp) => powerUp.apply(acc))
 
-    override def revert(entity: E): E =
+    override def revert[A <: E](entity: A): A =
         powerUps.foldRight(entity)((powerUp, acc) => powerUp.revert(acc))
 
 
