@@ -38,7 +38,7 @@ class PlayerMovementControlSpec extends AnyFeatureSpec with GivenWhenThen with M
             val controller = MockJFXPlayerTankController(playerTank)
 
             When("The player presses a movement input")
-            controller.simulateInput(MockJFXPlayerTankController.moveRightInput)
+            controller.simulateInput(MockJFXPlayerTankController.MOVE_RIGHT_INPUT)
 
             And("A game step occours")
             controller.step(1)

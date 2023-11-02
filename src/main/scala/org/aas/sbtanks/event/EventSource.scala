@@ -1,5 +1,7 @@
 package org.aas.sbtanks.event
 
+import scala.ref.WeakReference
+
 class EventSource[A]:
     type EventCallback = A => Any
 
@@ -9,10 +11,10 @@ class EventSource[A]:
         listeners = callback :: listeners
 
     def -= (callback: EventCallback) = 
-        listeners = listeners.filterNot(c => c == callback)
+        listeners = listeners.filterNot(callback.equals)
 
     def apply(param: A): Unit =
         invoke(param)
 
     def invoke(param: A): Unit =
-        listeners foreach { p => p(param) }
+        for c <- listeners do c(param)
