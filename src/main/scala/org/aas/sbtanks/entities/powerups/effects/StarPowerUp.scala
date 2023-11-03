@@ -2,7 +2,7 @@ package org.aas.sbtanks.entities.powerups.effects
 
 import org.aas.sbtanks.entities.powerups.PowerUp.ContextualFuncPowerUp
 import org.aas.sbtanks.entities.powerups.contexts.CounterContext
-import org.aas.sbtanks.entities.powerups.{ContextualChainPowerUp, SpeedBulletUp, SpeedUp}
+import org.aas.sbtanks.entities.powerups.{SpeedBulletUp, SpeedUp}
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 
