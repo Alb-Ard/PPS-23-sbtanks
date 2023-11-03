@@ -8,9 +8,9 @@ import org.aas.sbtanks.physics.{Collider, CollisionLayer}
 import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.entities.repository.DestroyableEntityAutoManager
 
-trait BulletController(bullet: Bullet with PositionBehaviour with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour) extends Steppable :
+trait BulletController(bullet: Bullet with PositionBehaviour with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour) extends Steppable:
 
-    override def step(delta: Double): Steppable =
+    override def step(delta: Double): BulletController.this.type =
         checkCollision() //non serve passare un collider perchè il Bullet è un Collider!
         bullet.positionChanged((bullet.positionX + (bullet.directionX * bullet.speed),
             bullet.positionY + (bullet.directionY * bullet.speed)))

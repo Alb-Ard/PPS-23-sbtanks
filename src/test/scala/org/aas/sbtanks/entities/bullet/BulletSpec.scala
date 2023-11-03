@@ -45,9 +45,4 @@ class BulletSpec extends AnyFlatSpec with Matchers {
         basicBullet.positionX should equal((basicTank.positionX + basicTank.directionX) * 3)
         basicBullet.positionY should equal((basicTank.positionY + basicTank.directionY) * 3)
     }
-
-
-    it should "stop existing when it collides with something" in {
-
-    }
 }

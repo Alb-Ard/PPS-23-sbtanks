@@ -14,4 +14,5 @@ trait TankShootingBehaviour:
         new Bullet(self.tankData.bulletSpeed, false) with PositionBehaviour(self.positionX + self.directionX, self.positionY + self.directionY)
                     with DirectionBehaviour with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
                                             Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))
-                    with DamageableBehaviour
+                    with DamageableBehaviour:
+            override def damage(): Unit = ???

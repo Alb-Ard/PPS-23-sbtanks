@@ -6,8 +6,11 @@ import scalafx.scene.{Node, Scene}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.shape.Rectangle
 
-class JFXBulletView(image: Image, animationSpeed: Double = 1) extends ImageView
-    with JFXMoveableView with JFXDirectionableView:
+class JFXBulletView(private val image: Image, animationSpeed: Double = 1) extends JFXDirectionableView with JFXMoveableView:
+
+    override def look(rotation: Double): Unit = super.look(rotation)
+
+    override def move(x: Double, y: Double): Unit = super.move(x, y)
 
     //ImageView.sfxImageView2jfx().setImage(JFXImageLoader.loadFromResources(1, 1))
 
