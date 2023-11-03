@@ -1,10 +1,15 @@
 package org.aas.sbtanks.entities.powerups.controller
 
+import org.aas.sbtanks.common.Steppable
+import org.aas.sbtanks.entities.powerups.{PowerUpChainBinder, TimeablePowerUp}
 import org.aas.sbtanks.entities.powerups.view.{JFXPowerUpView, PowerUpView, PowerUpViewManager}
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.physics.Collider
 
-class PowerUpController(var powerUpView: PowerUpViewManager, powerUp: PickablePowerUp):
+class PowerUpController(var powerUpView: PowerUpViewManager, powerUp: PickablePowerUp) extends Steppable:
+
+    private var powerUpBinder = PowerUpChainBinder[Tank]
+
     powerUp.overlapping += { (colliders) =>
         powerUpView = powerUpView.removeLastAddedView()
 
@@ -16,6 +21,15 @@ class PowerUpController(var powerUpView: PowerUpViewManager, powerUp: PickablePo
 
 
     }
+
+    override def step(deltaTime: Double): Steppable =
+        powerUpBinder.getPowerUps.collect:
+            case element: TimeablePowerUp =>
+                element.decreaseDuration(deltaTime)
+                if element.isExpired then
+                    powerUpBinder.unchain(element)
+        this
+
 
     private def checkEnemyTankCollision(colliders: Seq[Collider]): Seq[Tank] =
         colliders.collect:
