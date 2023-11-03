@@ -4,9 +4,9 @@ import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.obstacles.LevelObstacle
 import org.aas.sbtanks.behaviours.{CollisionBehaviour, DamageableBehaviour, DirectionBehaviour, PositionBehaviour}
-import org.aas.sbtanks.physics.{Collider, CollisionLayer, PhysicsWorld}
+import org.aas.sbtanks.physics.{Collider, CollisionLayer}
 import org.aas.sbtanks.common.Steppable
-import org.aas.sbtanks.entities.tank.{TankData, TankDataUpdater}
+import org.aas.sbtanks.entities.repository.DestroyableEntityAutoManager
 
 trait BulletController(bullet: Bullet with PositionBehaviour with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour) extends Steppable :
 
