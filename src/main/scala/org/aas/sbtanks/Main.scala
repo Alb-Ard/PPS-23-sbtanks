@@ -38,6 +38,7 @@ import org.aas.sbtanks.obstacles.LevelObstacleController
 import org.aas.sbtanks.level.scalafx.JFXLevelFactory
 import org.aas.sbtanks.entities.repository.DestroyableEntityAutoManager
 import scalafx.scene.Node
+import org.aas.sbtanks.entities.repository.EntityRepositoryTagger
 
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
@@ -62,6 +63,7 @@ object Main extends JFXApp3 with scalafx.Includes:
                 with JFXEntityControllerRepository
                 with JFXEntityViewAutoManager
                 with DestroyableEntityAutoManager[AnyRef, Node]
+                with EntityRepositoryTagger[AnyRef, Node, Int]
                 with EntityRepositoryContextAware
 
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize))
