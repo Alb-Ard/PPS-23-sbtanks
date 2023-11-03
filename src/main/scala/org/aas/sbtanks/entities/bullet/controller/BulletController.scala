@@ -35,7 +35,3 @@ trait BulletController(bullet: Bullet with PositionBehaviour with DirectionBehav
                 val hitBullet= collider.find(el => el.layer == CollisionLayer.BulletsLayer).get.asInstanceOf[Bullet with DamageableBehaviour]
                 bullet.destroyed
                 hitBullet.destroyed
-                //elimina qui il proiettile con cui mi sono scontrato
-            //PhysicsWorld.unregisterCollider(bullet)
-
-
