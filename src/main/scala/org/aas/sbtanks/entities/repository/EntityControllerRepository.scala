@@ -13,11 +13,11 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
 
     type Controller = Steppable
 
-    private case class ControllerWithViewFactory(validModelPredicate: Model => Boolean, provider: (Context, Model, View) => Controller)
-    private case class ControllerWithoutViewFactory(validModelPredicate: Model => Boolean, provider: (Context, Model) => Controller)
+    private case class ControllerFactory[ProviderParams](validModelPredicate: Model => Boolean, provider: ProviderParams => Controller)
+    private type ControllerWithViewFactory = ControllerFactory[(Context, Model, View)]
+    private type ControllerWithoutViewFactory = ControllerFactory[(Context, Model)]
 
-    private var controllers = Seq.empty[Controller]
-    private var modelControllers = Map.empty[Model, Controller]
+    private var controllers = Seq.empty[(Option[Model], Controller)]
     private var controllerWithViewFactories = Seq.empty[ControllerWithViewFactory]
     private var controllerWithoutViewFactories = Seq.empty[ControllerWithoutViewFactory]
 
@@ -28,26 +28,26 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
     modelRemoved += removeMvController
 
     override def step(delta: Double): this.type =
-        controllers = controllers map { c => c.step(delta) }
+        controllers = controllers map { c => (c(0), c(1).step(delta)) }
         this
 
     def registerControllerFactory[M <: Model, V <: View](validPredicate: Model => Boolean, factory: (Context, M, V) => Controller): this.type =
-        controllerWithViewFactories = controllerWithViewFactories :+ ControllerWithViewFactory(validPredicate, (c, m, v) => factory(c, m.asInstanceOf[M], v.asInstanceOf[V]))
+        controllerWithViewFactories = controllerWithViewFactories :+ ControllerFactory(validPredicate, (c, m, v) => factory(c, m.asInstanceOf[M], v.asInstanceOf[V]))
         this
 
     def registerControllerFactory[M <: Model, V <: View](validPredicate: Model => Boolean, factory: (Context, M) => Controller): this.type =
-        controllerWithoutViewFactories = controllerWithoutViewFactories :+ ControllerWithoutViewFactory(validPredicate, (c, m) => factory(c, m.asInstanceOf[M]))
+        controllerWithoutViewFactories = controllerWithoutViewFactories :+ ControllerFactory(validPredicate, (c, m) => factory(c, m.asInstanceOf[M]))
         this
 
     def addController(controller: Controller): this.type =
-        controllers = controllers :+ controller
+        controllers = controllers :+ (Option.empty, controller)
         this
 
     def removeController(controller: Controller): this.type =
-        controllers = controllers.filterNot(controller.equals)
+        controllers = controllers.filterNot(c => c(1) == controller)
         this
 
-    private def createMvController(model: Model, view: Option[View]): this.type =
+    protected def createMvController(model: Model, view: Option[View]): this.type =
         val controller = view match
             case None => controllerWithoutViewFactories.find(factory => factory.validModelPredicate(model))
                 .map(factory => factory.provider) match
@@ -60,15 +60,18 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
         controller match
             case None => this
             case Some(c) => 
-                modelControllers = modelControllers + ((model, c))
-                addController(c)
+                controllers = controllers :+ ((Option(model), c))
+                this
 
-    private def removeMvController(model: Model): this.type =
-        modelControllers.get(model) match
+    protected def removeMvController(model: Model): this.type =
+        controllers.find(c => c(0) == model) match
             case None => this
-            case Some(controller) =>
-                modelControllers = modelControllers - model
-                removeController(controller)
+            case Some(c) =>
+                controllers = controllers.filterNot(c => c(0) == model)
+                this
+
+    protected def editControllers(modifier: (Option[Model], Controller) => Controller) =
+        controllers = controllers.map(c => (c(0), modifier(c(0), c(1))))
 
 object EntityControllerRepository:
     extension [Model, View, Context <: EntityRepositoryContext[?]](controllerRepository: EntityControllerRepository[Model, View, Context])
