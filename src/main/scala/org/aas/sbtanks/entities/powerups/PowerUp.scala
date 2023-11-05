@@ -8,32 +8,28 @@ import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 
 object PowerUp:
 
-    trait PowerUp[E]:
-        def apply(entity: E): E
-        def revert(entity: E): E
+    abstract class PowerUp[E]:
+        def apply[A <: E](entity: A): A
+        def revert[A <: E](entity: A): A
+
+        def combineWith(others: Seq[PowerUp[E]]): Seq[PowerUp[E]] = others :+ this
 
 
 
+    trait PowerUpConstraint[E](predicate: E => Boolean) extends PowerUp[E]:
+        this: PowerUp[E] =>
+        abstract override def apply[A <: E](entity: A): A = Some(entity).filter(predicate).map(super.apply).getOrElse(entity)
 
-    trait PowerUpConstraint[E](predicate: E => Boolean, reversePredicate: E => Boolean) extends PowerUp[E]:
-        abstract override def apply(entity: E): E = Some(entity).filter(predicate).map(super.apply).getOrElse(entity)
+    /**
+      * @param f Function that should apply the effect by returning a modified entity of the same type
+      * @param g Function that should undo the effect by returning a modified entity of the same type
+      */
+    class FuncPowerUp[E](val f: E => E, val g: E => E) extends PowerUp[E]:
+        override def apply[A <: E](entity: A): A = f(entity).asInstanceOf[A]
+        override def revert[A <: E](entity: A): A = g(entity).asInstanceOf[A]
 
-        abstract override def revert(entity: E): E =  Some(entity).filter(reversePredicate).map(super.revert).getOrElse(entity)
-
-
-
-    /*
-    trait CombinablePowerUp[E] extends PowerUp[E]:
-        def combine(other: CombinablePowerUp[E]): CombinablePowerUp[E] = CombinablePowerUp.combine(this, other)
-    */
-
-    //trait PowerUpTank[E <: Tank] extends PowerUpConstraint[E](entity => entity.isInstanceOf[Tank]):
-
-
-    case class FuncPowerUp[E](f: E => E, g: E => E) extends PowerUp[E]:
-        override def apply(entity: E): E = f(entity)
-        override def revert(entity: E): E = g(entity)
-
+    class ContextualFuncPowerUp[C, E](context: C)(f: (C, E) => E, g: (C, E) => E)
+        extends FuncPowerUp[E](e => f(context, e), e => g(context, e))
 
 
     object PowerUp extends App:

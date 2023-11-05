@@ -11,16 +11,18 @@ class PowerUpChain[E](powerUps: Seq[PowerUp[E]]) extends PowerUp[E]:
     def apply(powerUps: PowerUp[E]*): PowerUpChain[E] =
         PowerUpChain(powerUps)
 
-    override def apply(entity: E): E =
+    override def apply[A <: E](entity: A): A =
         powerUps.foldLeft(entity)((acc, powerUp) => powerUp.apply(acc))
 
-    override def revert(entity: E): E =
+    override def revert[A <: E](entity: A): A =
         powerUps.foldRight(entity)((powerUp, acc) => powerUp.revert(acc))
 
+    def getPowerUps: Seq[PowerUp[E]] = powerUps
 
-    def chain(next: PowerUp[E]): PowerUpChain[E] = PowerUpChain(powerUps :+ next)
+    def chain(next: PowerUp[E]): PowerUpChain[E] = PowerUpChain(next combineWith powerUps )
 
     def unchain(last: PowerUp[E]): PowerUpChain[E] = PowerUpChain(powerUps.filter(_ != last))
+
 
 
 
@@ -75,8 +77,11 @@ class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E
 
 object PowerUpChain extends App:
 
-    extension (powerUp: PowerUp[Tank])
-        def +(next: PowerUp[Tank]): PowerUpChain[Tank] = PowerUpChain(Seq(powerUp, next))
+    extension [E](powerUp: PowerUp[E])
+        def +(next: PowerUp[E]): PowerUpChain[E] = PowerUpChain(Seq(powerUp, next))
+
+
+
 
 
 
