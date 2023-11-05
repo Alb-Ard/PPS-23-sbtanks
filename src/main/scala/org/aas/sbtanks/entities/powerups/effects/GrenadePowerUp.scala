@@ -18,4 +18,4 @@ object GrenadePowerUpUtils:
     /*
         TODO: constraint => should be and enemy not in spawning state
      */
-    val constraint: Tank => Boolean = ???
+    val constraint: Tank => Boolean = _ => true

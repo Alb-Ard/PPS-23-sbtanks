@@ -29,7 +29,7 @@ object TimerPowerUpUtils:
 
     val g: (CachedContext[(Int, Int)], Tank) => Tank =
         (c,t) =>
-            val (speed, bulletSpeed) = c.provide((t.tankData.speed, t.tankData.bulletSpeed))
+            val (speed, bulletSpeed) = c.getAndClear().get
             t updateTankData(t.tankData
                 .updateSpeed(_ => speed)
                 .updateBulletSpeed(_ => bulletSpeed));
