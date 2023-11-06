@@ -4,10 +4,8 @@ import org.aas.sbtanks.behaviours.{CollisionBehaviour, DamageableBehaviour, Dire
 import org.aas.sbtanks.common.view.{DirectionableView, JFXDirectionableView, JFXMoveableView}
 import org.aas.sbtanks.entities.bullet.view.BulletView
 import scalafx.Includes
-import scalafx.delegate.PositionDelegate
 import scalafx.scene.{Node, Scene}
 import scalafx.scene.image.{Image, ImageView}
-import scalafx.scene.shape.Rectangle
 import org.aas.sbtanks.entities.bullet.controller.BulletController
 import org.aas.sbtanks.entities.bullet.Bullet
 

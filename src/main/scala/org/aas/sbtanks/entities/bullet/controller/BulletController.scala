@@ -25,10 +25,10 @@ abstract class BulletController(bullet: Bullet with PositionBehaviour with Direc
                                                 el.layer == CollisionLayer.WallsLayer || el.layer == CollisionLayer.TanksLayer)
             if(collider.contains(CollisionLayer.TanksLayer))
                 val hitEnemy = collider.find(el => el.layer == CollisionLayer.TanksLayer).get.asInstanceOf[Tank with DamageableBehaviour]
-                hitEnemy.damage()
-                if(hitEnemy.tankData.health <= 0)
-                    hitEnemy.destroyed.apply(hitEnemy)
-                //hitEnemy.updateTankData(hitEnemy.tankData.updateHealth(_ - 1))
+                if(bullet.isPlayerBullet)
+                    hitEnemy.damage()
+                    if(hitEnemy.tankData.health <= 0)
+                        hitEnemy.destroyed.apply(hitEnemy)
             if(collider.contains(CollisionLayer.WallsLayer))
                 val hitWall = collider.find(el => el.layer == CollisionLayer.WallsLayer).get.asInstanceOf[LevelObstacle with DamageableBehaviour]
                 hitWall.destroyed.apply(hitWall)
