@@ -30,7 +30,8 @@ trait BulletController(bullet: Bullet with PositionBehaviour with DirectionBehav
                     hitEnemy.destroyed.apply(hitEnemy)
                 //hitEnemy.updateTankData(hitEnemy.tankData.updateHealth(_ - 1))
             if(collider.contains(CollisionLayer.WallsLayer))
-                val hitWall = collider.find(el => el.layer == CollisionLayer.WallsLayer).get.asInstanceOf[LevelObstacle]
+                val hitWall = collider.find(el => el.layer == CollisionLayer.WallsLayer).get.asInstanceOf[LevelObstacle with DamageableBehaviour]
+                hitWall.destroyed.apply(hitWall)
             if(collider.contains(CollisionLayer.BulletsLayer))
                 val hitBullet= collider.find(el => el.layer == CollisionLayer.BulletsLayer).get.asInstanceOf[Bullet with DamageableBehaviour]
                 bullet.destroyed.apply(bullet)
