@@ -1,9 +1,10 @@
 package org.aas.sbtanks.enemies.ai
 
-import org.aas.sbtanks.enemies.ai.State.{EnemyMoves, EnemyState, EnemyStateMonad}
+import org.aas.sbtanks.enemies.ai.State.EnemyStateMonad.moveNext
 
 
 object State:
+    import org.aas.sbtanks.enemies.ai.EnemyUtils.*
 
     trait Functor[F[_]]:
         def map[A, B](fa: F[A])(f: A => B): F[B]
@@ -29,26 +30,73 @@ object State:
             )
 
 
-    opaque type EnemyState[A] = State[EnemyMoves, A]
+    type EnemyState[A] = State[Enemy, A]
 
     object EnemyStateMonad extends Monad[EnemyState]:
-        def pure[A](a: A): EnemyState[A] = State(s => (a, s))
-        def flatMap[A, B](state: EnemyState[A])(f: A => EnemyState[B]): EnemyState[B] = state.flatMap(f)
+        def run[A](state: EnemyState[A]): Enemy => (A, Enemy) = state.runAndTranslate
 
-        def getState[A]: EnemyState[EnemyMoves] = State(s => (s, s))
+        override def pure[A](a: A): EnemyState[A] = State(s => (a, s))
+        override def flatMap[A, B](state: EnemyState[A])(f: A => EnemyState[B]): EnemyState[B] = state.flatMap(f)
+
+        def getState[A]: EnemyState[Enemy] = State(s => (s, s))
+
+        def setState[A](s: Enemy): EnemyState[Unit] = State(_ => ((), s))
+
+        def modify[A](f: Enemy => Enemy): EnemyState[Unit] = for
+            s <- getState
+            _ <- setState(f(s))
+        yield ()
+
+
+        def moveNext(enemy: Enemy): EnemyState[Enemy] =
+            for
+                newMove <- if isMoveValid(enemy) then pure(enemy) else moveNext(enemy.copy(move = nextDirectionPriority(enemy.move)))
+            yield newMove
 
 
 
+object EnemyUtils:
+
+    enum EnemyDirection:
+        case BottomY, RightX, LeftX, TopY
+
+    def nextDirectionPriority(direction: EnemyDirection): EnemyDirection = direction match
+        case EnemyDirection.BottomY => EnemyDirection.RightX
+        case EnemyDirection.RightX => EnemyDirection.LeftX
+        case EnemyDirection.LeftX => EnemyDirection.TopY
+        case EnemyDirection.TopY => EnemyDirection.BottomY
 
 
-    enum EnemyMoves:
-        case MoveBottomY, MoveTowardsCenterX, MoveFarFromCenterX, MoveTopY
+
+    case class Enemy(move: EnemyDirection, position: (Int, Int))
+
+    /* TODO check world */
+    def isMoveValid(enemy: Enemy): Boolean = true
+
+
+
 
 
 
 
 object a extends App:
-    import org.aas.sbtanks.enemies.ai.State.EnemyMoves.*
+    import org.aas.sbtanks.enemies.ai.EnemyUtils.*
+    import org.aas.sbtanks.enemies.ai.State.EnemyStateMonad
+
+    //println(moveNext(Enemy(EnemyDirection.BottomY, (0, 0))).runAndTranslate(Enemy(EnemyDirection.BottomY, (0, 0))))
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
