@@ -27,11 +27,11 @@ trait BulletController(bullet: Bullet with PositionBehaviour with DirectionBehav
                 val hitEnemy = collider.find(el => el.layer == CollisionLayer.TanksLayer).get.asInstanceOf[Tank with DamageableBehaviour]
                 hitEnemy.damage()
                 if(hitEnemy.tankData.health <= 0)
-                    hitEnemy.destroyed
+                    hitEnemy.destroyed.apply(hitEnemy)
                 //hitEnemy.updateTankData(hitEnemy.tankData.updateHealth(_ - 1))
             if(collider.contains(CollisionLayer.WallsLayer))
                 val hitWall = collider.find(el => el.layer == CollisionLayer.WallsLayer).get.asInstanceOf[LevelObstacle]
             if(collider.contains(CollisionLayer.BulletsLayer))
                 val hitBullet= collider.find(el => el.layer == CollisionLayer.BulletsLayer).get.asInstanceOf[Bullet with DamageableBehaviour]
-                bullet.destroyed
-                hitBullet.destroyed
+                bullet.destroyed.apply(bullet)
+                hitBullet.destroyed.apply(hitBullet)

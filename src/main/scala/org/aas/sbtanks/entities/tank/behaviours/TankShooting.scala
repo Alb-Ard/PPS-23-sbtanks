@@ -15,4 +15,4 @@ trait TankShootingBehaviour:
                     with DirectionBehaviour with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
                                             Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))
                     with DamageableBehaviour:
-            override def damage(): Unit = ???
+                        override def damage(): Unit = -1

@@ -40,8 +40,6 @@ class BulletSpec extends AnyFlatSpec with Matchers {
     it should "continue to move in one direction once shot" in {
         basicBullet.positionChanged(basicBullet.positionX + (basicBullet.directionX * basicBullet.speed),
                                     basicBullet.positionY + (basicBullet.directionY * basicBullet.speed))
-        basicBullet.positionChanged(basicBullet.positionX + (basicBullet.directionX * basicBullet.speed),
-                                    basicBullet.positionY + (basicBullet.directionY * basicBullet.speed))
         basicBullet.positionX should equal((basicTank.positionX + basicTank.directionX) * 3)
         basicBullet.positionY should equal((basicTank.positionY + basicTank.directionY) * 3)
     }
