@@ -11,8 +11,6 @@ trait CollisionBehaviour(sizeX: Double, sizeY: Double, override val layer: Colli
 
     val overlapping = EventSource[Seq[Collider]]
 
-    PhysicsWorld.registerCollider(this)
-
     def overlapsAnything = overlappedColliders.nonEmpty 
 
     def overlappedColliders = 
