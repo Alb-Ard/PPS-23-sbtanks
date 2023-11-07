@@ -9,10 +9,6 @@ import org.aas.sbtanks.behaviours.DamageableBehaviour
 trait DestroyableEntityAutoManager[M, V]:
     this: EntityMvRepositoryContainer[M, V] =>
 
-    modelAdded += { m => m match
-        case d: DamageableBehaviour => bindDestroy(d)
-        case _ => ()
-    }
     modelViewAdded += { (m, _) => m match
         case d: DamageableBehaviour => bindDestroy(d)
         case _ => ()

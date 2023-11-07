@@ -6,9 +6,7 @@ import org.aas.sbtanks.physics.PhysicsWorld
 trait EntityColliderAutoManager[M, V]:
     this: EntityMvRepositoryContainer[M, V] =>
     
-    modelAdded += registerEntity
     modelViewAdded += { (m, _) => registerEntity(m) }
-    modelRemoved += unregisterEntity
     modelViewRemoved += { (m, _) => unregisterEntity(m) }
 
     private def registerEntity(entityModel: M): this.type =

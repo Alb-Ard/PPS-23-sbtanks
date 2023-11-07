@@ -8,43 +8,38 @@ import scala.reflect.ClassTag
 abstract class EntityMvRepositoryContainer[Model, View]:
     case class ViewReplacedArgs(model: Model, oldView: Option[View], newView: Option[View])
 
-    val modelAdded = EventSource[Model]()
-    val modelViewAdded = EventSource[(Model, View)]()
-
+    val modelViewAdded = EventSource[(Model, Option[View])]()
     val modelViewReplaced = EventSource[ViewReplacedArgs]()
-
-    val modelRemoved = EventSource[Model]()
-    val modelViewRemoved = EventSource[(Model, View)]()
+    val modelViewRemoved = EventSource[(Model, Option[View])]()
 
     private var modelRepository = Seq.empty[Model]
     private var viewRepository = Seq.empty[View]
 
-    private var modelReferences = Map.empty[Model, View]
+    private var modelViewReferences = Map.empty[Model, View]
 
     def addModelView(model: Model, view: Option[View]): this.type =
         modelRepository = modelRepository :+ model
         viewRepository = view match
             case None => 
-                modelAdded(model)
                 viewRepository
             case Some(v) =>
                 viewRepository = viewRepository :+ v
-                modelReferences = modelReferences + ((model, v))
-                modelViewAdded(model, v)
+                modelViewReferences = modelViewReferences + ((model, v))
                 viewRepository
+        modelViewAdded(model, view)
         this
 
     def replaceView(model: Model, newView: Option[View]): this.type =
-        val (newViewRepository: Seq[View], oldView: Option[View]) = modelReferences.get(model).map(v => {
+        val (newViewRepository: Seq[View], oldView: Option[View]) = modelViewReferences.get(model).map(v => {
             viewRepository.filterNot(v.equals)
-            modelReferences = modelReferences - model
+            modelViewReferences = modelViewReferences - model
             (viewRepository, Option(v))
         }).getOrElse((viewRepository, Option.empty[View]))
         viewRepository = newView match
             case None => 
                 newViewRepository
             case Some(v) =>
-                modelReferences = modelReferences + ((model, v))
+                modelViewReferences = modelViewReferences + ((model, v))
                 newViewRepository :+ v
         modelViewReplaced(ViewReplacedArgs(model, oldView, newView))
         this
@@ -53,31 +48,31 @@ abstract class EntityMvRepositoryContainer[Model, View]:
 
     def entityViewCount = viewRepository.size
 
+    def entitiesOfModelType[M1 <: Model](using modelClassTag: ClassTag[M1], viewClassTag: ClassTag[View]) = 
+        modelRepository.filter(modelClassTag.runtimeClass.isInstance)
+                .map(m => (m, modelViewReferences.get(m)))
+
     def entitiesOfMvTypes[M1 <: Model, V1 <: View](using modelClassTag: ClassTag[M1], viewClassTag: ClassTag[V1]) =
         modelRepository.filter(modelClassTag.runtimeClass.isInstance)
-                .filter(viewClassTag.runtimeClass.isInstance)
-                .map(v => modelReferences.find((_, vv) => v == vv))
+                .map(m => modelViewReferences.find((mm, _) => m == mm))
                 .filter(mv => mv.isDefined)
                 .map(mv => mv.get)
+                .filter((_, v) => viewClassTag.runtimeClass.isInstance(v))
                 .map((m, v) => (m.asInstanceOf[M1], v.asInstanceOf[V1]))
 
     def removeModelView(model: Model): this.type =
         modelRepository = modelRepository.filterNot(model.equals)
-        viewRepository = modelReferences.getOrElse(model, null) match
-            case null =>
-                modelRemoved(model)
+        val view = modelViewReferences.get(model)
+        viewRepository = view match
+            case None =>
                 viewRepository
-            case v => 
+            case Some(v) => 
+                modelViewReferences = modelViewReferences - model
                 viewRepository.filterNot(v.equals)
-                modelReferences = modelReferences - model
-                modelViewRemoved(model, v.asInstanceOf[View])
-                viewRepository
+        modelViewRemoved(model, view)
         this
     
 object EntityMvRepositoryContainer:
     extension [M, V](repository: EntityMvRepositoryContainer[M, V])
-        def entitiesOfModelType[M1 <: M](using modelClassTag: ClassTag[M1], viewClassTag: ClassTag[V]) = 
-            repository.entitiesOfMvTypes[M1, V]
-
         def entitiesOfViewType[V1 <: V](using modelClassTag: ClassTag[M], viewClassTag: ClassTag[V1]) = 
             repository.entitiesOfMvTypes[M, V1]

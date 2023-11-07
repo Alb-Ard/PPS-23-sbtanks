@@ -21,11 +21,8 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
     private var controllerWithViewFactories = Seq.empty[ControllerWithViewFactory]
     private var controllerWithoutViewFactories = Seq.empty[ControllerWithoutViewFactory]
 
-    modelViewAdded += { (m, v) => createMvController(m, Option(v)) }
-    modelAdded += { m => createMvController(m, Option.empty) }
-
+    modelViewAdded += { (m, v) => createMvController(m, v) }
     modelViewRemoved += { (m, _) => removeMvController(m) }
-    modelRemoved += removeMvController
 
     override def step(delta: Double): this.type =
         controllers = controllers map { c => (c(0), c(1).step(delta)) }
