@@ -32,7 +32,7 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
         controllerWithViewFactories = controllerWithViewFactories :+ ControllerFactory(validPredicate, (c, m, v) => factory(c, m.asInstanceOf[M], v.asInstanceOf[V]))
         this
 
-    def registerControllerFactory[M <: Model, V <: View](validPredicate: Model => Boolean, factory: (Context, M) => Controller): this.type =
+    def registerControllerFactory[M <: Model](validPredicate: Model => Boolean, factory: (Context, M) => Controller): this.type =
         controllerWithoutViewFactories = controllerWithoutViewFactories :+ ControllerFactory(validPredicate, (c, m) => factory(c, m.asInstanceOf[M]))
         this
 
@@ -43,6 +43,10 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
     def removeController(controller: Controller): this.type =
         controllers = controllers.filterNot(c => c(1) == controller)
         this
+
+    def controllerCount = controllers.size
+    
+    def controllerFactoryCount = controllerWithViewFactories.size + controllerWithoutViewFactories.size
 
     protected def createMvController(model: Model, view: Option[View]): this.type =
         val controller = view match
