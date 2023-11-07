@@ -1,40 +1,11 @@
 package org.aas.sbtanks.entities.repository
 
-import scala.collection.mutable
-
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class EntityRepositorySpec extends AnyFlatSpec with Matchers:
-    type MockModel = AnyRef
-    type MockView = AnyRef
-    type MockViewContainer = mutable.Buffer[MockView]
+import org.aas.sbtanks.entities.repository.MockEntityMvRepositoryContainer.CompleteEntityRepository
 
-    type CompleteEntityRepository = EntityMvRepositoryContainer[MockModel, MockView]
-        with EntityControllerRepository[MockModel, MockView, EntityRepositoryContext[MockViewContainer]]
-        with EntityViewAutoManager[MockView]
-        with DestroyableEntityAutoManager[MockModel, MockView]
-        with EntityRepositoryTagger[MockModel, MockView, Int]
-        with EntityRepositoryContextAware[MockViewContainer, EntityRepositoryContext[MockViewContainer]]
-
-    def withEntityRepository(test: CompleteEntityRepository => Any) =
-        given EntityRepositoryContext[MockViewContainer] = EntityRepositoryContext(mutable.Buffer.empty)
-        val entityRepository = new EntityMvRepositoryContainer[MockModel, MockView]()
-                with EntityControllerRepository[MockModel, MockView, EntityRepositoryContext[MockViewContainer]]
-                with EntityViewAutoManager[MockView]
-                with DestroyableEntityAutoManager[MockModel, MockView]
-                with EntityRepositoryTagger[MockModel, MockView, Int]
-                with EntityRepositoryContextAware:
-                    override def addAutoManagedView(view: MockView) = 
-                        summon[EntityRepositoryContext[MockViewContainer]].viewContainer :+ view
-                        this
-                
-                    override def removeAutoManagedView(view: MockView) =
-                        summon[EntityRepositoryContext[MockViewContainer]].viewContainer -= view
-                        this
-                        
-        test(entityRepository)
-
+class EntityMvRepositorySpec extends AnyFlatSpec with Matchers with EntityRepositoryTest:
     "An entity repository" should "be empty at creation" in withEntityRepository { repository =>
         repository.entityModelCount should be (0)
         repository.entityViewCount should be (0)
