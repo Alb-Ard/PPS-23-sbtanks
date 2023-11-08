@@ -9,6 +9,7 @@ object MockEntityMvRepositoryContainer:
 
     type CompleteEntityRepository = EntityMvRepositoryContainer[MockModel, MockView]
         with EntityControllerRepository[MockModel, MockView, EntityRepositoryContext[MockViewContainer]]
+        with EntityControllerReplacer[MockModel, MockView, EntityRepositoryContext[MockViewContainer]]
         with EntityViewAutoManager[MockView]
         with DestroyableEntityAutoManager[MockModel, MockView]
         with EntityRepositoryTagger[MockModel, MockView, Int]
@@ -18,6 +19,7 @@ object MockEntityMvRepositoryContainer:
         given EntityRepositoryContext[MockViewContainer] = EntityRepositoryContext(mutable.Buffer.empty)
         new EntityMvRepositoryContainer[MockModel, MockView]()
                 with EntityControllerRepository[MockModel, MockView, EntityRepositoryContext[MockViewContainer]]
+                with EntityControllerReplacer[MockModel, MockView, EntityRepositoryContext[MockViewContainer]]
                 with EntityViewAutoManager[MockView]
                 with DestroyableEntityAutoManager[MockModel, MockView]
                 with EntityRepositoryTagger[MockModel, MockView, Int]
