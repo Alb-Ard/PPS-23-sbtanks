@@ -14,5 +14,5 @@ trait DestroyableEntityAutoManager[M, V]:
         case _ => ()
     }
 
-    def bindDestroy(destroyable: M with DamageableBehaviour) =
+    private def bindDestroy(destroyable: M with DamageableBehaviour) =
         destroyable.destroyed += { _ => removeModelView(destroyable) }
