@@ -1,6 +1,7 @@
 package org.aas.sbtanks.enemies.ai
 
 import org.aas.sbtanks.enemies.ai.State.EnemyStateMonad.{checkMove, computeState, moveNext, updateCoord}
+import org.aas.sbtanks.enemies.ai.a.enemy
 
 import scala.util.Random
 
@@ -14,11 +15,14 @@ object State:
     trait Monad[F[_]] extends Functor[F]:
         def pure[A](a: A): F[A]
         def flatMap[A, B](fa: F[A])(f: A => F[B]): F[B]
+
         override def map[A, B](fa: F[A])(f: A => B): F[B] =
             flatMap(fa)(a => pure(f(a)))
 
 
     case class State[S, A](runAndTranslate: S => (A, S)):
+
+
         def map[B](f: A => B): State[S, B] =
             State(s0 =>
                 val (a, s1) = runAndTranslate(s0)
@@ -45,12 +49,15 @@ object State:
         def run[A](state: EnemyState[A]): Enemy => (A, Enemy) = state.runAndTranslate
 
         override def pure[A](a: A): EnemyState[A] = State(s => (a, s))
+
         override def flatMap[A, B](state: EnemyState[A])(f: A => EnemyState[B]): EnemyState[B] = state.flatMap(f)
+
 
         def getState: EnemyState[Enemy] = State(s => (s, s))
 
 
         def gets[A](f: Enemy => A): EnemyState[A] = State(s => (f(s), s))
+
 
         def setState(s: Enemy): EnemyState[Unit] = State(_ => ((), s))
 
@@ -58,7 +65,6 @@ object State:
             s <- getState
             _ <- setState(f(s))
         yield ()
-
 
         /*
             check if an EnemyDirection is valid, return Optional State
@@ -80,7 +86,7 @@ object State:
                 c <- checkMove()
                 d <- c match
                     case Some(d) => pure(d)
-                    case None => modify(s => s.copy(move = nextDirectionPriority(s.move))).flatMap(_ => moveNext())
+                    case None => transition(false).flatMap(_ => moveNext())
             yield d
 
 
@@ -103,10 +109,30 @@ object State:
         def computeState(): EnemyState[(Int, Int)] =
             for
                 - <- updateCoord()
+                _ <- transition(true)
                 c2 <- gets(_.position)
             yield c2
 
 
+        def transition(value: Boolean): EnemyState[Unit] =
+            for
+                dir <- gets(_.move)
+                newDir <- (dir, value) match
+                    case (EnemyDirection.BottomY, true) => pure(EnemyDirection.BottomY)
+                    case (EnemyDirection.BottomY, false) => pure(EnemyDirection.RightX)
+
+                    case (EnemyDirection.RightX, true) => pure(EnemyDirection.BottomY)
+                    case (EnemyDirection.RightX, false) => pure(EnemyDirection.LeftX)
+
+                    case (EnemyDirection.LeftX, true) => pure(EnemyDirection.BottomY)
+                    case (EnemyDirection.LeftX, false) => pure(EnemyDirection.TopY)
+
+                    case (EnemyDirection.TopY, true) => pure(EnemyDirection.LeftX)
+                    case (EnemyDirection.TopY, false) => pure(EnemyDirection.BottomY)
+
+                _ <- modify(e => e.copy(move = newDir))
+            yield
+                ()
 
 
 
@@ -117,30 +143,9 @@ object State:
 
 
 
-object EnemyUtils:
-
-    enum EnemyDirection:
-        case BottomY, RightX, LeftX, TopY
-
-    def nextDirectionPriority(direction: EnemyDirection): EnemyDirection = direction match
-        case EnemyDirection.BottomY => EnemyDirection.RightX
-        case EnemyDirection.RightX => EnemyDirection.LeftX
-        case EnemyDirection.LeftX => EnemyDirection.TopY
-        case EnemyDirection.TopY => EnemyDirection.BottomY
 
 
 
-
-
-
-    case class Enemy(move: EnemyDirection, position: (Int, Int))
-
-    /* TODO check world (probability is a temporary check)*/
-    def isMoveValid(enemy: Enemy): Boolean =
-        val random = new Random()
-        val probability = 0.1
-
-        random.nextDouble() < probability
 
 
 
@@ -154,7 +159,17 @@ object a extends App:
 
     //println(moveNext(Enemy(EnemyDirection.BottomY, (0, 0))).runAndTranslate(Enemy(EnemyDirection.BottomY, (0, 0))))
 
-    println(computeState().runAndTranslate(Enemy(EnemyDirection.BottomY, (0, 0))))
+
+
+    private def nextStep(enemy: Enemy): ((Int, Int), Enemy) =
+        computeState().runAndTranslate(enemy)
+
+
+
+
+    val enemy = Enemy(EnemyDirection.BottomY, (0, 0))
+
+    val (newCoord, newEnemy) = nextStep(enemy)
 
 
 
