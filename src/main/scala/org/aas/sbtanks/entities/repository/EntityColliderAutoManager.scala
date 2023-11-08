@@ -10,9 +10,13 @@ trait EntityColliderAutoManager[M, V]:
     modelViewRemoved += { (m, _) => unregisterEntity(m) }
 
     private def registerEntity(entityModel: M): this.type =
-        Option(entityModel.asInstanceOf[Collider]).foreach(PhysicsWorld.registerCollider)
+        entityModel match
+            case c: Collider => PhysicsWorld.registerCollider(c)
+            case _ => ()
         this
     
     private def unregisterEntity(entityModel: M): this.type =
-        Option(entityModel.asInstanceOf[Collider]).foreach(PhysicsWorld.unregisterCollider)
+        entityModel match
+            case c: Collider => PhysicsWorld.unregisterCollider(c)
+            case _ => ()
         this

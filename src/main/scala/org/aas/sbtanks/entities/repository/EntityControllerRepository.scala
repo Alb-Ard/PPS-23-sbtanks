@@ -4,7 +4,7 @@ import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer
 import org.aas.sbtanks.common.Steppable
 
 /**
-  * Adds the ability to (un)register controller factories, to automatically create controllers from models
+  * Adds the ability to register controller factories, to automatically create controllers from models
   *
   * @param context The context that will be passed to the controller factories
   */
@@ -73,11 +73,3 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
 
     protected def editControllers(modifier: (Option[Model], Controller) => Controller) =
         controllers = controllers.map(c => (c(0), modifier(c(0), c(1))))
-
-object EntityControllerRepository:
-    extension [Model, View, Context <: EntityRepositoryContext[?]](controllerRepository: EntityControllerRepository[Model, View, Context])
-        def registerControllerFactory[M <: Model, V <: View](modelType: Class[M], factory: (Context, M, V) => EntityControllerRepository[Model, View, Context]#Controller) =
-            controllerRepository.registerControllerFactory(modelType.isInstance, factory)
-
-        def registerControllerFactory[M <: Model, V <: View](modelType: Class[M], factory: (Context, M) => EntityControllerRepository[Model, View, Context]#Controller) =
-            controllerRepository.registerControllerFactory(modelType.isInstance, factory)

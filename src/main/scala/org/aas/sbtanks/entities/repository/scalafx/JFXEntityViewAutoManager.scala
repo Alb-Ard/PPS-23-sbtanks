@@ -7,6 +7,7 @@ import scalafx.application.Platform
 import scalafx.stage.Stage
 import scalafx.scene.Node
 import scalafx.Includes
+import org.aas.sbtanks.entities.tank.view.TankView
 
 /**
   * Automatically adds views to the viewContainer in the given reporitory context
@@ -16,12 +17,21 @@ import scalafx.Includes
 trait JFXEntityViewAutoManager(using context: EntityRepositoryContext[Stage]) extends EntityViewAutoManager[Node] with Includes:
     this: JFXEntityMvRepositoryContainer with EntityRepositoryContextAware[Stage, EntityRepositoryContext[Stage]] =>
 
-    override def addAutoManagedView(view: Node) =
-        Platform.runLater { context.viewContainer.scene.value.content.add(view) }
+    protected override def addAutoManagedView(view: Node) =
+        Platform.runLater { 
+            val insertIndex = view match
+                case tv if JFXEntityViewAutoManager.BACK_LAYER_VIEW_TYPES
+                        .filter(c => c.isAssignableFrom(view.getClass()))
+                        .nonEmpty => 0
+                case _ => Math.max(0, context.viewContainer.scene.value.content.length - 1)
+            context.viewContainer.scene.value.content.insert(insertIndex, view)
+        }
         this
 
-    override def removeAutoManagedView(view: Node) =
+    protected override def removeAutoManagedView(view: Node) =
         Platform.runLater { context.viewContainer.scene.value.content.remove(view) }
         this
     
+object JFXEntityViewAutoManager:
+    val BACK_LAYER_VIEW_TYPES = Seq(classOf[TankView])
 

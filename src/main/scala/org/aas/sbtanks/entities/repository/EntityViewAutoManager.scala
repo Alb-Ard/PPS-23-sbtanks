@@ -15,6 +15,6 @@ trait EntityViewAutoManager[V]:
     }
     modelViewRemoved += { (_, v) => v.foreach(removeAutoManagedView) }
 
-    def addAutoManagedView(view: V): this.type
+    protected def addAutoManagedView(view: V): this.type
 
-    def removeAutoManagedView(view: V): this.type
+    protected def removeAutoManagedView(view: V): this.type
