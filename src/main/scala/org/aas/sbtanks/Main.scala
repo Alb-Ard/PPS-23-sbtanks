@@ -39,6 +39,8 @@ import org.aas.sbtanks.level.scalafx.JFXLevelFactory
 import org.aas.sbtanks.entities.repository.DestroyableEntityAutoManager
 import scalafx.scene.Node
 import org.aas.sbtanks.entities.repository.EntityRepositoryTagger
+import org.aas.sbtanks.entities.repository.EntityControllerReplacer
+import org.aas.sbtanks.entities.repository.EntityColliderAutoManager
 
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
@@ -51,19 +53,16 @@ object Main extends JFXApp3 with scalafx.Includes:
             width = 1280
             height = 720
             scene = new Scene:
-                content = new Rectangle:
-                    x = 0
-                    y = 0
-                    width = 1280
-                    height = 720
-                    fill = Color.BLACK
+                fill = Color.BLACK
 
         given EntityRepositoryContext[Stage] = EntityRepositoryContext(stage)
         val entityRepository = new JFXEntityMvRepositoryContainer()
                 with JFXEntityControllerRepository
                 with JFXEntityViewAutoManager
+                with EntityControllerReplacer[AnyRef, Node, EntityRepositoryContext[Stage]]
                 with DestroyableEntityAutoManager[AnyRef, Node]
                 with EntityRepositoryTagger[AnyRef, Node, Int]
+                with EntityColliderAutoManager[AnyRef, Node]
                 with EntityRepositoryContextAware
 
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize))
@@ -71,7 +70,7 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
         levelFactory.createFromString("UUUUUUU" +
-                                      "U-----U" +
+                                      "U-TTT-U" +
                                       "U-SwS-U" +
                                       "U--P--U" +
                                       "U-WWW-U" +
