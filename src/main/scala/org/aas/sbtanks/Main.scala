@@ -65,7 +65,7 @@ object Main extends JFXApp3 with scalafx.Includes:
                 with EntityColliderAutoManager[AnyRef, Node]
                 with EntityRepositoryContextAware
 
-        entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize))
+        entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView))))
                 .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory[Stage](viewScale * tileSize))
 
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
