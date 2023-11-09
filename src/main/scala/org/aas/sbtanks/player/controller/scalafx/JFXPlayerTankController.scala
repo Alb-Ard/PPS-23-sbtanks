@@ -6,12 +6,26 @@ import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 
 import scalafx.stage.Stage
 import scalafx.scene.input.KeyEvent
+import scalafx.scene.Node
 import scalafx.Includes
+import org.aas.sbtanks.entities.repository.EntityRepositoryContextAware
+import org.aas.sbtanks.entities.repository.EntityRepositoryContext
 
-class JFXPlayerTankController(tank: ControllableTank, speedMultiplier: Double, view: TankView, viewScale: Double)
+abstract class JFXPlayerTankController(using context: EntityRepositoryContext[Stage])(tank: ControllableTank, speedMultiplier: Double, view: TankView, viewScale: Double)
     extends TankController(tank, speedMultiplier, view, viewScale, JFXPlayerInputController())
+    with EntityRepositoryContextAware
     with Includes:
 
-    def registerSceneEventHandlers(stage: Stage) =
+    registerSceneEventHandlers(context.viewContainer)
+
+    private def registerSceneEventHandlers(stage: Stage) =
         stage.addEventHandler(KeyEvent.KeyPressed, inputEvents.handleKeyPressEvent)
         stage.addEventHandler(KeyEvent.KeyReleased, inputEvents.handleKeyReleasedEvent)
+
+object JFXPlayerTankController:
+    def factory(speedMultiplier: Double, viewScale: Double, bulletConsumer: (AnyRef, Node) => Any)(context: EntityRepositoryContext[Stage], tank: ControllableTank, view: TankView) =
+        new JFXPlayerTankController(using context)(tank, speedMultiplier, view, viewScale):
+            override def shoot() =
+                // TODO
+                //bulletConsumer()
+                this

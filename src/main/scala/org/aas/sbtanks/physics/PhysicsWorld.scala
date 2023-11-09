@@ -14,6 +14,12 @@ object PhysicsWorld:
     def unregisterCollider(collider: Collider) =
         colliders = colliders.filterNot(collider.equals)
 
+    def clearColliders() =
+        colliders = List.empty
+
     def getOverlaps(collider: Collider) =
-        colliders.filterNot(collider.equals)
-            .filter(c => c.boundingBox.checkOverlap(collider.boundingBox) && collider.layerMasks.contains(c.layer))
+        getBoxOverlaps(collider.boundingBox, collider.layerMasks, Seq(collider))
+
+    def getBoxOverlaps(box: AABB, layers: Seq[CollisionLayer], ignoredColliders: Seq[Collider]) =
+        colliders.filterNot(ignoredColliders.contains)
+            .filter(c => c.boundingBox.checkOverlap(box) && (layers.isEmpty || layers.contains(c.layer)))
