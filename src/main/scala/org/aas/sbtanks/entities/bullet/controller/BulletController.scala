@@ -27,11 +27,6 @@ abstract class BulletController(bullet: Bullet with PositionBehaviour with Direc
                 val hitTank = collider.find(el => el.layer == CollisionLayer.TanksLayer).get.asInstanceOf[Tank with DamageableBehaviour]
                 if(checkBulletPlayer(hitTank))
                     hitTank.damage()
-                    /*
-                    if(hitTank.tankData.health <= 0)
-                        hitTank.destroyed.apply(hitTank)
-                     */
-
             if(collider.contains(CollisionLayer.WallsLayer))
                 val hitWall = collider.find(el => el.layer == CollisionLayer.WallsLayer).get.asInstanceOf[LevelObstacle with DamageableBehaviour]
                 hitWall.damage()
