@@ -106,7 +106,7 @@ object State:
             yield ()
 
 
-        def computeState(): EnemyState[(Int, Int)] =
+        def computeState(): EnemyState[(Double, Double)] =
             for
                 - <- updateCoord()
                 _ <- transition(true)
@@ -161,7 +161,7 @@ object a extends App:
 
 
 
-    private def nextStep(enemy: Enemy): ((Int, Int), Enemy) =
+    private def nextStep(enemy: Enemy): ((Double, Double), Enemy) =
         computeState().runAndTranslate(enemy)
 
 
@@ -170,7 +170,7 @@ object a extends App:
     val enemy = Enemy(EnemyDirection.BottomY, (0, 0))
 
     val (newCoord, newEnemy) = nextStep(enemy)
-
+    println((newCoord, newEnemy))
 
 
 

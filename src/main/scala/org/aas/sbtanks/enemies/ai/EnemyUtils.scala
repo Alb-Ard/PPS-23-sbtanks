@@ -8,7 +8,7 @@ object EnemyUtils:
         case BottomY, RightX, LeftX, TopY
 
 
-    case class Enemy(move: EnemyDirection, position: (Int, Int))
+    case class Enemy(move: EnemyDirection, position: (Double, Double))
 
     /* TODO check world (probability is a temporary check)*/
     def isMoveValid(enemy: Enemy): Boolean =
