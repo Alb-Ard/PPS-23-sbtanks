@@ -31,6 +31,7 @@ class MockTankView extends TankView:
 
 class MockJFXPlayerTankController(tank: ControllableTank) extends TankController(tank, 1 / 16D, MockTankView(), 1, JFXPlayerInputController()):
     def simulateInput(event: KeyEvent) = inputEvents.handleKeyPressEvent(event)
+    override protected def shoot() = this
 
 object MockJFXPlayerTankController:
     val MOCK_STAGE = EntityRepositoryContext[Stage](new JFXApp3.PrimaryStage())
