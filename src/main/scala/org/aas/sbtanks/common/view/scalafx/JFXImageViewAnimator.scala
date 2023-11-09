@@ -3,6 +3,7 @@ package org.aas.sbtanks.common.view.scalafx
 import scalafx.animation.AnimationTimer
 import scalafx.scene.image.Image
 import scalafx.scene.image.ImageView
+import scalafx.application.Platform
 
 trait JFXImageViewAnimator(private var images: Seq[Image], speed: Double, private var running: Boolean = false):
     this: ImageView =>
@@ -25,4 +26,4 @@ trait JFXImageViewAnimator(private var images: Seq[Image], speed: Double, privat
 
     def setImages(images: Seq[Image]) =
         this.images = images
-        image = images(0)
+        Platform.runLater { image = images(0) }
