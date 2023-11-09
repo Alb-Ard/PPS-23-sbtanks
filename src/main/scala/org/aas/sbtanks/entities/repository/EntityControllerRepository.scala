@@ -4,7 +4,7 @@ import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer
 import org.aas.sbtanks.common.Steppable
 
 /**
-  * Adds the ability to (un)register controller factories, to automatically create controllers from models
+  * Adds the ability to register controller factories, to automatically create controllers from models
   *
   * @param context The context that will be passed to the controller factories
   */
@@ -21,11 +21,8 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
     private var controllerWithViewFactories = Seq.empty[ControllerWithViewFactory]
     private var controllerWithoutViewFactories = Seq.empty[ControllerWithoutViewFactory]
 
-    modelViewAdded += { (m, v) => createMvController(m, Option(v)) }
-    modelAdded += { m => createMvController(m, Option.empty) }
-
+    modelViewAdded += { (m, v) => createMvController(m, v) }
     modelViewRemoved += { (m, _) => removeMvController(m) }
-    modelRemoved += removeMvController
 
     override def step(delta: Double): this.type =
         controllers = controllers map { c => (c(0), c(1).step(delta)) }
@@ -35,7 +32,7 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
         controllerWithViewFactories = controllerWithViewFactories :+ ControllerFactory(validPredicate, (c, m, v) => factory(c, m.asInstanceOf[M], v.asInstanceOf[V]))
         this
 
-    def registerControllerFactory[M <: Model, V <: View](validPredicate: Model => Boolean, factory: (Context, M) => Controller): this.type =
+    def registerControllerFactory[M <: Model](validPredicate: Model => Boolean, factory: (Context, M) => Controller): this.type =
         controllerWithoutViewFactories = controllerWithoutViewFactories :+ ControllerFactory(validPredicate, (c, m) => factory(c, m.asInstanceOf[M]))
         this
 
@@ -46,6 +43,10 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
     def removeController(controller: Controller): this.type =
         controllers = controllers.filterNot(c => c(1) == controller)
         this
+
+    def controllerCount = controllers.size
+    
+    def controllerFactoryCount = controllerWithViewFactories.size + controllerWithoutViewFactories.size
 
     protected def createMvController(model: Model, view: Option[View]): this.type =
         val controller = view match
@@ -72,11 +73,3 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
 
     protected def editControllers(modifier: (Option[Model], Controller) => Controller) =
         controllers = controllers.map(c => (c(0), modifier(c(0), c(1))))
-
-object EntityControllerRepository:
-    extension [Model, View, Context <: EntityRepositoryContext[?]](controllerRepository: EntityControllerRepository[Model, View, Context])
-        def registerControllerFactory[M <: Model, V <: View](modelType: Class[M], factory: (Context, M, V) => EntityControllerRepository[Model, View, Context]#Controller) =
-            controllerRepository.registerControllerFactory(modelType.isInstance, factory)
-
-        def registerControllerFactory[M <: Model, V <: View](modelType: Class[M], factory: (Context, M) => EntityControllerRepository[Model, View, Context]#Controller) =
-            controllerRepository.registerControllerFactory(modelType.isInstance, factory)

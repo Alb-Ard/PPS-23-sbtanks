@@ -55,5 +55,5 @@ final case class JFXLevelFactory(tileSize: Double, viewScale: Double, tileAnimat
                 tileSize - pixelSize,
                 tileSize,
                 viewScale))
-        val playerView = JFXTankView(images, tileSize)
-        Seq((tank, playerView))
+        val tankView = JFXTankView(images, tileSize)
+        Seq((tank, tankView))

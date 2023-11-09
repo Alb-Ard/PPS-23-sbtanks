@@ -6,7 +6,6 @@ package org.aas.sbtanks.entities.repository
 trait EntityRepositoryTagger[M, V, T]:
     this: EntityMvRepositoryContainer[M, V] =>
 
-    modelRemoved += clearTags
     modelViewRemoved += { (m, _) => clearTags(m) }
 
     var tags = Seq.empty[(T, M)]
