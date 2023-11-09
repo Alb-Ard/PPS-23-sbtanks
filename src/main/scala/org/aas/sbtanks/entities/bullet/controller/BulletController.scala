@@ -8,7 +8,9 @@ import org.aas.sbtanks.physics.{Collider, CollisionLayer}
 import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.entities.repository.DestroyableEntityAutoManager
 
-class BulletController(bullet: Bullet with PositionBehaviour with ConstrainedMovementBehaviour with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour) extends Steppable:
+class BulletController(bullet: Bullet with PositionBehaviour with ConstrainedMovementBehaviour
+                        with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour) extends Steppable:
+
     bullet.overlapping += checkCollision
 
     override def step(delta: Double): BulletController.this.type =

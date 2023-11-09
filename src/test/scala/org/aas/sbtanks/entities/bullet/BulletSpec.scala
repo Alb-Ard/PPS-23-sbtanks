@@ -45,9 +45,20 @@ class BulletSpec extends AnyFlatSpec with Matchers {
 
 
     it should "continue to move in one direction once shot" in {
-        basicBullet.moveRelative(1.0, 0.0)
-        basicBullet.moveRelative(1.0, 0.0)
-        basicBullet.positionX should equal(basicTank.positionX + 2)
-        basicBullet.positionY should equal(basicTank.positionY)
+        basicBullet.moveRelative(basicBullet.positionX + (basicBullet.directionX * basicBullet.speed),
+            basicBullet.positionY + (basicBullet.directionY * basicBullet.speed))
+        basicBullet.moveRelative(basicBullet.positionX + (basicBullet.directionX * basicBullet.speed),
+            basicBullet.positionY + (basicBullet.directionY * basicBullet.speed))
+        basicBullet.positionX should equal(basicTank.positionX + (basicTank.directionX * basicTank.tankData.bulletSpeed) * 2)
+        basicBullet.positionY should equal(basicTank.positionY + (basicTank.directionY * basicTank.tankData.bulletSpeed) * 2)
+    }
+
+    "bullets shot from the same tank" should "move in the same direction" in {
+        fastBullet(0).moveRelative(fastBullet(0).positionX + (fastBullet(0).directionX * fastBullet(0).speed),
+            fastBullet(0).positionY + (fastBullet(0).directionY * fastBullet(0).speed))
+        fastBullet(1).moveRelative(fastBullet(1).positionX + (fastBullet(1).directionX * fastBullet(1).speed),
+            fastBullet(1).positionY + (fastBullet(1).directionY * fastBullet(1).speed))
+        fastBullet(1).positionX should equal (fastBullet(0).positionX + (fastBullet(0).directionX * fastBullet(0).speed))
+        fastBullet(1).positionY should equal (fastBullet(0).positionY + (fastBullet(0).directionY * fastBullet(0).speed))
     }
 }

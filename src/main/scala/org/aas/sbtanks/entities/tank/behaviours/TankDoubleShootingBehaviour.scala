@@ -8,11 +8,11 @@ import org.aas.sbtanks.physics.CollisionLayer
 trait TankDoubleShootingBehaviour:
     self: Tank with PositionBehaviour with DirectionBehaviour =>
 
-    def shoot(): Seq[Bullet with PositionBehaviour with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour] =
+    def shoot(): Seq[Bullet with PositionBehaviour with ConstrainedMovementBehaviour with DirectionBehaviour  with CollisionBehaviour with DamageableBehaviour] =
         Seq(generateBullet((self.directionX, self.directionY)), generateBullet((self.directionX * 2, self.directionY * 2)))
 
 
-    def generateBullet(offset: (Double, Double)): Bullet with PositionBehaviour with CollisionBehaviour
+    def generateBullet(offset: (Double, Double)): Bullet with PositionBehaviour with ConstrainedMovementBehaviour
                                     with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour =
         new Bullet(self.tankData.bulletSpeed, false) with PositionBehaviour(self.positionX + offset._1, self.positionY + offset._2)
             with ConstrainedMovementBehaviour with DirectionBehaviour
