@@ -25,16 +25,16 @@ class BulletSpec extends AnyFlatSpec with Matchers {
                                     basicTank.positionY + basicTank.directionY) with ConstrainedMovementBehaviour with DirectionBehaviour
                                     with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
                                     Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer)))
-        fastTank.shoot() should be( Seq(new Bullet(fastTank.tankData.bulletSpeed, false)
+        fastTank.shoot() should be(Seq(new Bullet(fastTank.tankData.bulletSpeed, false)
                                     with PositionBehaviour(fastTank.positionX + fastTank.directionX,
                                     fastTank.positionY + fastTank.directionY) with ConstrainedMovementBehaviour with DirectionBehaviour
                                     with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
-                                    Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))),
+                                    Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer)),
                                     new Bullet(fastTank.tankData.bulletSpeed, false)
                                     with PositionBehaviour(fastTank.positionX + (fastTank.directionX * 2),
                                     fastTank.positionY + (fastTank.directionY * 2)) with ConstrainedMovementBehaviour with DirectionBehaviour
                                     with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
-                                    Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer)))
+                                    Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))))
 
     }
 
@@ -46,7 +46,8 @@ class BulletSpec extends AnyFlatSpec with Matchers {
 
     it should "continue to move in one direction once shot" in {
         basicBullet.moveRelative(1.0, 0.0)
-        basicBullet.positionX should equal((basicTank.positionX + basicTank.directionX) * 3)
-        basicBullet.positionY should equal((basicTank.positionY + basicTank.directionY) * 3)
+        basicBullet.moveRelative(1.0, 0.0)
+        basicBullet.positionX should equal(basicTank.positionX + 2)
+        basicBullet.positionY should equal(basicTank.positionY)
     }
 }
