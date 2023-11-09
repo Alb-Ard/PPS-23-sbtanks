@@ -8,12 +8,16 @@ import org.aas.sbtanks.physics.{Collider, CollisionLayer}
 import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.entities.repository.DestroyableEntityAutoManager
 
-abstract class BulletController(bullet: Bullet with PositionBehaviour with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour) extends Steppable:
+class BulletController(bullet: Bullet with PositionBehaviour with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour) extends Steppable:
 
     override def step(delta: Double): BulletController.this.type =
         checkCollision() //non serve passare un collider perchè il Bullet è un Collider!
-        bullet.positionChanged((bullet.positionX + (bullet.directionX * bullet.speed),
-            bullet.positionY + (bullet.directionY * bullet.speed)))
+        bullet.positionChanged.apply(bullet.positionX + (bullet.directionX * bullet.speed),
+            bullet.positionY + (bullet.directionY * bullet.speed))
+        /*
+        bullet.positionX + (bullet.directionX * bullet.speed),
+                    bullet.positionY + (bullet.directionY * bullet.speed))
+         */
         this
 
     //differenze tra bullet tank e bullet player:
@@ -27,11 +31,8 @@ abstract class BulletController(bullet: Bullet with PositionBehaviour with Direc
                 val hitTank = collider.find(el => el.layer == CollisionLayer.TanksLayer).get.asInstanceOf[Tank with DamageableBehaviour]
                 if(checkBulletPlayer(hitTank))
                     hitTank.damage()
-                    /*
-                    if(hitTank.tankData.health <= 0)
-                        hitTank.destroyed.apply(hitTank)
-                     */
-
+                    //if(hitTank.isPlayer && hitTank.tankData.health == 0)
+                        //respawn()
             if(collider.contains(CollisionLayer.WallsLayer))
                 val hitWall = collider.find(el => el.layer == CollisionLayer.WallsLayer).get.asInstanceOf[LevelObstacle with DamageableBehaviour]
                 hitWall.damage()
@@ -41,4 +42,5 @@ abstract class BulletController(bullet: Bullet with PositionBehaviour with Direc
                 hitBullet.damage()
 
     private def checkBulletPlayer(tank: Tank with DamageableBehaviour): Boolean =
-        (bullet.isPlayerBullet && !tank.isPlayer) || (!bullet.isPlayerBullet && tank.isPlayer)
+        //(bullet.isPlayerBullet && !tank.isPlayer) || (!bullet.isPlayerBullet && tank.isPlayer)
+        true
