@@ -14,10 +14,6 @@ class BulletController(bullet: Bullet with PositionBehaviour with ConstrainedMov
     override def step(delta: Double): BulletController.this.type =
         bullet.moveRelative(bullet.positionX + (bullet.directionX * bullet.speed),
             bullet.positionY + (bullet.directionY * bullet.speed))
-        /*
-        bullet.positionX + (bullet.directionX * bullet.speed),
-                    bullet.positionY + (bullet.directionY * bullet.speed))
-         */
         this
 
     //differenze tra bullet tank e bullet player:

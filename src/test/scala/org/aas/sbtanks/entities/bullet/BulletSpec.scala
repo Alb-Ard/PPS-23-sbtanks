@@ -1,6 +1,6 @@
 package org.aas.sbtanks.entities.bullet
 
-import org.aas.sbtanks.behaviours.{CollisionBehaviour, DirectionBehaviour, PositionBehaviour}
+import org.aas.sbtanks.behaviours.{CollisionBehaviour, DirectionBehaviour, PositionBehaviour, ConstrainedMovementBehaviour}
 import org.aas.sbtanks.entities.tank.behaviours.TankShootingBehaviour
 import org.aas.sbtanks.entities.tank.behaviours.TankDoubleShootingBehaviour
 import org.aas.sbtanks.physics.CollisionLayer
@@ -15,24 +15,24 @@ class BulletSpec extends AnyFlatSpec with Matchers {
     import org.aas.sbtanks.entities.tank.structure.Tank
 
 
-    val basicTank = new BasicTank() with PositionBehaviour() with DirectionBehaviour with TankShootingBehaviour()
+    val basicTank = new BasicTank() with PositionBehaviour() with DirectionBehaviour  with TankShootingBehaviour()
     val fastTank = new FastTank() with PositionBehaviour() with DirectionBehaviour with TankDoubleShootingBehaviour()
     val basicBullet = basicTank.shoot()
     val fastBullet = fastTank.shoot()
 
     "a bullet" should "be created when a tank shoots" in {
         basicTank.shoot() should be(new Bullet(basicTank.tankData.bulletSpeed, false) with PositionBehaviour(basicTank.positionX + basicTank.directionX,
-                                    basicTank.positionY + basicTank.directionY) with DirectionBehaviour
+                                    basicTank.positionY + basicTank.directionY) with ConstrainedMovementBehaviour with DirectionBehaviour
                                     with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
                                     Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer)))
         fastTank.shoot() should be( Seq(new Bullet(fastTank.tankData.bulletSpeed, false)
                                     with PositionBehaviour(fastTank.positionX + fastTank.directionX,
-                                    fastTank.positionY + fastTank.directionY) with DirectionBehaviour
+                                    fastTank.positionY + fastTank.directionY) with ConstrainedMovementBehaviour with DirectionBehaviour
                                     with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
                                     Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))),
                                     new Bullet(fastTank.tankData.bulletSpeed, false)
                                     with PositionBehaviour(fastTank.positionX + (fastTank.directionX * 2),
-                                    fastTank.positionY + (fastTank.directionY * 2)) with DirectionBehaviour
+                                    fastTank.positionY + (fastTank.directionY * 2)) with ConstrainedMovementBehaviour with DirectionBehaviour
                                     with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
                                     Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer)))
 
@@ -45,8 +45,7 @@ class BulletSpec extends AnyFlatSpec with Matchers {
 
 
     it should "continue to move in one direction once shot" in {
-        basicBullet.positionChanged.apply(basicBullet.positionX + (basicBullet.directionX * basicBullet.speed),
-                                    basicBullet.positionY + (basicBullet.directionY * basicBullet.speed))
+        basicBullet.moveRelative(1.0, 0.0)
         basicBullet.positionX should equal((basicTank.positionX + basicTank.directionX) * 3)
         basicBullet.positionY should equal((basicTank.positionY + basicTank.directionY) * 3)
     }
