@@ -5,7 +5,7 @@ import org.aas.sbtanks.enemies.ai.EnemyUtils.*
 import org.aas.sbtanks.enemies.ai.State.EnemyStateMonad.computeState
 
 trait AiMovementBehavior:
-    this: DirectionBehaviour with PositionBehaviour with CollisionBehaviour with ConstrainedMovementBehaviour =>
+    this: AiEntity =>
 
 
     /*
@@ -24,13 +24,16 @@ trait AiMovementBehavior:
     private def move(newPos: (Double, Double)): Unit =
         this.moveRelative(newPos._1, newPos._2)
 
-    def compute(): Unit =
+    def compute(): this.type =
         val (newPos, newContext): ((Double, Double), Enemy) = computeState().runAndTranslate(context)
+        
+        this.directionX
 
-        context = newContext
 
 
         this.move(newPos._1, newPos._2)
+
+        this
 
 
 
