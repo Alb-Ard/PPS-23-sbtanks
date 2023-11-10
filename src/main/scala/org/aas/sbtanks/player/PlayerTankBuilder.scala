@@ -41,11 +41,13 @@ case class PlayerTankBuilder(private val x: Double = 0,
             with DirectionBehaviour
             with CollisionBehaviour(collisionSizeX, collisionSizeY, collisionLayer, collisionMask.toSeq)
             with DamageableBehaviour:
-                override def damage(): Unit = 
+                override protected def applyDamage(amount: Int) = 
                     updateTankData(tankData.updateHealth(_ - 1))
                     tankData.health match
-                        case v if v <= 0 => destroyed(())
-                        case _ => ()
+                        case v if v <= 0 =>
+                            destroyed(())
+                            this
+                        case _ => this
 
 
 object PlayerTankBuilder:
