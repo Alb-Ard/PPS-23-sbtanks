@@ -5,16 +5,15 @@ import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.enemies.ai.*
 import org.aas.sbtanks.enemies.ai.State.EnemyStateMonad.computeState
 import org.aas.sbtanks.enemies.ai.EnemyUtils.Enemy
+import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
+import org.aas.sbtanks.enemies.controller.AiMovableController
 
-class EnemyController(private val enemyTanks: Seq[Tank]) extends Steppable:
+class EnemyController(private val enemyTanks: Seq[AiEntity]) extends AiMovableController(enemyTanks) with Steppable:
 
-    override def step(delta: Double) = ???
+    override def step(delta: Double) =
+        this.computeStates()
+        this
 
-    def updateAll(enemies: Seq[Enemy]): (Seq[(Double, Double)], Seq[Enemy]) =
-        enemies.map(updateEnemyPosition).unzip
-        
 
-    def updateEnemyPosition(enemy: Enemy): ((Double, Double), Enemy) =
-        computeState().runAndTranslate(enemy)
 
 
