@@ -14,4 +14,6 @@ trait TankShootingBehaviour:
                     with ConstrainedMovementBehaviour with DirectionBehaviour with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
                                             Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))
                     with DamageableBehaviour:
-                        override def damage(): Unit = this.destroyed(())
+                        override def applyDamage(amount: Int) = 
+                            destroyed(())
+                            this
