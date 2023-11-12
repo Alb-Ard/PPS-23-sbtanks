@@ -10,22 +10,15 @@ import org.aas.sbtanks.common.view.DirectionableView.lookInDirection
 import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.entities.tank.view.TankView
 import org.aas.sbtanks.entities.tank.structure.Tank
-import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
+import TankController.ControllableTank
+import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
 
-abstract class TankController[+A <: TankInputEvents](tank: ControllableTank, speedMultiplier: Double, view: TankView, viewScale: Double, protected val inputEvents: A) extends Steppable:
-    tank.directionChanged += { (x, y) => 
-        view.lookInDirection(x, y)
-        view.isMoving(tank.directionX != 0 || tank.directionY != 0)
-    }
-    tank.positionChanged += { (x, y) => view.move(x * viewScale, y * viewScale) }
-    inputEvents.moveDirectionChanged += tank.setDirection 
-    inputEvents.shootPerfomed += { _ => shoot() }
-
-    override def step(delta: Double) = 
-        tank.moveRelative(tank.directionX * tank.tankData.speed * speedMultiplier, tank.directionY * tank.tankData.speed * speedMultiplier)
-        this
-    
-    protected def shoot(): this.type
+trait TankController(tanks: Seq[(ControllableTank, TankView)], viewScale: Double):
+    tanks.foreach((t, v) => t.directionChanged += { (x, y) => 
+        v.lookInDirection(x, y)
+        v.isMoving(t.directionX != 0 || t.directionY != 0)
+    })
+    tanks.foreach((t, v) => t.positionChanged += { (x, y) => v.move(x * viewScale, y * viewScale) })
 
 object TankController:    
     type ControllableTank = Tank
@@ -33,3 +26,4 @@ object TankController:
         with MovementBehaviour
         with PositionBehaviour
         with CollisionBehaviour
+        with TankMultipleShootingBehaviour

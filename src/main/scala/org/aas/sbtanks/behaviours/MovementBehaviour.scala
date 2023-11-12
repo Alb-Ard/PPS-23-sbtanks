@@ -2,6 +2,7 @@ package org.aas.sbtanks.behaviours
 
 import org.aas.sbtanks.event.EventSource
 import org.aas.sbtanks.physics.AABB.checkOverlap
+import org.aas.sbtanks.physics.PhysicsWorld
 
 trait MovementBehaviour:
     this: PositionBehaviour =>
@@ -13,9 +14,11 @@ trait ConstrainedMovementBehaviour extends MovementBehaviour:
     this: PositionBehaviour with CollisionBehaviour =>
 
     override def moveRelative(amountX: Double, amountY: Double) =
-        val previousX = positionX
-        val previousY = positionY
-        super.moveRelative(amountX, amountY)
-        if overlapsAnything then
-            setPosition(previousX, previousY)
+        if testMoveRelative(amountX, amountY) then
+            super.moveRelative(amountX, amountY)
         this
+    
+    def testMoveRelative(amountX: Double, amountY: Double) =
+        val startingBox = boundingBox
+        val movedBox = boundingBox.copy(x = startingBox.x + amountX, y = startingBox.y + amountY)
+        PhysicsWorld.getBoxOverlaps(movedBox, layerMasks, Seq(this)).isEmpty

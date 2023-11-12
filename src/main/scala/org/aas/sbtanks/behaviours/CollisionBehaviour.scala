@@ -11,11 +11,13 @@ trait CollisionBehaviour(sizeX: Double, sizeY: Double, override val layer: Colli
 
     val overlapping = EventSource[Seq[Collider]]
 
+    positionChanged += { _ => PhysicsWorld.refresh() }
+
     def overlapsAnything = overlappedColliders.nonEmpty 
 
-    def overlappedColliders = 
-        val overlaps = PhysicsWorld.getOverlaps(this)
-        overlapping(overlaps)
-        overlaps
+    def overlappedColliders = PhysicsWorld.getOverlaps(this)
 
     override def boundingBox = AABB(positionX, positionY, sizeX, sizeY)
+
+    override def overlapsChanged(overlappingColliders: Seq[Collider]) = 
+        overlapping(overlappingColliders)

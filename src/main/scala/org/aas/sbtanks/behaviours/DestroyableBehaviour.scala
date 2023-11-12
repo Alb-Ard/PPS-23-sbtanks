@@ -5,4 +5,22 @@ import org.aas.sbtanks.event.EventSource
 trait DamageableBehaviour:
     val destroyed = EventSource[Unit]()
 
-    def damage(): Unit
+    private var damageable = true
+
+    def isDamageable = damageable
+
+    def setDamageable(damageable: Boolean): this.type =
+        this.damageable = damageable
+        this
+
+    def damage(amount: Int): this.type =
+        isDamageable match
+            case true => applyDamage(amount)
+            case _ => this
+
+    protected def applyDamage(amount: Int): this.type
+
+object DamageableBehaviour:
+    extension (damageable: DamageableBehaviour)
+        def damage() =
+            damageable.damage(1)

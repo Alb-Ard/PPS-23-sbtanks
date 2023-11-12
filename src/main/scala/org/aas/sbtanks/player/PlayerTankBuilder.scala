@@ -9,6 +9,7 @@ import org.aas.sbtanks.behaviours.ConstrainedMovementBehaviour
 import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.behaviours.DamageableBehaviour
 import org.aas.sbtanks.entities.tank.TankExample.updatedTank
+import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
 
 case class PlayerTank() extends Tank(PlayerTankData)
 
@@ -40,12 +41,15 @@ case class PlayerTankBuilder(private val x: Double = 0,
             with ConstrainedMovementBehaviour
             with DirectionBehaviour
             with CollisionBehaviour(collisionSizeX, collisionSizeY, collisionLayer, collisionMask.toSeq)
-            with DamageableBehaviour:
-                override def damage(): Unit = 
+            with DamageableBehaviour
+            with TankMultipleShootingBehaviour:
+                override protected def applyDamage(amount: Int) = 
                     updateTankData(tankData.updateHealth(_ - 1))
                     tankData.health match
-                        case v if v <= 0 => destroyed(())
-                        case _ => ()
+                        case v if v <= 0 =>
+                            destroyed(())
+                            this
+                        case _ => this
 
 
 object PlayerTankBuilder:

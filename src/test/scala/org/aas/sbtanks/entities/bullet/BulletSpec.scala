@@ -1,7 +1,8 @@
 package org.aas.sbtanks.entities.bullet
 
-import org.aas.sbtanks.behaviours.{CollisionBehaviour, DirectionBehaviour, PositionBehaviour}
+import org.aas.sbtanks.behaviours.{CollisionBehaviour, DirectionBehaviour, PositionBehaviour, ConstrainedMovementBehaviour}
 import org.aas.sbtanks.entities.tank.behaviours.TankShootingBehaviour
+import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
 import org.aas.sbtanks.physics.CollisionLayer
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -14,33 +15,50 @@ class BulletSpec extends AnyFlatSpec with Matchers {
     import org.aas.sbtanks.entities.tank.structure.Tank
 
 
-    val basicTank = new BasicTank() with PositionBehaviour() with DirectionBehaviour with TankShootingBehaviour()
-    val fastTank = new FastTank() with PositionBehaviour() with DirectionBehaviour with TankShootingBehaviour()
-    val basicBullet = basicTank.shoot()
-    val fastBullet = fastTank.shoot()
+    val basicTank = new BasicTank() with PositionBehaviour() with DirectionBehaviour  with TankMultipleShootingBehaviour()
+    val fastTank = new FastTank() with PositionBehaviour() with DirectionBehaviour with TankMultipleShootingBehaviour()
+    val basicBullet = basicTank.shoot(1)
+    val fastBullet = fastTank.shoot(2)
 
     "a bullet" should "be created when a tank shoots" in {
-        basicTank.shoot() should be(new Bullet(basicTank.tankData.bulletSpeed, false) with PositionBehaviour(basicTank.positionX + basicTank.directionX,
-                                    basicTank.positionY + basicTank.directionY) with DirectionBehaviour
+        basicTank.shoot(1) should be(Seq(new Bullet(basicTank.tankData.bulletSpeed, false) with PositionBehaviour(basicTank.positionX + basicTank.directionX,
+                                    basicTank.positionY + basicTank.directionY) with ConstrainedMovementBehaviour with DirectionBehaviour
                                     with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
-                                    Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer)))
-        fastTank.shoot() should be(new Bullet(fastTank.tankData.bulletSpeed, false) with PositionBehaviour(fastTank.positionX + fastTank.directionX,
-                                    fastTank.positionY + fastTank.directionY) with DirectionBehaviour
+                                    Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))))
+        fastTank.shoot(2) should be(Seq(new Bullet(fastTank.tankData.bulletSpeed, false)
+                                    with PositionBehaviour(fastTank.positionX + fastTank.directionX,
+                                    fastTank.positionY + fastTank.directionY) with ConstrainedMovementBehaviour with DirectionBehaviour
                                     with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
-                                    Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer)))
+                                    Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer)),
+                                    new Bullet(fastTank.tankData.bulletSpeed, false)
+                                    with PositionBehaviour(fastTank.positionX + (fastTank.directionX * 2),
+                                    fastTank.positionY + (fastTank.directionY * 2)) with ConstrainedMovementBehaviour with DirectionBehaviour
+                                    with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
+                                    Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))))
 
     }
 
     it should "have the same speed as the tank that shot it" in {
-        basicBullet.speed should equal(basicTank.tankData.bulletSpeed)
-        fastBullet.speed should equal(fastTank.tankData.bulletSpeed)
+        basicBullet.head.speed should equal(basicTank.tankData.bulletSpeed)
+        fastBullet.head.speed should equal(fastTank.tankData.bulletSpeed)
     }
 
 
     it should "continue to move in one direction once shot" in {
-        basicBullet.positionChanged(basicBullet.positionX + (basicBullet.directionX * basicBullet.speed),
-                                    basicBullet.positionY + (basicBullet.directionY * basicBullet.speed))
-        basicBullet.positionX should equal((basicTank.positionX + basicTank.directionX) * 3)
-        basicBullet.positionY should equal((basicTank.positionY + basicTank.directionY) * 3)
+        basicBullet(0).moveRelative(basicBullet(0).positionX + (basicBullet(0).directionX * basicBullet(0).speed),
+            basicBullet(0).positionY + (basicBullet(0).directionY * basicBullet(0).speed))
+        basicBullet(0).moveRelative(basicBullet(0).positionX + (basicBullet(0).directionX * basicBullet(0).speed),
+            basicBullet(0).positionY + (basicBullet(0).directionY * basicBullet(0).speed))
+        basicBullet(0).positionX should equal(basicTank.positionX + (basicTank.directionX * basicTank.tankData.bulletSpeed) * 2)
+        basicBullet(0).positionY should equal(basicTank.positionY + (basicTank.directionY * basicTank.tankData.bulletSpeed) * 2)
+    }
+
+    "bullets shot from the same tank" should "move in the same direction" in {
+        fastBullet(0).moveRelative(fastBullet(0).positionX + (fastBullet(0).directionX * fastBullet(0).speed),
+            fastBullet(0).positionY + (fastBullet(0).directionY * fastBullet(0).speed))
+        fastBullet(1).moveRelative(fastBullet(1).positionX + (fastBullet(1).directionX * fastBullet(1).speed),
+            fastBullet(1).positionY + (fastBullet(1).directionY * fastBullet(1).speed))
+        fastBullet(1).positionX should equal (fastBullet(0).positionX + (fastBullet(0).directionX * fastBullet(0).speed))
+        fastBullet(1).positionY should equal (fastBullet(0).positionY + (fastBullet(0).directionY * fastBullet(0).speed))
     }
 }
