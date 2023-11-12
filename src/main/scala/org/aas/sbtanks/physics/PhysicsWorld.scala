@@ -26,9 +26,9 @@ trait PhysicsContainer:
             case _ =>
                 val clampedBox = box.normalized.clamped(0.1D)
                 colliders.filterNot(ignoredColliders.contains)
-                    .filter(c => {
-                        println(c.toString() + " " + clampedBox.toString())
-                        c.boundingBox.checkOverlap(clampedBox) && layers.contains(c.layer)
-                    })
+                    .filter(c => c.boundingBox.checkOverlap(clampedBox) && layers.contains(c.layer))
+    
+    def refresh() =
+        colliders.map(c => (c, getOverlaps(c))).foreach((c, o) => c.overlapsChanged(o))
 
 object PhysicsWorld extends PhysicsContainer
