@@ -40,8 +40,9 @@ object LevelObstacle:
                         Seq.empty
                     )
                     with DamageableBehaviour:
-                        override def damage(): Unit = 
+                        override protected def applyDamage(amount: Int) =
                             destroyed(())
+                            this
                 )
 
     case object BrickWall extends LevelObstacleProvider("obstacles/brick_wall_1.png", "obstacles/brick_wall_2.png")

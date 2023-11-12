@@ -4,10 +4,14 @@ import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.obstacles.view.ObstacleView
 import org.aas.sbtanks.behaviours.PositionBehaviour
 import org.aas.sbtanks.entities.repository.EntityRepositoryContext
+import org.aas.sbtanks.obstacles.view.scalafx.JFXAnimatedObstacleView
 
 final case class LevelObstacleController(model: LevelObstacle with PositionBehaviour, view: ObstacleView, positionMultiplier: Double) extends Steppable:
     model.positionChanged += moveView
     moveView(model.positionX, model.positionY)
+    view match
+        case a: JFXAnimatedObstacleView => a.startAnimation()
+        case _ => ()
 
     override def step(delta: Double) = this
 
