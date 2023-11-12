@@ -5,14 +5,20 @@ import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.physics.CollisionLayer
 
-trait TankDoubleShootingBehaviour:
+trait TankMultipleShootingBehaviour:
     self: Tank with PositionBehaviour with DirectionBehaviour =>
 
-    def shoot(): Seq[Bullet with PositionBehaviour with ConstrainedMovementBehaviour with DirectionBehaviour  with CollisionBehaviour with DamageableBehaviour] =
-        Seq(generateBullet((self.directionX, self.directionY)), generateBullet((self.directionX * 2, self.directionY * 2)))
+    def shoot(nShots: Int): Seq[Bullet with PositionBehaviour with ConstrainedMovementBehaviour with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour] =
+        var shotsFired: Seq[Bullet with PositionBehaviour with ConstrainedMovementBehaviour
+            with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour] = Seq.empty
+        for(n <- Range(1, nShots + 1))
+            shotsFired = shotsFired :+ generateBullet((self.directionX * n, self.directionY * n))
+            //shotsFired.::(generateBullet((self.directionX * n, self.directionY * n)))
+            //Seq(generateBullet((self.directionX, self.directionY)), generateBullet((self.directionX * 2, self.directionY * 2)))
+        shotsFired
 
 
-    def generateBullet(offset: (Double, Double)): Bullet with PositionBehaviour with ConstrainedMovementBehaviour
+    private def generateBullet(offset: (Double, Double)): Bullet with PositionBehaviour with ConstrainedMovementBehaviour
                                     with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour =
         new Bullet(self.tankData.bulletSpeed, false) with PositionBehaviour(self.positionX + offset._1, self.positionY + offset._2)
             with ConstrainedMovementBehaviour with DirectionBehaviour
