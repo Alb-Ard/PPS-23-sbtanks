@@ -14,16 +14,17 @@ trait JFXImageViewAnimator(private var images: Seq[Image], speed: Double, privat
 
     def isAnimationRunning = running
 
-    def startAnimation() =
+    def startAnimation(): this.type =
         running = true
         animationTimer.start()
         this
 
-    def stopAnimation() =
+    def stopAnimation(): this.type =
         running = false
         animationTimer.stop()
         this
 
-    def setImages(images: Seq[Image]) =
+    def setImages(images: Seq[Image]): this.type =
         this.images = images
         Platform.runLater { image = images(0) }
+        this
