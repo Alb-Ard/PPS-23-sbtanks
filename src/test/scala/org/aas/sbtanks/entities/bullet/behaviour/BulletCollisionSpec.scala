@@ -24,7 +24,7 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers{
                         Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))
                         with DamageableBehaviour:
                             override def damage(): Unit = this.destroyed(())
-    val bullet2 = new Bullet(1, true) with PositionBehaviour(0,1) with ConstrainedMovementBehaviour
+    val bullet2 = new Bullet(1, true) with PositionBehaviour(1,0) with ConstrainedMovementBehaviour
                         with DirectionBehaviour with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
                         Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))
                         with DamageableBehaviour:
