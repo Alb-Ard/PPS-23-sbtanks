@@ -13,28 +13,35 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers{
 
     val tank: Tank = new BasicTank() with PositionBehaviour() with DirectionBehaviour with MovementBehaviour
         with TankShootingBehaviour() with DamageableBehaviour:
-        override def damage(): Unit = {
-            tankData.updateHealth(_ - 1)
-            if (tankData.health == 0)
-                this.destroyed(())
-        }
+            override def applyDamage(amount: Int)= {
+                tankData.updateHealth(_ - 1)
+                if (tankData.health == 0)
+                    this.destroyed(())
+                this
+            }
 
     val bullet1 = new Bullet(1, false) with PositionBehaviour with ConstrainedMovementBehaviour with DirectionBehaviour
                         with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
                         Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))
                         with DamageableBehaviour:
-                            override def damage(): Unit = this.destroyed(())
+                            override def applyDamage(amount: Int) =
+                                destroyed(())
+                                this
     val bullet2 = new Bullet(1, true) with PositionBehaviour(1,0) with ConstrainedMovementBehaviour
                         with DirectionBehaviour with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
                         Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))
                         with DamageableBehaviour:
-                            override def damage(): Unit = this.destroyed(())
+                            override def applyDamage(amount: Int) =
+                                destroyed(())
+                                this
 
     val bullet3 = new Bullet(1, true) with PositionBehaviour with ConstrainedMovementBehaviour with DirectionBehaviour
                         with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
                         Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))
                         with DamageableBehaviour:
-                        override def damage(): Unit = this.destroyed(())
+                            override def applyDamage(amount: Int) =
+                                destroyed(())
+                                this
 
     val bulletController = new BulletController(bullet1)
 
