@@ -7,19 +7,16 @@ import org.aas.sbtanks.behaviours.PositionBehaviour
 import org.aas.sbtanks.behaviours.CollisionBehaviour
 
 class RayCastSpec extends AnyFlatSpec with Matchers:
-    case class MockCollider(x: Double, y: Double, sizeX: Double, sizeY: Double, override val layer: CollisionLayer) 
-        extends PositionBehaviour(x, y) with CollisionBehaviour(sizeX, sizeY, layer, CollisionLayer.ALL_LAYERS)
-
     "A horizontal RayCast" should "not return any collisions in any empty world" in {
         PhysicsWorld.clearColliders()
-        PhysicsWorld.horizontalRayCast(0, 0, Option.empty, CollisionLayer.ALL_LAYERS, Seq.empty) shouldBe empty
+        PhysicsWorld.horizontalRayCast(0, 0, Option.empty, CollisionLayer.values.toSeq, Seq.empty) should be (empty)
     }
 
     it should "not return any collisions when no objects are in its check area" in {
         PhysicsWorld.clearColliders()
         PhysicsWorld.registerCollider(MockCollider(0, -10, 1, 1, CollisionLayer.TanksLayer))
         PhysicsWorld.registerCollider(MockCollider(-10, 0, 1, 1, CollisionLayer.TanksLayer))
-        PhysicsWorld.horizontalRayCast(0, 0, Option.empty, CollisionLayer.ALL_LAYERS, Seq.empty) shouldBe empty
+        PhysicsWorld.horizontalRayCast(0, 0, Option.empty, CollisionLayer.values.toSeq, Seq.empty) should be (empty)
     }
 
     it should "return collisions when objects are in its check area" in {
@@ -27,19 +24,31 @@ class RayCastSpec extends AnyFlatSpec with Matchers:
         PhysicsWorld.registerCollider(MockCollider(0, -10, 1, 1, CollisionLayer.TanksLayer))
         val colliderInFront = MockCollider(10, 0, 1, 1, CollisionLayer.TanksLayer)
         PhysicsWorld.registerCollider(colliderInFront)
-        PhysicsWorld.horizontalRayCast(0, 0, Option.empty, CollisionLayer.ALL_LAYERS, Seq.empty) shouldBe empty
+        val foundColliders = PhysicsWorld.horizontalRayCast(0, 0, Option.empty, CollisionLayer.values.toSeq, Seq.empty) 
+        foundColliders.length should be (1)
+        foundColliders should contain (colliderInFront)
+    }
+
+    it should "be able to cast in a negative direction" in {
+        PhysicsWorld.clearColliders()
+        PhysicsWorld.registerCollider(MockCollider(0, -10, 1, 1, CollisionLayer.TanksLayer))
+        val colliderInFront = MockCollider(-10, 0, 1, 1, CollisionLayer.TanksLayer)
+        PhysicsWorld.registerCollider(colliderInFront)
+        val foundColliders = PhysicsWorld.horizontalRayCast(0, 0, Option(-20), CollisionLayer.values.toSeq, Seq.empty) 
+        foundColliders.length should be (1)
+        foundColliders should contain (colliderInFront)
     }
 
     "A vertical RayCast" should "not return any collisions in any empty world" in {
         PhysicsWorld.clearColliders()
-        PhysicsWorld.verticalRayCast(0, 0, Option.empty, CollisionLayer.ALL_LAYERS, Seq.empty) shouldBe empty
+        PhysicsWorld.verticalRayCast(0, 0, Option.empty, CollisionLayer.values.toSeq, Seq.empty) should be (empty)
     }
 
     it should "not return any collisions when no objects are in its check area" in {
         PhysicsWorld.clearColliders()
         PhysicsWorld.registerCollider(MockCollider(-10, 0, 1, 1, CollisionLayer.TanksLayer))
         PhysicsWorld.registerCollider(MockCollider(0, -10, 1, 1, CollisionLayer.TanksLayer))
-        PhysicsWorld.verticalRayCast(0, 0, Option.empty, CollisionLayer.ALL_LAYERS, Seq.empty) shouldBe empty
+        PhysicsWorld.verticalRayCast(0, 0, Option.empty, CollisionLayer.values.toSeq, Seq.empty) should be (empty)
     }
 
     it should "return collisions when objects are in its check area" in {
@@ -47,5 +56,17 @@ class RayCastSpec extends AnyFlatSpec with Matchers:
         PhysicsWorld.registerCollider(MockCollider(-10, 0, 1, 1, CollisionLayer.TanksLayer))
         val colliderInFront = MockCollider(0, 10, 1, 1, CollisionLayer.TanksLayer)
         PhysicsWorld.registerCollider(colliderInFront)
-        PhysicsWorld.verticalRayCast(0, 0, Option.empty, CollisionLayer.ALL_LAYERS, Seq.empty) should contain (colliderInFront)
+        val foundColliders = PhysicsWorld.verticalRayCast(0, 0, Option.empty, CollisionLayer.values.toSeq, Seq.empty) 
+        foundColliders.length should be (1)
+        foundColliders should contain (colliderInFront)
+    }
+
+    it should "be able to cast in a negative direction" in {
+        PhysicsWorld.clearColliders()
+        PhysicsWorld.registerCollider(MockCollider(-10, 0, 1, 1, CollisionLayer.TanksLayer))
+        val colliderInFront = MockCollider(0, -10, 1, 1, CollisionLayer.TanksLayer)
+        PhysicsWorld.registerCollider(colliderInFront)
+        val foundColliders = PhysicsWorld.verticalRayCast(0, 0, Option(-20), CollisionLayer.values.toSeq, Seq.empty) 
+        foundColliders.length should be (1)
+        foundColliders should contain (colliderInFront)
     }

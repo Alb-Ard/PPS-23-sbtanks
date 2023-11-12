@@ -21,8 +21,14 @@ trait PhysicsContainer:
         getBoxOverlaps(collider.boundingBox, collider.layerMasks, Seq(collider))
 
     def getBoxOverlaps(box: AABB, layers: Seq[CollisionLayer], ignoredColliders: Seq[Collider]) =
-        val clampedBox = AABB(box.x, box.y, Math.max(0.1D, box.width), Math.max(0.1D, box.height))
-        colliders.filterNot(ignoredColliders.contains)
-            .filter(c => c.boundingBox.checkOverlap(box) && (layers.isEmpty || layers.contains(c.layer)))
+        layers.length match
+            case 0 => Seq.empty
+            case _ =>
+                val clampedBox = box.normalized.clamped(0.1D)
+                colliders.filterNot(ignoredColliders.contains)
+                    .filter(c => {
+                        println(c.toString() + " " + clampedBox.toString())
+                        c.boundingBox.checkOverlap(clampedBox) && layers.contains(c.layer)
+                    })
 
 object PhysicsWorld extends PhysicsContainer
