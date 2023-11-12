@@ -1,11 +1,11 @@
 package org.aas.sbtanks.enemies.controller
 
 import org.aas.sbtanks.common.Steppable
-import org.aas.sbtanks.enemies.ai.AiEntity
-import org.aas.sbtanks.enemies.ai.fsm.AiMovementStateMachineUtils.computeAiState
+import org.aas.sbtanks.enemies.ai.MovementEntity
+import org.aas.sbtanks.enemies.ai.fsm.movement.AiMovementStateMachineUtils.computeAiState
 
 
-trait AiMovableController(val entities: Seq[AiEntity]):
+trait AiMovableController(val entities: Seq[MovementEntity]):
 
     def computeStates() =
         this.entities.map(computeAiState)

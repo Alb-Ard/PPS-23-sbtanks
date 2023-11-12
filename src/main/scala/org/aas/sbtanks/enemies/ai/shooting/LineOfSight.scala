@@ -1,8 +1,8 @@
-package org.aas.sbtanks.enemies.ai
+package org.aas.sbtanks.enemies.ai.shooting
 
 import org.aas.sbtanks.behaviours.{DirectionBehaviour, PositionBehaviour}
-import org.aas.sbtanks.physics.{Collider, CollisionLayer, PhysicsContainer, PhysicsWorld}
 import org.aas.sbtanks.physics.Raycast.*
+import org.aas.sbtanks.physics.{Collider, CollisionLayer, PhysicsContainer, PhysicsWorld}
 
 trait LineOfSight(private val priorityCollider: Seq[Collider], private val priorityTake: Int, private val lineCollisions: Seq[CollisionLayer], private val exclusion: Seq[Collider]):
     this: PositionBehaviour with DirectionBehaviour =>

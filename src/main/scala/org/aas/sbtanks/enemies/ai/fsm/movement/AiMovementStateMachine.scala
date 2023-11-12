@@ -1,12 +1,12 @@
-package org.aas.sbtanks.enemies.ai.fsm
+package org.aas.sbtanks.enemies.ai.fsm.movement
 
-import org.aas.sbtanks.enemies.ai.AiMovementState
-import org.aas.sbtanks.enemies.ai.State.State
-import org.aas.sbtanks.enemies.ai.AiEntity
 import org.aas.sbtanks.enemies.ai.DirectionUtils.*
-import org.aas.sbtanks.enemies.ai.fsm.DirectionMove.{CanMoveTo, CannotMoveTo}
+import org.aas.sbtanks.enemies.ai.State.State
+import DirectionMove.{CanMoveTo, CannotMoveTo}
+import org.aas.sbtanks.enemies.ai.fsm.{StateMachine, StateModifier}
+import org.aas.sbtanks.enemies.ai.{MovementEntity, AiMovementState}
 
-object AiMovementStateMachine extends StateMachine[AiMovementState, AiEntity, DirectionMove] with StateModifier[AiMovementState, AiEntity]:
+object AiMovementStateMachine extends StateMachine[AiMovementState, MovementEntity, DirectionMove] with StateModifier[AiMovementState, MovementEntity]:
 
     private def pure[A](a: A): AiMovementState[A] = State(s => (a, s))
 
@@ -26,17 +26,17 @@ object AiMovementStateMachine extends StateMachine[AiMovementState, AiEntity, Di
                 case ((_, y), CanMoveTo) if y < 0.0 => pure(Left_X)
                 case ((_, y), CannotMoveTo) if y < 0.0 => pure(Bottom_Y)
 
-            _ <- modify(e => e.setDirection(newDir._1, newDir._2).asInstanceOf[AiEntity])
+            _ <- modify(e => e.setDirection(newDir._1, newDir._2).asInstanceOf[MovementEntity])
         yield
             ()
 
-    override def getState: AiMovementState[AiEntity] = State(s => (s, s))
+    override def getState: AiMovementState[MovementEntity] = State(s => (s, s))
 
-    override def gets[A](f: AiEntity => A): AiMovementState[A] = State(s => (f(s), s))
+    override def gets[A](f: MovementEntity => A): AiMovementState[A] = State(s => (f(s), s))
 
-    override def setState(s: AiEntity): AiMovementState[Unit] = State(_ => ((), s))
+    override def setState(s: MovementEntity): AiMovementState[Unit] = State(_ => ((), s))
 
-    override def modify(f: AiEntity => AiEntity): AiMovementState[Unit] =
+    override def modify(f: MovementEntity => MovementEntity): AiMovementState[Unit] =
         for {
             s <- getState
             _ <- setState(f(s))
@@ -77,7 +77,7 @@ object AiMovementStateMachine extends StateMachine[AiMovementState, AiEntity, Di
 
 
 object AiMovementStateMachineUtils:
-    def computeAiState(entity: AiEntity): ((Double, Double), AiEntity) =
+    def computeAiState(entity: MovementEntity): ((Double, Double), MovementEntity) =
         AiMovementStateMachine.computeState().runAndTranslate(entity)
 
 

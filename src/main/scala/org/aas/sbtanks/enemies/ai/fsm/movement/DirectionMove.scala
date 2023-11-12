@@ -1,4 +1,4 @@
-package org.aas.sbtanks.enemies.ai.fsm
+package org.aas.sbtanks.enemies.ai.fsm.movement
 
 enum DirectionMove:
     case CanMoveTo
