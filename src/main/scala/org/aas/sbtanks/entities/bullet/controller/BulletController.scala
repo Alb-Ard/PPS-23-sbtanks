@@ -7,13 +7,14 @@ import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehavi
 import org.aas.sbtanks.physics.{Collider, CollisionLayer}
 import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.entities.repository.DestroyableEntityAutoManager
+import org.aas.sbtanks.behaviours.DamageableBehaviour.damage
 
 class BulletController(bullet: Bullet with PositionBehaviour with ConstrainedMovementBehaviour
                         with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour) extends Steppable:
 
     bullet.overlapping += checkCollision
 
-    override def step(delta: Double): BulletController.this.type =
+    override def step(delta: Double) =
         bullet.moveRelative(bullet.positionX + (bullet.directionX * bullet.speed),
             bullet.positionY + (bullet.directionY * bullet.speed))
         this
@@ -22,17 +23,15 @@ class BulletController(bullet: Bullet with PositionBehaviour with ConstrainedMov
     //bullet tank colpisce altri bullets di tutti i tipi, ostacoli e il player
     //bullet player colpisce gli altri tank, gli ostacoli e i proiettili di tutti i tipi
     private def checkCollision(colliders: Seq[Collider]): Unit =
-        val filteredColliders = colliders.filter(el => el.isInstanceOf[DamageableBehaviour])
-        filteredColliders.head match
-            case el if(el.layer == CollisionLayer.TanksLayer) => {
-                val hitTank = el.layer.asInstanceOf[Tank with DamageableBehaviour]
-                if(checkBulletPlayer(hitTank))
-                    hitTank.damage()
+        colliders.foreach(c => c match
+            case el: Tank with DamageableBehaviour => {
+                if(checkBulletPlayer(el))
+                    el.damage()
             }
-            case el if(el.layer == CollisionLayer.WallsLayer) =>
-                el.layer.asInstanceOf[LevelObstacle with DamageableBehaviour].damage()
-            case el if(el.layer == CollisionLayer.BulletsLayer) =>
-                el.layer.asInstanceOf[Bullet with DamageableBehaviour].damage()
+            case el: DamageableBehaviour => {
+                el.damage()
+            }
+        )
         bullet.damage()
 
         //:: Nil
