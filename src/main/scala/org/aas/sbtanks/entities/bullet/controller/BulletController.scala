@@ -8,15 +8,15 @@ import org.aas.sbtanks.physics.{Collider, CollisionLayer}
 import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.entities.repository.DestroyableEntityAutoManager
 import org.aas.sbtanks.behaviours.DamageableBehaviour.damage
+import org.aas.sbtanks.behaviours.MovementBehaviour
 
-class BulletController(bullet: Bullet with PositionBehaviour with ConstrainedMovementBehaviour
+class BulletController(bullet: Bullet with PositionBehaviour with MovementBehaviour
                         with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour) extends Steppable:
 
     bullet.overlapping += checkCollision
 
     override def step(delta: Double) =
-        bullet.moveRelative(bullet.positionX + (bullet.directionX * bullet.speed),
-            bullet.positionY + (bullet.directionY * bullet.speed))
+        bullet.moveRelative(bullet.directionX * bullet.speed, bullet.directionY * bullet.speed)
         this
 
     //differenze tra bullet tank e bullet player:
