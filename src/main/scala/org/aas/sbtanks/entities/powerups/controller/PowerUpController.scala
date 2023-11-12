@@ -22,7 +22,7 @@ class PowerUpController(var powerUpView: PowerUpViewManager, powerUp: PickablePo
 
     }
 
-    override def step(deltaTime: Double): Steppable =
+    override def step(deltaTime: Double): this.type =
         powerUpBinder.getPowerUps.collect:
             case element: TimeablePowerUp =>
                 element.decreaseDuration(deltaTime)
