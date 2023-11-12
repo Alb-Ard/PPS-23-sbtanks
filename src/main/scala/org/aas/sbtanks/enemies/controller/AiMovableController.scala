@@ -2,7 +2,8 @@ package org.aas.sbtanks.enemies.controller
 
 import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.enemies.ai.AiEntity
-import org.aas.sbtanks.enemies.ai.aa.computeAiState
+import org.aas.sbtanks.enemies.ai.fsm.AiMovementStateMachineUtils.computeAiState
+
 
 trait AiMovableController(val entities: Seq[AiEntity]):
 

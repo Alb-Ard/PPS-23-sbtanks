@@ -47,10 +47,10 @@ object AiMovementStateMachine extends StateMachine[AiMovementState, AiEntity, Di
         for
             s0 <- getState
             x <- gets(x => (x.directionX.asInstanceOf[Double], x.directionY.asInstanceOf[Double]))
-            if isMoveValid(s0)
+            if s0.testMoveRelative(x._1, x._2)
         yield x
 
-    def moveNext(): AiMovementState[(Double, Double)] =
+    private def moveNext(): AiMovementState[(Double, Double)] =
         for
             c <- checkMove()
             d <- c match
@@ -58,7 +58,7 @@ object AiMovementStateMachine extends StateMachine[AiMovementState, AiEntity, Di
                 case None => transition(CannotMoveTo).flatMap(_ => moveNext())
         yield d
 
-    def getNewCoord(): AiMovementState[(Double, Double)] =
+    private def getNewCoord: AiMovementState[(Double, Double)] =
         for
             d <- moveNext()
             c <- gets(x => (x.positionX, x.positionY))
@@ -72,10 +72,14 @@ object AiMovementStateMachine extends StateMachine[AiMovementState, AiEntity, Di
 
     def computeState(): AiMovementState[(Double, Double)] =
         for
-            newCoord <- getNewCoord()
+            newCoord <- getNewCoord
             _ <- transition(CanMoveTo)
         yield newCoord
 
 
+object AiMovementStateMachineUtils:
+    def computeAiState(entity: AiEntity): ((Double, Double), AiEntity) =
+        AiMovementStateMachine.computeState().runAndTranslate(entity)
+
 object x extends App:
-    println("CIAO")
+    println("csac")
