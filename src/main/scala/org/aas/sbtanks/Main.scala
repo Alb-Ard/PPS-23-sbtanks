@@ -24,7 +24,7 @@ import org.aas.sbtanks.player.PlayerTankBuilder
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import org.aas.sbtanks.common.view.scalafx.JFXImageViewAnimator
 import org.aas.sbtanks.entities.bullet.Bullet
-import org.aas.sbtanks.entities.bullet.controller.BulletController
+import org.aas.sbtanks.entities.bullet.controller.scalafx.JFXBulletController
 import org.aas.sbtanks.obstacles.view.scalafx.JFXObstacleView
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityMvRepositoryContainer
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityControllerRepository
@@ -68,7 +68,7 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView)), tileSize))
                 .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory[Stage](viewScale * tileSize))
-                .registerControllerFactory(m => m.isInstanceOf[Bullet], BulletController.factory(viewScale * tileSize))
+                .registerControllerFactory(m => m.isInstanceOf[Bullet], JFXBulletController.factory())
 
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
         levelFactory.createFromString("UUUUUUU" +
