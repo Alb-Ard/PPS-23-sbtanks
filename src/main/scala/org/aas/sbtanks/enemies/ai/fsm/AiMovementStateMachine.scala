@@ -3,8 +3,7 @@ package org.aas.sbtanks.enemies.ai.fsm
 import org.aas.sbtanks.enemies.ai.AiMovementState
 import org.aas.sbtanks.enemies.ai.State.State
 import org.aas.sbtanks.enemies.ai.AiEntity
-import org.aas.sbtanks.enemies.ai.AiMovement.{getState, gets, isMoveValid, pure, transition}
-import org.aas.sbtanks.enemies.ai.EnemyUtils.*
+import org.aas.sbtanks.enemies.ai.DirectionUtils.*
 import org.aas.sbtanks.enemies.ai.fsm.DirectionMove.{CanMoveTo, CannotMoveTo}
 
 object AiMovementStateMachine extends StateMachine[AiMovementState, AiEntity, DirectionMove] with StateModifier[AiMovementState, AiEntity]:
@@ -81,5 +80,4 @@ object AiMovementStateMachineUtils:
     def computeAiState(entity: AiEntity): ((Double, Double), AiEntity) =
         AiMovementStateMachine.computeState().runAndTranslate(entity)
 
-object x extends App:
-    println("csac")
+
