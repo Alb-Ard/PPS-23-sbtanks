@@ -25,7 +25,6 @@ class JFXBulletView(private val bulletImage: Image) extends ImageView(bulletImag
 object testJFXBulletView extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
     val tileSize = 16D
-    val bulletView = new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bulletSprite.png", 16, 1280 * 720))
 
     override def start(): Unit =
         stage = new JFXApp3.PrimaryStage:
@@ -33,8 +32,9 @@ object testJFXBulletView extends JFXApp3 with scalafx.Includes:
             width = 1280
             height = 720
             scene = new Scene:
-                content = bulletView
                 fill = Color.Black
+        val bulletView = new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
+        stage.scene.value.content.add(bulletView)
 
 
 
