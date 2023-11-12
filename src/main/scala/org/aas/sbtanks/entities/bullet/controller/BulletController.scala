@@ -2,11 +2,9 @@ package org.aas.sbtanks.entities.bullet.controller
 
 import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.tank.structure.Tank
-import org.aas.sbtanks.obstacles.LevelObstacle
 import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehaviour, DamageableBehaviour, DirectionBehaviour, PositionBehaviour}
 import org.aas.sbtanks.physics.{Collider, CollisionLayer}
 import org.aas.sbtanks.common.Steppable
-import org.aas.sbtanks.entities.repository.DestroyableEntityAutoManager
 import org.aas.sbtanks.behaviours.DamageableBehaviour.damage
 import org.aas.sbtanks.behaviours.MovementBehaviour
 
@@ -34,7 +32,6 @@ class BulletController(bullet: Bullet with PositionBehaviour with MovementBehavi
         )
         bullet.damage()
 
-        //:: Nil
         /*
         if(colliders.contains(CollisionLayer.TanksLayer))
             val hitTank = colliders.find(el => el.layer == CollisionLayer.TanksLayer).get.asInstanceOf[Tank with DamageableBehaviour]
@@ -55,10 +52,3 @@ class BulletController(bullet: Bullet with PositionBehaviour with MovementBehavi
     private def checkBulletPlayer(tank: Tank): Boolean =
         //(bullet.isPlayerBullet && !tank.isPlayer) || (!bullet.isPlayerBullet && tank.isPlayer)
         true
-
-    /*
-    private def getColliders(): List[Collider] =
-        bullet.overlappedColliders.filter(el => el.layer == CollisionLayer.BulletsLayer ||
-            el.layer == CollisionLayer.WallsLayer || el.layer == CollisionLayer.TanksLayer)
-
-    */
