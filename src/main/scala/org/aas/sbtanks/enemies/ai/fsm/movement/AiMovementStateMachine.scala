@@ -3,14 +3,12 @@ package org.aas.sbtanks.enemies.ai.fsm.movement
 import org.aas.sbtanks.enemies.ai.DirectionUtils.*
 import org.aas.sbtanks.enemies.ai.State.State
 import DirectionMove.{CanMoveTo, CannotMoveTo}
-import org.aas.sbtanks.enemies.ai.fsm.{StateMachine, StateModifier}
-import org.aas.sbtanks.enemies.ai.{MovementEntity, AiMovementState}
+import org.aas.sbtanks.enemies.ai.MovementEntity
+import org.aas.sbtanks.enemies.ai.fsm.{AbstractStateMachine, StateMachine, StateModifier}
 
-object AiMovementStateMachine extends StateMachine[AiMovementState, MovementEntity, DirectionMove] with StateModifier[AiMovementState, MovementEntity]:
+object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, DirectionMove]:
 
-    private def pure[A](a: A): AiMovementState[A] = State(s => (a, s))
-
-    override def transition(value: DirectionMove): AiMovementState[Unit] =
+    override def transition(value: DirectionMove): State[MovementEntity, Unit] =
         for
             dir <- gets(x => (x.directionX.asInstanceOf[Double], x.directionY.asInstanceOf[Double]))
             newDir <- (dir, value) match
@@ -20,7 +18,7 @@ object AiMovementStateMachine extends StateMachine[AiMovementState, MovementEnti
                 case ((x, _), CanMoveTo) if x > 0.0 => pure(Bottom_Y)
                 case ((x, _), CannotMoveTo) if x > 0.0 => pure(Left_X)
 
-                case ((x, _), CanMoveTo) if x < 0.0=> pure(Bottom_Y)
+                case ((x, _), CanMoveTo) if x < 0.0 => pure(Bottom_Y)
                 case ((x, _), CannotMoveTo) if x < 0.0 => pure(Top_Y)
 
                 case ((_, y), CanMoveTo) if y < 0.0 => pure(Left_X)
@@ -30,26 +28,16 @@ object AiMovementStateMachine extends StateMachine[AiMovementState, MovementEnti
         yield
             ()
 
-    override def getState: AiMovementState[MovementEntity] = State(s => (s, s))
 
-    override def gets[A](f: MovementEntity => A): AiMovementState[A] = State(s => (f(s), s))
 
-    override def setState(s: MovementEntity): AiMovementState[Unit] = State(_ => ((), s))
-
-    override def modify(f: MovementEntity => MovementEntity): AiMovementState[Unit] =
-        for {
-            s <- getState
-            _ <- setState(f(s))
-        } yield ()
-
-    def checkMove(): AiMovementState[Option[(Double, Double)]] =
+    def checkMove(): State[MovementEntity, Option[(Double, Double)]] =
         for
             s0 <- getState
             x <- gets(x => (x.directionX.asInstanceOf[Double], x.directionY.asInstanceOf[Double]))
             if s0.testMoveRelative(x._1, x._2)
         yield x
 
-    private def moveNext(): AiMovementState[(Double, Double)] =
+    private def moveNext(): State[MovementEntity, (Double, Double)] =
         for
             c <- checkMove()
             d <- c match
@@ -57,7 +45,7 @@ object AiMovementStateMachine extends StateMachine[AiMovementState, MovementEnti
                 case None => transition(CannotMoveTo).flatMap(_ => moveNext())
         yield d
 
-    private def getNewCoord: AiMovementState[(Double, Double)] =
+    private def getNewCoord: State[MovementEntity, (Double, Double)] =
         for
             d <- moveNext()
             c <- gets(x => (x.positionX, x.positionY))
@@ -69,7 +57,7 @@ object AiMovementStateMachine extends StateMachine[AiMovementState, MovementEnti
         yield newPos
 
 
-    def computeState(): AiMovementState[(Double, Double)] =
+    def computeState(): State[MovementEntity,(Double, Double)] =
         for
             newCoord <- getNewCoord
             _ <- transition(CanMoveTo)
