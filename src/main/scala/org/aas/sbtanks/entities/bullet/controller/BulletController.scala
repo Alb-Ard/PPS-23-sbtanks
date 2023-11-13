@@ -7,11 +7,14 @@ import org.aas.sbtanks.physics.{Collider, CollisionLayer}
 import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.behaviours.DamageableBehaviour.damage
 import org.aas.sbtanks.behaviours.MovementBehaviour
+import org.aas.sbtanks.entities.bullet.view.BulletView
+import org.aas.sbtanks.player.PlayerTank
 
 class BulletController(bullet: Bullet with PositionBehaviour with MovementBehaviour
-                        with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour) extends Steppable:
+                        with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour, bulletView: BulletView) extends Steppable:
 
     bullet.overlapping += checkCollision
+    bullet.positionChanged += bulletView.move
 
     override def step(delta: Double) =
         bullet.moveRelative(bullet.directionX * bullet.speed, bullet.directionY * bullet.speed)
@@ -29,10 +32,9 @@ class BulletController(bullet: Bullet with PositionBehaviour with MovementBehavi
             case el: DamageableBehaviour => {
                 el.damage()
             }
+            case el => el
         )
         bullet.damage()
 
     private def checkBulletPlayer(tank: Tank): Boolean =
-        //(bullet.isPlayerBullet && !tank.isPlayer) || (!bullet.isPlayerBullet && tank.isPlayer)
-        //NEED ISPLAYER FLAG
-        true
+        (bullet.isPlayerBullet && !tank.isInstanceOf[PlayerTank]) || (!bullet.isPlayerBullet && tank.isInstanceOf[PlayerTank])
