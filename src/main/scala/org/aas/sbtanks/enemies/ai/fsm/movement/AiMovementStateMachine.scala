@@ -6,6 +6,8 @@ import DirectionMove.{CanMoveTo, CannotMoveTo}
 import org.aas.sbtanks.enemies.ai.MovementEntity
 import org.aas.sbtanks.enemies.ai.fsm.{AbstractStateMachine, StateMachine, StateModifier}
 
+import scala.util.Random
+
 object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, DirectionMove]:
 
     override def transition(value: DirectionMove): State[MovementEntity, Unit] =
@@ -13,7 +15,10 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
             dir <- gets(x => (x.directionX.asInstanceOf[Double], x.directionY.asInstanceOf[Double]))
             newDir <- (dir, value) match
                 case ((_, y), CanMoveTo) if y > 0.0 => pure(Bottom_Y)
-                case ((_, y), CannotMoveTo) if y > 0.0 => pure(Right_X)
+                case ((_, y), CannotMoveTo) if y > 0.0 => Random.nextInt(2) match {
+                    case 0 => pure(Right_X)
+                    case 1 => pure(Left_X)
+                }
 
                 case ((x, _), CanMoveTo) if x > 0.0 => pure(Bottom_Y)
                 case ((x, _), CannotMoveTo) if x > 0.0 => pure(Left_X)
@@ -21,7 +26,10 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
                 case ((x, _), CanMoveTo) if x < 0.0 => pure(Bottom_Y)
                 case ((x, _), CannotMoveTo) if x < 0.0 => pure(Top_Y)
 
-                case ((_, y), CanMoveTo) if y < 0.0 => pure(Left_X)
+                case ((_, y), CanMoveTo) if y < 0.0 => Random.nextInt(2) match {
+                    case 0 => pure(Right_X)
+                    case 1 => pure(Left_X)
+                }
                 case ((_, y), CannotMoveTo) if y < 0.0 => pure(Bottom_Y)
 
             _ <- modify(e => e.setDirection(newDir._1, newDir._2).asInstanceOf[MovementEntity])
@@ -67,5 +75,4 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
 object AiMovementStateMachineUtils:
     def computeAiState(entity: MovementEntity): ((Double, Double), MovementEntity) =
         AiMovementStateMachine.computeState().runAndTranslate(entity)
-
 
