@@ -5,4 +5,4 @@ package org.aas.sbtanks.entities.repository
   *
   * @param context
   */
-trait EntityRepositoryContextAware[VC, C <: EntityRepositoryContext[VC]](using context: C)
+trait EntityRepositoryContextAware[VController, VContainer](using context: EntityRepositoryContext[VController, VContainer])

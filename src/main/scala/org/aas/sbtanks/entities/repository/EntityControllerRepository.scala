@@ -8,7 +8,7 @@ import org.aas.sbtanks.common.Steppable
   *
   * @param context The context that will be passed to the controller factories
   */
-trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext[?]](using context: Context) extends Steppable:
+trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext[?, ?]](using context: Context) extends Steppable:
     this: EntityMvRepositoryContainer[Model, View] =>
 
     type Controller = Steppable

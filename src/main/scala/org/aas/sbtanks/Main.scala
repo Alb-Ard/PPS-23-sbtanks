@@ -41,32 +41,47 @@ import scalafx.scene.Node
 import org.aas.sbtanks.entities.repository.EntityRepositoryTagger
 import org.aas.sbtanks.entities.repository.EntityControllerReplacer
 import org.aas.sbtanks.entities.repository.EntityColliderAutoManager
+import org.aas.sbtanks.player.view.ui.scalafx.JFXPlayerSidebarView
+import scalafx.scene.layout.StackPane
+import scalafx.scene.layout.Pane
+import scalafx.scene.layout.BorderPane
+import scalafx.scene.layout.Region
+import scalafx.geometry.Pos
 
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
     val tileSize = 16D
     val tankUnitMoveSpeed = 1D / tileSize
+    val windowSize = (1280, 720)
+    val interfaceScale = 4D
 
     override def start(): Unit = 
         stage = new JFXApp3.PrimaryStage:
             title = "sbTanks"
-            width = 1280
-            height = 720
+            width = windowSize(0)
+            height = windowSize(1)
             scene = new Scene:
                 fill = Color.BLACK
 
-        given EntityRepositoryContext[Stage] = EntityRepositoryContext(stage)
+        val entityViewContainer = Pane()
+        val scenePane = BorderPane(center = null, right = null, top = null, bottom = null, left = null)
+        BorderPane.setAlignment(entityViewContainer, Pos.CENTER)
+        scenePane.center.set(entityViewContainer)
+                
+        stage.scene.value.content.add(scenePane)
+
+        given EntityRepositoryContext[Stage, Pane] = EntityRepositoryContext(stage, entityViewContainer)
         val entityRepository = new JFXEntityMvRepositoryContainer()
                 with JFXEntityControllerRepository
                 with JFXEntityViewAutoManager
-                with EntityControllerReplacer[AnyRef, Node, EntityRepositoryContext[Stage]]
+                with EntityControllerReplacer[AnyRef, Node, EntityRepositoryContext[Stage, Pane]]
                 with DestroyableEntityAutoManager[AnyRef, Node]
                 with EntityRepositoryTagger[AnyRef, Node, Int]
                 with EntityColliderAutoManager[AnyRef, Node]
                 with EntityRepositoryContextAware
 
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView))))
-                .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory[Stage](viewScale * tileSize))
+                .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(viewScale * tileSize))
 
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
         levelFactory.createFromString("UUUUUUU" +
@@ -76,6 +91,9 @@ object Main extends JFXApp3 with scalafx.Includes:
                                       "U-WWW-U" +
                                       "U-WBW-U" +
                                       "UUUUUUU", 7, entityRepository)
+
+        val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
+        scenePane.right.set(playerSidebar)
 
         var lastTimeNanos = System.nanoTime().doubleValue
         val updateTimer = AnimationTimer(_ => {
