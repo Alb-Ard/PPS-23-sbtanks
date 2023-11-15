@@ -71,13 +71,17 @@ object Main extends JFXApp3 with scalafx.Includes:
                 .registerControllerFactory(m => m.isInstanceOf[Bullet], JFXBulletController.factory())
 
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
-        levelFactory.createFromString("UUUUUUU" +
-                                      "U-TTT-U" +
-                                      "U-SwS-U" +
-                                      "U--P--U" +
-                                      "U-WWW-U" +
-                                      "U-WBW-U" +
-                                      "UUUUUUU", 7, entityRepository)
+        levelFactory.createFromString("UUUUUUUUUUU" +
+                                      "U--TTTTT--U" +
+                                      "U--SSwSS--U" +
+                                      "U--SwwwS--U" +
+                                      "U--TSTST--U" +
+                                      "U----P----U" +
+                                      "U--SwwwS--U" +
+                                      "U--TSTST--U" +
+                                      "U--WWWWW--U" +
+                                      "U--WWBWW--U" +
+                                      "UUUUUUUUUUU", 11, entityRepository)
 
         var lastTimeNanos = System.nanoTime().doubleValue
         val updateTimer = AnimationTimer(_ => {
