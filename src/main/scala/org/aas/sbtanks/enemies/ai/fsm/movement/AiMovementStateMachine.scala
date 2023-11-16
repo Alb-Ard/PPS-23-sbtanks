@@ -68,7 +68,7 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
     def computeState(): State[MovementEntity,(Double, Double)] =
         for
             newCoord <- getNewCoord
-            _ <- transition(CanMoveTo)
+            //_ <- transition(CanMoveTo)
         yield newCoord
 
 
