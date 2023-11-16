@@ -7,7 +7,8 @@ import org.aas.sbtanks.level.scalafx.JFXGameOverView
 
 class JFXPlayerDeathController(playerTank: ControllableTank with DamageableBehaviour,gameView: JFXLevelFactory):
 
+    playerTank.destroyed += {_ => gameover()}
     def gameover(): Unit =
-        if(playerTank.tankData.health == 0)
-            new JFXGameOverView()
+       new JFXGameOverView()
+
 

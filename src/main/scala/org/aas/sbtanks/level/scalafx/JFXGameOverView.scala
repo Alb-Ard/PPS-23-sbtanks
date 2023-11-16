@@ -1,6 +1,5 @@
 package org.aas.sbtanks.level.scalafx
 
-import scalafx.stage.Stage
 import scalafx.scene.Scene
 import scalafx.application.JFXApp3
 import scalafx.geometry.Insets
