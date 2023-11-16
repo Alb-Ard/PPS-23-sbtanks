@@ -13,8 +13,18 @@ class DamageableSpec extends AnyFlatSpec with Matchers:
         damageable.damage()
         wasDamaged should be (true)
     }
+
+    it should "invoke the damaged event when damaged" in {
+        var wasDamaged = false
+        val damageable = new Object() with DamageableBehaviour:
+            override protected def applyDamage(amount: Int) =
+                this
+        damageable.damaged += { _ => wasDamaged = true }
+        damageable.damage()
+        wasDamaged should be (true)
+    }
     
-    "A damageable behaviour" should "apply damage when it is damageable" in {
+    it should "apply damage when it is damageable" in {
         var wasDamaged = false
         val damageable = new Object() with DamageableBehaviour:
             override protected def applyDamage(amount: Int) =
@@ -24,7 +34,7 @@ class DamageableSpec extends AnyFlatSpec with Matchers:
         wasDamaged should be (true)
     }
     
-    "A damageable behaviour" should "not apply damage when it is not damageable" in {
+    it should "not apply damage when it is not damageable" in {
         var wasDamaged = false
         val damageable = new Object() with DamageableBehaviour:
             override protected def applyDamage(amount: Int) =
@@ -34,7 +44,7 @@ class DamageableSpec extends AnyFlatSpec with Matchers:
         wasDamaged should be (false)
     }
 
-    "A damageable behaviour" should "apply the correct amount of damage" in {
+    it should "apply the correct amount of damage" in {
         var appliedDamage = Option.empty[Int]
         val damageable = new Object() with DamageableBehaviour:
             override protected def applyDamage(amount: Int) =
