@@ -10,6 +10,7 @@ import scalafx.scene.text.Text
 class JFXPlayerHealthView(interfaceScale: Double) extends Pane with PlayerHealthView:
     private val label = new Text("X"):
         x = 8D * interfaceScale
+        style = "font-family: 'Press Start 2P'; src: "
     private val tankIcon = ImageView(JFXImageLoader.loadFromResources("ui/player_lifes_icon.png", 8, interfaceScale))
 
     children.addAll(label, tankIcon)
