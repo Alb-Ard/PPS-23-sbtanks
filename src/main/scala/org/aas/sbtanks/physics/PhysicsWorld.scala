@@ -27,7 +27,7 @@ trait PhysicsContainer:
                 val clampedBox = box.normalized.clamped(0.1D)
                 colliders.filterNot(ignoredColliders.contains)
                     .filter(c => {
-                        println(c.toString() + " " + clampedBox.toString())
+                        //println(c.toString() + " " + clampedBox.toString())
                         c.boundingBox.checkOverlap(clampedBox) && layers.contains(c.layer)
                     })
 

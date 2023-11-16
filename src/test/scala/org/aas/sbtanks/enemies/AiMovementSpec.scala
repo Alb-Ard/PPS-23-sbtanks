@@ -6,6 +6,7 @@ import org.aas.sbtanks.enemies.ai.fsm.movement.AiMovementStateMachineUtils
 import org.aas.sbtanks.enemies.ai.{DirectionUtils, MovementEntity}
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.level.MockLevelFactory
+import org.aas.sbtanks.physics.PhysicsWorld
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -17,6 +18,8 @@ class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
 
 
     "tank " should "go right or left but not down or up" in:
+        PhysicsWorld.clearColliders()
+
         val tank = MockLevelFactory()
             .createFromString("UUUUUUU" +
                 "U-TTT-U" +
@@ -39,6 +42,8 @@ class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
 
 
     "Tank ai movement" should "prioritize bottom directed movement when possible" in:
+        PhysicsWorld.clearColliders()
+
         val tank: MovementEntity = MockLevelFactory()
             .createFromString(
                 "UUUUU" +
@@ -57,7 +62,10 @@ class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
 
         newPos should be (tank.positionX, tank.positionY + 1.0)
 
+
     "Tank ai movement" should "run across top directions only if no other options is available while right and left directions choices are random" in:
+        PhysicsWorld.clearColliders()
+
         val tank: MovementEntity = MockLevelFactory()
             .createFromString(
                 "UUUUU" +
