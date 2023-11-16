@@ -67,7 +67,10 @@ object Main extends JFXApp3 with scalafx.Includes:
         val scenePane = BorderPane(center = null, right = null, top = null, bottom = null, left = null)
         BorderPane.setAlignment(entityViewContainer, Pos.CENTER)
         scenePane.center.set(entityViewContainer)
-                
+
+        val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
+        scenePane.right.set(playerSidebar)
+
         stage.scene.value.content.add(scenePane)
 
         given EntityRepositoryContext[Stage, Pane] = EntityRepositoryContext(stage, entityViewContainer)
@@ -80,7 +83,7 @@ object Main extends JFXApp3 with scalafx.Includes:
                 with EntityColliderAutoManager[AnyRef, Node]
                 with EntityRepositoryContextAware
 
-        entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView))))
+        entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView)), playerSidebar.healthView))
                 .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(viewScale * tileSize))
 
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
@@ -91,9 +94,6 @@ object Main extends JFXApp3 with scalafx.Includes:
                                       "U-WWW-U" +
                                       "U-WBW-U" +
                                       "UUUUUUU", 7, entityRepository)
-
-        val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
-        scenePane.right.set(playerSidebar)
 
         var lastTimeNanos = System.nanoTime().doubleValue
         val updateTimer = AnimationTimer(_ => {

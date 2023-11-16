@@ -11,6 +11,7 @@ import scalafx.scene.input.KeyEvent
 import scalafx.scene.Node
 import scalafx.scene.layout.Pane
 import scalafx.Includes
+import org.aas.sbtanks.player.view.ui.PlayerHealthView
 
 abstract class JFXPlayerTankController(using context: EntityRepositoryContext[Stage, Pane])(tank: ControllableTank, speedMultiplier: Double, view: TankView, viewScale: Double)
     extends TankInputController(tank, view, speedMultiplier, viewScale, JFXPlayerInputController())
@@ -24,9 +25,16 @@ abstract class JFXPlayerTankController(using context: EntityRepositoryContext[St
         stage.addEventHandler(KeyEvent.KeyReleased, inputEvents.handleKeyReleasedEvent)
 
 object JFXPlayerTankController:
-    def factory(speedMultiplier: Double, viewScale: Double, bulletConsumer: (AnyRef, Node) => Any)(context: EntityRepositoryContext[Stage, Pane], tank: ControllableTank, view: TankView) =
+    def factory(speedMultiplier: Double, viewScale: Double, bulletConsumer: (AnyRef, Node) => Any, healthView: PlayerHealthView)(context: EntityRepositoryContext[Stage, Pane], tank: ControllableTank, view: TankView) =
         new JFXPlayerTankController(using context)(tank, speedMultiplier, view, viewScale):
+
+            tank.damaged += { _ => updateHealthView() }
+            updateHealthView()
+
             override def shoot() =
                 // TODO
                 //bulletConsumer()
                 this
+
+            private def updateHealthView() =
+                healthView.setRemainingHealth(tank.tankData.health)
