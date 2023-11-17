@@ -1,6 +1,7 @@
 package org.aas.sbtanks.enemies.controller
 
 import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehaviour, DamageableBehaviour, DirectionBehaviour, PositionBehaviour}
+import org.aas.sbtanks.enemies.ai.shooting.LineOfSight
 import org.aas.sbtanks.entities.tank.factories.{BasicTankData, TankTypeData}
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.physics.CollisionLayer
@@ -38,6 +39,7 @@ case class EnemyTankBuilder(private val x: Double = 0,
             with ConstrainedMovementBehaviour
             with DirectionBehaviour
             with CollisionBehaviour(collisionSizeX, collisionSizeY, collisionLayer, collisionMask.toSeq)
+            with LineOfSight(Seq(CollisionLayer.WallsLayer), Seq.empty)
             with DamageableBehaviour:
             override protected def applyDamage(amount: Int) =
                 updateTankData(tankData.updateHealth(_ - 1))

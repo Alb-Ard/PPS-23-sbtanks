@@ -14,23 +14,23 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
         for
             dir <- gets(x => (x.directionX.asInstanceOf[Double], x.directionY.asInstanceOf[Double]))
             newDir <- (dir, value) match
-                case ((_, y), CanMoveTo) if y > 0.0 => pure(Bottom_Y)
+                case ((_, y), CanMoveTo) if y > 0.0 => pure(Bottom)
                 case ((_, y), CannotMoveTo) if y > 0.0 => Random.nextInt(2) match {
-                    case 0 => pure(Right_X)
-                    case 1 => pure(Left_X)
+                    case 0 => pure(Right)
+                    case 1 => pure(Left)
                 }
 
-                case ((x, _), CanMoveTo) if x > 0.0 => pure(Bottom_Y)
-                case ((x, _), CannotMoveTo) if x > 0.0 => pure(Left_X)
+                case ((x, _), CanMoveTo) if x > 0.0 => pure(Bottom)
+                case ((x, _), CannotMoveTo) if x > 0.0 => pure(Left)
 
-                case ((x, _), CanMoveTo) if x < 0.0 => pure(Bottom_Y)
-                case ((x, _), CannotMoveTo) if x < 0.0 => pure(Top_Y)
+                case ((x, _), CanMoveTo) if x < 0.0 => pure(Bottom)
+                case ((x, _), CannotMoveTo) if x < 0.0 => pure(Top)
 
                 case ((_, y), CanMoveTo) if y < 0.0 => Random.nextInt(2) match {
-                    case 0 => pure(Right_X)
-                    case 1 => pure(Left_X)
+                    case 0 => pure(Right)
+                    case 1 => pure(Left)
                 }
-                case ((_, y), CannotMoveTo) if y < 0.0 => pure(Bottom_Y)
+                case ((_, y), CannotMoveTo) if y < 0.0 => pure(Bottom)
 
             _ <- modify(e => e.setDirection(newDir._1, newDir._2).asInstanceOf[MovementEntity])
         yield
@@ -58,10 +58,10 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
             d <- moveNext()
             c <- gets(x => (x.positionX, x.positionY))
             newPos <- d match
-                case Bottom_Y => pure((c._1, c._2 + 1))
-                case Right_X => pure((c._1 + 1, c._2))
-                case Left_X => pure((c._1 - 1, c._2))
-                case Top_Y => pure((c._1, c._2 - 1))
+                case Bottom => pure((c._1, c._2 + 1))
+                case Right => pure((c._1 + 1, c._2))
+                case Left => pure((c._1 - 1, c._2))
+                case Top => pure((c._1, c._2 - 1))
         yield newPos
 
 
