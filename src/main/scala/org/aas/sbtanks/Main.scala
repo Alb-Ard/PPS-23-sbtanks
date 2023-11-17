@@ -48,6 +48,7 @@ import scalafx.scene.layout.BorderPane
 import scalafx.scene.layout.Region
 import scalafx.geometry.Pos
 import org.aas.sbtanks.player.controller.PlayerUiViewController
+import org.aas.sbtanks.lifecycle.LevelSequencer
 
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
@@ -93,20 +94,32 @@ object Main extends JFXApp3 with scalafx.Includes:
         playerSidebar.remainingEnemiesView.setEnemyCount(20)
         // **********
 
+        val level1 = ("UUUUUUU" +
+                      "U-TTT-U" +
+                      "U-SwS-U" +
+                      "U--P--U" +
+                      "U-WWW-U" +
+                      "U-WBW-U" +
+                      "UUUUUUU", 7)
+        val level2 = ("UUUUUUU" +
+                      "U-----U" +
+                      "UTSWSTU" +
+                      "U-P---U" +
+                      "U-WWW-U" +
+                      "U-WBW-U" +
+                      "UUUUUUU", 7)
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
-        levelFactory.createFromString("UUUUUUU" +
-                                      "U-TTT-U" +
-                                      "U-SwS-U" +
-                                      "U--P--U" +
-                                      "U-WWW-U" +
-                                      "U-WBW-U" +
-                                      "UUUUUUU", 7, entityRepository)
+        val levelSequencer = LevelSequencer[AnyRef, Node](Seq(level1, level2), levelFactory, entityRepository).start()
 
         var lastTimeNanos = System.nanoTime().doubleValue
+        var testTime = 2D
         val updateTimer = AnimationTimer(_ => {
             val currentTimeNanos = System.nanoTime().doubleValue
             val deltaTime = (currentTimeNanos - lastTimeNanos).doubleValue / 1000D / 1000D / 1000D
             entityRepository.step(deltaTime)
             lastTimeNanos = currentTimeNanos
+            if testTime > 0 && testTime - deltaTime < 0 then
+                levelSequencer.completeLevel()
+            testTime -= deltaTime
         })
         updateTimer.start()

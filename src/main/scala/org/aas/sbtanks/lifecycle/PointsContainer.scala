@@ -19,4 +19,4 @@ trait PointsContainer:
     
     def amount = points
 
-object PointsManager extends PointsContainer
+

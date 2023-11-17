@@ -50,7 +50,7 @@ abstract class EntityMvRepositoryContainer[Model, View]:
 
     def entitiesOfModelType[M1 <: Model](using modelClassTag: ClassTag[M1], viewClassTag: ClassTag[View]) = 
         modelRepository.filter(modelClassTag.runtimeClass.isInstance)
-                .map(m => (m, modelViewReferences.get(m)))
+                .map(m => (m.asInstanceOf[M1], modelViewReferences.get(m)))
 
     def entitiesOfMvTypes[M1 <: Model, V1 <: View](using modelClassTag: ClassTag[M1], viewClassTag: ClassTag[V1]) =
         modelRepository.filter(modelClassTag.runtimeClass.isInstance)
@@ -76,3 +76,5 @@ object EntityMvRepositoryContainer:
     extension [M, V](repository: EntityMvRepositoryContainer[M, V])
         def entitiesOfViewType[V1 <: V](using modelClassTag: ClassTag[M], viewClassTag: ClassTag[V1]) = 
             repository.entitiesOfMvTypes[M, V1]
+        
+        def entities(using modelClassTag: ClassTag[M], viewClassTag: ClassTag[V]) = repository.entitiesOfModelType[M]
