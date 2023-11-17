@@ -24,16 +24,18 @@ class PlayerUiViewController[RM >: Tank, RV](using modelClassTag: ClassTag[RM], 
     override def step(delta: Double) = 
         this
 
+    def setEnemyCount(amount: Int) =
+        playerSidebarView.remainingEnemiesView.setEnemyCount(amount)
+
     private def onModelCreated(m: RM) = m match
         case p: ControllablePlayerTank =>
             playerTank.foreach(p => p.damaged -= onPlayerDamaged)
             playerTank = Option(p)
             p.damaged += onPlayerDamaged
-        case e: Tank => recalculateEnemyCount()
         case _ => ()
 
     private def recalculateEnemyCount() = 
-        playerSidebarView.remainingEnemiesView.setEnemyCount(entityRepository.entitiesOfModelType[Tank]
+        setEnemyCount(entityRepository.entitiesOfModelType[Tank]
             .map(_(0))
             .filter(t => !(t.isInstanceOf[PlayerTank]))
             .size)

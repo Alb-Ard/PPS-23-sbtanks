@@ -5,8 +5,11 @@ import org.aas.sbtanks.level.LevelContainer
 import org.aas.sbtanks.level.LevelFactory
 import org.aas.sbtanks.player.PlayerTank
 import scala.reflect.ClassTag
+import org.aas.sbtanks.event.EventSource
 
-class LevelSequencer[M >: PlayerTank, V](using modelClassTag: ClassTag[M], viewClassTag: ClassTag[V])(levels: Seq[(String, Int)], levelFactory: LevelFactory[M, V], entityRepository: LevelFactory[M, V]#LevelEntityRepository):
+class LevelSequencer[M >: PlayerTank, V](using modelClassTag: ClassTag[M], viewClassTag: ClassTag[V])(levels: Seq[(String, Int, Int)], levelFactory: LevelFactory[M, V], entityRepository: LevelFactory[M, V]#LevelEntityRepository):
+    val levelChanged = EventSource[(LevelContainer[M, V], Int)]
+
     private var queue = Queue.from(levels)
 
     private var currentLevel = Option.empty[LevelContainer[M, V]]
@@ -25,10 +28,11 @@ class LevelSequencer[M >: PlayerTank, V](using modelClassTag: ClassTag[M], viewC
             case None => 
                 queue = Queue.empty
                 currentLevel = Option.empty
-            case Some(((levelString, levelSize), newQueue)) =>
+            case Some(((levelString, levelSize, enemyCount), newQueue)) =>
                 queue = newQueue
                 currentLevel = Option(levelFactory.createFromString(levelString, levelSize, entityRepository))
-        copyPlayerHealth(player)
+                copyPlayerHealth(player)
+                levelChanged(currentLevel.get, enemyCount)
         this
     
     def endCurrentLevel() =

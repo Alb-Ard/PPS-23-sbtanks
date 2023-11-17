@@ -88,11 +88,9 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView)), playerSidebar.healthView))
                 .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(viewScale * tileSize))
-                .addController(PlayerUiViewController[AnyRef, Node](entityRepository, playerSidebar))
 
-        // ** TEST **
-        playerSidebar.remainingEnemiesView.setEnemyCount(20)
-        // **********
+        val playerUiViewController = PlayerUiViewController[AnyRef, Node](entityRepository, playerSidebar);
+        entityRepository.addController(playerUiViewController)
 
         val level1 = ("UUUUUUU" +
                       "U-TTT-U" +
@@ -100,16 +98,18 @@ object Main extends JFXApp3 with scalafx.Includes:
                       "U--P--U" +
                       "U-WWW-U" +
                       "U-WBW-U" +
-                      "UUUUUUU", 7)
+                      "UUUUUUU", 7, 10)
         val level2 = ("UUUUUUU" +
                       "U-----U" +
                       "UTSWSTU" +
                       "U-P---U" +
                       "U-WWW-U" +
                       "U-WBW-U" +
-                      "UUUUUUU", 7)
+                      "UUUUUUU", 7, 20)
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
-        val levelSequencer = LevelSequencer[AnyRef, Node](Seq(level1, level2), levelFactory, entityRepository).start()
+        val levelSequencer = LevelSequencer[AnyRef, Node](Seq(level1, level2), levelFactory, entityRepository)
+        levelSequencer.levelChanged += { (_, enemyCount) => playerUiViewController.setEnemyCount(enemyCount) }
+        levelSequencer.start()
 
         var lastTimeNanos = System.nanoTime().doubleValue
         var testTime = 2D
