@@ -47,6 +47,7 @@ import scalafx.scene.layout.Pane
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.layout.Region
 import scalafx.geometry.Pos
+import org.aas.sbtanks.player.controller.PlayerUiViewController
 
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
@@ -86,6 +87,7 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView)), playerSidebar.healthView))
                 .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(viewScale * tileSize))
+                .addController(PlayerUiViewController[AnyRef, Node](entityRepository, playerSidebar))
 
         // ** TEST **
         playerSidebar.remainingEnemiesView.setEnemyCount(20)
