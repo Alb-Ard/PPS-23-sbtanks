@@ -8,14 +8,17 @@ import scalafx.scene.layout.Pane
 import scalafx.scene.text.Text
 
 class JFXPlayerHealthView(interfaceScale: Double) extends Pane with PlayerHealthView:
-    private val label = new Text("X"):
+    private val playerName = new Text("IP"):
+        styleClass.add("sidebar-text")
+    private val lifesCount = new Text("X"):
         x = 8D * interfaceScale
-        style = "font-family: 'Press Start 2P'; src: "
+        y = 8D * interfaceScale
+        styleClass.add("sidebar-text")
     private val tankIcon = ImageView(JFXImageLoader.loadFromResources("ui/player_lifes_icon.png", 8, interfaceScale))
 
-    children.addAll(label, tankIcon)
+    children.addAll(playerName, lifesCount, tankIcon)
 
     override def setRemainingHealth(amount: Int) =
-        label.text.set(amount.toString())
+        lifesCount.text.set(amount.toString())
         this
 

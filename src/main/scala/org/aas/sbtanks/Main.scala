@@ -62,6 +62,7 @@ object Main extends JFXApp3 with scalafx.Includes:
             height = windowSize(1)
             scene = new Scene:
                 fill = Color.BLACK
+                stylesheets.add(getClass().getResource("/ui/style.css").toExternalForm())
 
         val entityViewContainer = Pane()
         val scenePane = BorderPane(center = null, right = null, top = null, bottom = null, left = null)
@@ -85,6 +86,10 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView)), playerSidebar.healthView))
                 .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(viewScale * tileSize))
+
+        // ** TEST **
+        playerSidebar.remainingEnemiesView.setEnemyCount(20)
+        // **********
 
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
         levelFactory.createFromString("UUUUUUU" +
