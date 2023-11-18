@@ -1,9 +1,7 @@
 package org.aas.sbtanks.physics
 
-sealed trait CollisionLayer
-
-object CollisionLayer:
-    case object TanksLayer extends CollisionLayer
-    case object BulletsLayer extends CollisionLayer
-    case object WallsLayer extends CollisionLayer
-    case object NonWalkableLayer extends CollisionLayer
+enum CollisionLayer:
+    case TanksLayer extends CollisionLayer
+    case BulletsLayer extends CollisionLayer
+    case WallsLayer extends CollisionLayer
+    case NonWalkableLayer extends CollisionLayer

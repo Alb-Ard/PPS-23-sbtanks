@@ -9,7 +9,6 @@ import scalafx.scene.input.KeyEvent
 import scalafx.scene.image.Image
 import scalafx.scene.image.ImageView
 import scalafx.animation.AnimationTimer
-
 import org.aas.sbtanks.player.controller.scalafx.JFXPlayerInputController
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 import org.aas.sbtanks.entities.tank.view.TankView
@@ -24,6 +23,7 @@ import org.aas.sbtanks.obstacles.LevelObstacle
 import org.aas.sbtanks.player.PlayerTankBuilder
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import org.aas.sbtanks.common.view.scalafx.JFXImageViewAnimator
+import org.aas.sbtanks.enemies.controller.EnemyController
 import org.aas.sbtanks.obstacles.view.scalafx.JFXObstacleView
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityMvRepositoryContainer
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityControllerRepository
@@ -86,8 +86,9 @@ object Main extends JFXApp3 with scalafx.Includes:
                 with EntityColliderAutoManager[AnyRef, Node]
                 with EntityRepositoryContextAware
 
-        entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView)), playerSidebar.healthView))
+        entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView))))
                 .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(viewScale * tileSize))
+                .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank], EnemyController.factory(viewScale * tileSize))
 
         val playerUiViewController = PlayerUiViewController[AnyRef, Node](entityRepository, playerSidebar);
         entityRepository.addController(playerUiViewController)
@@ -117,6 +118,7 @@ object Main extends JFXApp3 with scalafx.Includes:
             val currentTimeNanos = System.nanoTime().doubleValue
             val deltaTime = (currentTimeNanos - lastTimeNanos).doubleValue / 1000D / 1000D / 1000D
             entityRepository.step(deltaTime)
+            Thread.sleep(500)
             lastTimeNanos = currentTimeNanos
             if testTime > 0 && testTime - deltaTime < 0 then
                 levelSequencer.completeLevel()

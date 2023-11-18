@@ -1,5 +1,6 @@
 package org.aas.sbtanks.level.scalafx
 
+import org.aas.sbtanks.enemies.controller.EnemyTankBuilder
 import org.aas.sbtanks.level.LevelFactory
 import scalafx.scene.Node
 import org.aas.sbtanks.obstacles.LevelObstacle
@@ -44,7 +45,7 @@ final case class JFXLevelFactory(tileSize: Double, viewScale: Double, tileAnimat
         )))
 
     private def createTankMv(x: Double, y: Double, tankType: String, tankAttributes: Seq[String]) =
-        val tank = PlayerTankBuilder()
+        val tank = EnemyTankBuilder()
                 .setPosition(x, y)
                 .setCollisionSize(x = 1D - pixelSize, y = 1D - pixelSize)
                 .build()
