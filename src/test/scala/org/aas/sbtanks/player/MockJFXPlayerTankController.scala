@@ -34,7 +34,7 @@ class MockJFXPlayerTankController(tank: ControllableTank) extends TankInputContr
     override protected def shoot() = this
 
 object MockJFXPlayerTankController:
-    val MOCK_STAGE = EntityRepositoryContext[Stage](new JFXApp3.PrimaryStage())
+    val MOCK_STAGE = EntityRepositoryContext[Stage, Any](new JFXApp3.PrimaryStage(), ())
 
     val MOVE_UP_INPUT = KeyEvent(jfxsi.KeyEvent(jfxsi.KeyEvent.KEY_PRESSED, "w", "w", W, false, false, false, false))
     val MOVE_DOWN_INPUT = KeyEvent(jfxsi.KeyEvent(jfxsi.KeyEvent.KEY_PRESSED, "s", "s", S, false, false, false, false))

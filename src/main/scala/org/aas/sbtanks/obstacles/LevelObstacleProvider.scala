@@ -5,7 +5,7 @@ import org.aas.sbtanks.behaviours.PositionBehaviour
 import org.aas.sbtanks.behaviours.CollisionBehaviour
 import org.aas.sbtanks.behaviours.DamageableBehaviour
 
-case class LevelObstacle(val imagesPath: Seq[String])
+class LevelObstacle(val imagesPath: Seq[String])
 
 object LevelObstacle:
     sealed trait LevelObstacleProvider(val imagesPath: String*):

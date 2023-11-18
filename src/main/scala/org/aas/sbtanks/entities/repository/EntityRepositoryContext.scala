@@ -1,3 +1,3 @@
 package org.aas.sbtanks.entities.repository
 
-case class EntityRepositoryContext[VC](val viewContainer: VC)
+case class EntityRepositoryContext[VController, VContainer](val viewController: VController, val viewContainer: VContainer)

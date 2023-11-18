@@ -3,8 +3,9 @@ package org.aas.sbtanks.level
 import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer
 import org.aas.sbtanks.level.LevelFactory.stringEntityFromChar
 import org.aas.sbtanks.entities.repository.EntityRepositoryTagger
+import scala.reflect.ClassTag
 
-abstract class LevelFactory[M, V]():
+abstract class LevelFactory[M, V]:
     type LevelEntityRepository = EntityMvRepositoryContainer[M, V] with EntityRepositoryTagger[M, V, Int]
 
     /**
@@ -17,7 +18,7 @@ abstract class LevelFactory[M, V]():
       * @param entityRepository The repository used as a target for created entities
       * @return A LevelContainer that contains the created level
       */
-    def createFromString(levelString: String, levelEdgeSize: Int, entityRepository: LevelEntityRepository) = 
+    def createFromString(using modelClassTag: ClassTag[M], viewClassTag: ClassTag[V])(levelString: String, levelEdgeSize: Int, entityRepository: LevelEntityRepository) = 
         val levelEntityStrings = levelString.map(stringEntityFromChar).filter(e => e.isDefined)
         for 
             y <- (0 until levelEdgeSize)
@@ -28,7 +29,7 @@ abstract class LevelFactory[M, V]():
                 .map(createEntityMv(_, x, y))
                 .getOrElse(Seq.empty)
                 .foreach((m, v) => entityRepository.addModelView(m, Option(v)).addTag(m, entityIndex))
-        LevelContainer(entityRepository)
+        LevelContainer(using modelClassTag, viewClassTag)(entityRepository)
 
     protected def createEntityMv(entity: LevelFactory.StringEntity, x: Double, y: Double): Seq[(M, V)]
 

@@ -20,5 +20,5 @@ final case class LevelObstacleController(model: LevelObstacle with PositionBehav
 
 
 object LevelObstacleController:
-    def factory[VC](positionMultiplier: Double)(context: EntityRepositoryContext[VC], model: LevelObstacle with PositionBehaviour, view: ObstacleView) =
+    def factory[C <: EntityRepositoryContext[?, ?]](positionMultiplier: Double)(context: C, model: LevelObstacle with PositionBehaviour, view: ObstacleView) =
         LevelObstacleController(model, view, positionMultiplier)
