@@ -25,16 +25,9 @@ abstract class JFXPlayerTankController(using context: EntityRepositoryContext[St
         stage.addEventHandler(KeyEvent.KeyReleased, inputEvents.handleKeyReleasedEvent)
 
 object JFXPlayerTankController:
-    def factory(speedMultiplier: Double, viewScale: Double, bulletConsumer: (AnyRef, Node) => Any, healthView: PlayerHealthView)(context: EntityRepositoryContext[Stage, Pane], tank: ControllableTank, view: TankView) =
+    def factory(speedMultiplier: Double, viewScale: Double, bulletConsumer: (AnyRef, Node) => Any)(context: EntityRepositoryContext[Stage, Pane], tank: ControllableTank, view: TankView) =
         new JFXPlayerTankController(using context)(tank, speedMultiplier, view, viewScale):
-
-            tank.damaged += { _ => updateHealthView() }
-            updateHealthView()
-
             override def shoot() =
                 // TODO
                 //bulletConsumer()
                 this
-
-            private def updateHealthView() =
-                healthView.setRemainingHealth(tank.tankData.health)

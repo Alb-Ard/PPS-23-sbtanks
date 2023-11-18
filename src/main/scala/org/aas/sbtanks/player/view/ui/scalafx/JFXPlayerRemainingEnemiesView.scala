@@ -10,12 +10,12 @@ class JFXPlayerRemainingEnemiesView(interfaceScale: Double) extends FlowPane wit
     prefWrapLength = 16D * interfaceScale
 
     override def setEnemyCount(count: Int): Unit = Platform.runLater { () =>
-        (count - children.length) match
-            case p if p > 0 =>
-                for i <- 0 until p do children.add(createEnemyIcon())
-            case n if n < 0 =>
-                for i <- 0 until n do children.remove(children.length - 1)        
+        children.clear()
+        for i <- 0 until count do children.add(createEnemyIcon())
     }
+
+    override def enemyDefeated(): Unit = 
+        children.headOption.foreach(c => children.removeAll(c))
 
     def createEnemyIcon() =
         ImageView(JFXImageLoader.loadFromResources("ui/enemy_icon.png", 8, interfaceScale))

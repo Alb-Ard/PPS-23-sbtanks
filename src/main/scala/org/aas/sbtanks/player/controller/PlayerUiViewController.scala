@@ -17,7 +17,7 @@ class PlayerUiViewController[RM >: Tank, RV](using modelClassTag: ClassTag[RM], 
     entityRepository.modelViewReplaced += { a => onModelCreated(a.model) }
     entityRepository.modelViewRemoved += { (m, _) => m match
         case p: ControllablePlayerTank if playerTank.map(pp => p == pp).getOrElse(false) => playerTank = Option.empty
-        case e: Tank => recalculateEnemyCount()
+        case e: Tank if !e.isInstanceOf[PlayerTank] => playerSidebarView.remainingEnemiesView.enemyDefeated()
         case _ => ()
      }
 
@@ -27,18 +27,14 @@ class PlayerUiViewController[RM >: Tank, RV](using modelClassTag: ClassTag[RM], 
     def setEnemyCount(amount: Int) =
         playerSidebarView.remainingEnemiesView.setEnemyCount(amount)
 
-    private def onModelCreated(m: RM) = m match
-        case p: ControllablePlayerTank =>
-            playerTank.foreach(p => p.damaged -= onPlayerDamaged)
-            playerTank = Option(p)
-            p.damaged += onPlayerDamaged
-        case _ => ()
-
-    private def recalculateEnemyCount() = 
-        setEnemyCount(entityRepository.entitiesOfModelType[Tank]
-            .map(_(0))
-            .filter(t => !(t.isInstanceOf[PlayerTank]))
-            .size)
+    private def onModelCreated(m: RM) =
+        m match
+            case p: ControllablePlayerTank =>
+                playerTank.foreach(p => p.damaged -= onPlayerDamaged)
+                playerTank = Option(p)
+                p.damaged += onPlayerDamaged
+                playerSidebarView.healthView.setRemainingHealth(p.tankData.health)
+            case _ => ()
     
     private def onPlayerDamaged(amount: Int) = 
         playerTank.foreach(t => playerSidebarView.healthView.setRemainingHealth(t.tankData.health))

@@ -45,7 +45,7 @@ final case class JFXLevelFactory(tileSize: Double, viewScale: Double, tileAnimat
         )))
 
     private def createTankMv(x: Double, y: Double, tankType: String, tankAttributes: Seq[String]) =
-        val tank = EnemyTankBuilder()
+        val tank = PlayerTankBuilder()
                 .setPosition(x, y)
                 .setCollisionSize(x = 1D - pixelSize, y = 1D - pixelSize)
                 .build()
