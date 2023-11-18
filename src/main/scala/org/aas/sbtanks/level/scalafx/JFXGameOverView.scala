@@ -1,5 +1,6 @@
 package org.aas.sbtanks.level.scalafx
 
+import org.aas.sbtanks.lifecycle.PointsManager
 import scalafx.scene.Scene
 import scalafx.application.JFXApp3
 import scalafx.geometry.Insets
@@ -32,7 +33,7 @@ class JFXGameOverView extends JFXApp3 with scalafx.Includes:
                                 stops = Stops(Red, DarkRed))
                         },
                         new Text {
-                            text = "Score:" //+ game score
+                            text = "Score: " + PointsManager.amount
                             style = "-fx-font: italic bold 100pt sans-serif"
                             fill = new LinearGradient(
                                 endX = 0,
