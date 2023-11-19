@@ -23,7 +23,7 @@ import org.aas.sbtanks.obstacles.LevelObstacle
 import org.aas.sbtanks.player.PlayerTankBuilder
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import org.aas.sbtanks.common.view.scalafx.JFXImageViewAnimator
-import org.aas.sbtanks.enemies.controller.EnemyController
+import org.aas.sbtanks.enemies.controller.{EnemyController, EnemySpawnController, EnemyTankBuilder, EnemyTankGenerator}
 import org.aas.sbtanks.obstacles.view.scalafx.JFXObstacleView
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityMvRepositoryContainer
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityControllerRepository
@@ -51,12 +51,16 @@ import org.aas.sbtanks.player.controller.PlayerUiViewController
 import org.aas.sbtanks.lifecycle.LevelSequencer
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 
+import scala.collection.immutable.Queue
+
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
     val tileSize = 16D
     val tankUnitMoveSpeed = 1D / tileSize
     val windowSize = (1280, 720)
     val interfaceScale = 4D
+
+    val pixelSize = 1D / tileSize
 
     override def start(): Unit = 
         stage = new JFXApp3.PrimaryStage:
@@ -89,10 +93,25 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView))))
                 .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(viewScale * tileSize))
-                .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank], EnemyController.factory(viewScale * tileSize))
+                .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank], EnemySpawnController.factory(viewScale * tileSize))
 
         val playerUiViewController = PlayerUiViewController[AnyRef, Node](entityRepository, playerSidebar);
         entityRepository.addController(playerUiViewController)
+
+
+        val tank = EnemyTankBuilder()
+            .setPosition(2.0, 6.0)
+            .setCollisionSize(x = 1D - pixelSize, y = 1D - pixelSize)
+            .build()
+
+        val g = new EnemyTankGenerator(entityRepository, tank)
+
+        entityRepository.addController(g)
+
+        g.loadTank()
+
+
+
 
         // ** TEST **
         val level1 = ("UUUUUUU" +
@@ -109,11 +128,15 @@ object Main extends JFXApp3 with scalafx.Includes:
                       "U-WWW-U" +
                       "U-WBW-U" +
                       "UUUUUUU", 7, 20)
+
         // **********
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
         val levelSequencer = LevelSequencer[AnyRef, Node](Seq(level1, level2), levelFactory, entityRepository)
         levelSequencer.levelChanged += { (_, enemyCount) => playerUiViewController.setEnemyCount(enemyCount) }
         levelSequencer.start()
+
+
+
 
         var lastTimeNanos = System.nanoTime().doubleValue
         // ** TEST **
@@ -125,9 +148,13 @@ object Main extends JFXApp3 with scalafx.Includes:
             entityRepository.step(deltaTime)
             lastTimeNanos = currentTimeNanos
             // ** TEST **
-            if testTime > 0 && testTime - deltaTime < 0 then
-                levelSequencer.completeLevel()
-            testTime -= deltaTime
+            //if testTime > 0 && testTime - deltaTime < 0 then
+            //    levelSequencer.completeLevel()
+            //testTime -= deltaTime
             // **********
         })
         updateTimer.start()
+
+        val ints = List(1, 2, 3, 4, 5)
+
+        for i <- ints do println(i)
