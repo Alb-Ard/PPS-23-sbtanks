@@ -8,11 +8,12 @@ import scalafx.scene.layout.VBox
 
 class JFXPlayerSidebarView(override val healthView: JFXPlayerHealthView,
                            override val remainingEnemiesView: JFXPlayerRemainingEnemiesView,
+                           override val levelNumberView: JFXPlayerLevelNumberView,
                            private val interfaceScale: Double,
                            private val viewportHeight: Double,
                            private val sidebarWidth: Double)
     extends Pane
-    with PlayerSidebarView(healthView, remainingEnemiesView):
+    with PlayerSidebarView(healthView, remainingEnemiesView, levelNumberView):
 
     children.add(new Rectangle:
         width = sidebarWidth
@@ -21,11 +22,12 @@ class JFXPlayerSidebarView(override val healthView: JFXPlayerHealthView,
     private val elementsContainer = VBox()
     children.add(elementsContainer)
     elementsContainer.padding = Insets(16D)
-    elementsContainer.children.addAll(remainingEnemiesView, healthView)
+    elementsContainer.children.addAll(remainingEnemiesView, healthView, levelNumberView)
     healthView.translateY = 16D * interfaceScale
+    levelNumberView.translateY = 16D * interfaceScale
 
 object JFXPlayerSidebarView:
     val SIDEBAR_WIDTH = 128
 
     def create(interfaceScale: Double, viewportHeight: Double) =
-        JFXPlayerSidebarView(JFXPlayerHealthView(interfaceScale), JFXPlayerRemainingEnemiesView(interfaceScale), interfaceScale, viewportHeight, SIDEBAR_WIDTH)
+        JFXPlayerSidebarView(JFXPlayerHealthView(interfaceScale), JFXPlayerRemainingEnemiesView(interfaceScale), JFXPlayerLevelNumberView(interfaceScale), interfaceScale, viewportHeight, SIDEBAR_WIDTH)

@@ -108,11 +108,14 @@ object Main extends JFXApp3 with scalafx.Includes:
                       "U-P---U" +
                       "U-WWW-U" +
                       "U-WBW-U" +
-                      "UUUUUUU", 7, 20)
+                      "UUUUUUU", 7, 10)
         // **********
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
         val levelSequencer = LevelSequencer[AnyRef, Node](Seq(level1, level2), levelFactory, entityRepository)
-        levelSequencer.levelChanged += { (_, enemyCount) => playerUiViewController.setEnemyCount(enemyCount) }
+        levelSequencer.levelChanged += { (_, enemyCount) => 
+            playerUiViewController.setEnemyCount(enemyCount) 
+            playerUiViewController.setCompletedLevelCount(levelSequencer.completedLevelCount)
+        }
         levelSequencer.start()
 
         var lastTimeNanos = System.nanoTime().doubleValue
