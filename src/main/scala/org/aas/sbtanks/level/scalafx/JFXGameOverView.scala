@@ -3,35 +3,37 @@ package org.aas.sbtanks.level.scalafx
 import org.aas.sbtanks.lifecycle.PointsManager
 import scalafx.scene.Scene
 import scalafx.application.JFXApp3
-import scalafx.geometry.Insets
+import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.control.{Button, ButtonBar}
 import scalafx.scene.effect.DropShadow
-import scalafx.scene.layout.HBox
+import scalafx.scene.layout.{BorderPane, GridPane, HBox, VBox}
 import scalafx.scene.paint.Color.*
 import scalafx.scene.paint.*
-import scalafx.scene.text.Text
-import scalafx.scene.text.Font
+import scalafx.scene.text.{Font, Text, TextAlignment}
 
 class JFXGameOverView:
 
     val stylesheet = getClass.getResource("/ui/press_start_2p.ttf").toExternalForm
 
-    def generateContent(): HBox =
-        new HBox {
-            padding = Insets(50, 60, 50, 60)
+    def generateContent(): VBox =
+        new VBox {
+            padding = Insets(70, 60, 70, 60)
             children = Seq(
                 new Text {
                     text = "Game Over"
-                    font = Font.loadFont(stylesheet, 30)
+                    font = Font.loadFont(stylesheet, 120)
                     //style = "normal bold 100pt"
+                    alignment = Pos.Center
                     fill = new LinearGradient(
                         endX = 0,
                         stops = Stops(Red, DarkRed))
                 },
                 new Text {
                     text = "Score: " + PointsManager.amount
-                    font = Font.loadFont(stylesheet, 30)
+                    font = Font.loadFont(stylesheet, 100)
                     //style = "italic bold 100pt"
+                    alignment = Pos.Center
+                    textAlignment = TextAlignment.Center
                     fill = new LinearGradient(
                         endX = 0,
                         stops = Stops(Green, DarkGreen)
@@ -43,16 +45,18 @@ class JFXGameOverView:
                     }
                 },
                 new ButtonBar {
+                    padding = Insets(100, 130, 100, 0)
                     buttons = Seq(
                         new Button("Retry") {
-                            font = Font.loadFont(stylesheet, 10)
+                            font = Font.loadFont(stylesheet, 20)
                             id = "retry"
-                            style = "background-color: black"
+                            margin = Insets(0, 80, 0, 80)
                             //onMouseClicked = goes back to first level
                         },
-                        new Button("Go to Title Screen") {
-                            font = Font.loadFont(stylesheet, 10)
+                        new Button("Go to Title") {
+                            font = Font.loadFont(stylesheet, 20)
                             id = "title_screen"
+                            margin = Insets(0, 80, 0, 80)
                             //onMouseClicked = goes back to menu
                         }
                     )
