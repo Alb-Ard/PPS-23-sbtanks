@@ -1,7 +1,7 @@
 package org.aas.sbtanks.entities.repository.scalafx
 
-import org.aas.sbtanks.entities.repository.EntityRepositoryContextAware
-import org.aas.sbtanks.entities.repository.EntityRepositoryContext
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContextAware
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 import org.aas.sbtanks.entities.repository.EntityViewAutoManager
 import scalafx.application.Platform
 import scalafx.stage.Stage
@@ -15,11 +15,11 @@ import scalafx.scene.layout.Pane
   *
   * @param context The context from which to take the viewContainer
   */
-trait JFXEntityViewAutoManager(using context: EntityRepositoryContext[Stage, Pane]) extends EntityViewAutoManager[Node] with Includes:
-    this: JFXEntityMvRepositoryContainer with EntityRepositoryContextAware[Stage, Pane] =>
+trait JFXEntityViewAutoManager[VSlotKey](using context: EntityRepositoryContext[Stage, VSlotKey, Pane])(gameKey: VSlotKey) extends EntityViewAutoManager[Node] with Includes:
+    this: JFXEntityMvRepositoryContainer with EntityRepositoryContextAware[Stage, VSlotKey, Pane] =>
 
     protected override def addAutoManagedView(view: Node) =
-        context.viewContainer match
+        context.viewSlots.get(gameKey) match
             case None => ()
             case Some(c) =>        
                 Platform.runLater { 
@@ -33,7 +33,7 @@ trait JFXEntityViewAutoManager(using context: EntityRepositoryContext[Stage, Pan
         this
 
     protected override def removeAutoManagedView(view: Node) =
-        Platform.runLater { context.viewContainer.foreach(c => c.children.remove(view)) }
+        Platform.runLater { context.viewSlots.get(gameKey).foreach(c => c.children.remove(view)) }
         this
     
 object JFXEntityViewAutoManager:

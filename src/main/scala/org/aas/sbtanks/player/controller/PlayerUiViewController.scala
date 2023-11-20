@@ -7,8 +7,8 @@ import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.player.view.ui.PlayerSidebarView
 import scala.reflect.ClassTag
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
-import org.aas.sbtanks.entities.repository.EntityRepositoryContextAware
-import org.aas.sbtanks.entities.repository.EntityRepositoryContext
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContextAware
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 
 /**
   * A controller that manages the player sidebar UI view
@@ -19,21 +19,22 @@ import org.aas.sbtanks.entities.repository.EntityRepositoryContext
   * @param entityRepository The entity repository used to fetch the data
   * @param playerSidebarView The sidebar view that will show the data
   */
-abstract class PlayerUiViewController[RM >: Tank, RV, CVController, CVContainer](using modelClassTag: ClassTag[RM], viewClassTag: ClassTag[RV])
-    (using context: EntityRepositoryContext[CVController, CVContainer])
-    (entityRepository: EntityMvRepositoryContainer[RM, RV], playerSidebarView: PlayerSidebarView)
-    extends EntityRepositoryContextAware[CVController, CVContainer] with Steppable:
+abstract class PlayerUiViewController[RM >: Tank, RV, CVController, CVSlotKey, CVSlot](using modelClassTag: ClassTag[RM], viewClassTag: ClassTag[RV])
+    (using context: EntityRepositoryContext[CVController, CVSlotKey, CVSlot])
+    (entityRepository: EntityMvRepositoryContainer[RM, RV], playerSidebarView: PlayerSidebarView, uiKey: CVSlotKey)
+    extends EntityRepositoryContextAware[CVController, CVSlotKey, CVSlot] with Steppable:
 
     type ControllablePlayerTank = PlayerTank with ControllableTank
     
     private var playerTank = Option.empty[ControllablePlayerTank]
 
-    context.changed += { a => a.newUiContainer.foreach(c => addViewToContext(c)) }
+    context.changed += { (_, n) => n.get(uiKey).foreach(c => addViewToContext(c)) }
+    context.viewSlots.get(uiKey).foreach(c => addViewToContext(c))
 
     entityRepository.modelViewAdded += { (m, _) => onModelCreated(m) }
     entityRepository.modelViewReplaced += { a => onModelCreated(a.model) }
     entityRepository.modelViewRemoved += { (m, _) => m match
-        case p: ControllablePlayerTank if playerTank.map(pp => p == pp).getOrElse(false) => playerTank = Option.empty
+        case p: ControllablePlayerTank if playerTank.contains(p) => playerTank = Option.empty
         case e: Tank if !e.isInstanceOf[PlayerTank] => playerSidebarView.remainingEnemiesView.enemyDefeated()
         case _ => ()
      }
@@ -47,7 +48,7 @@ abstract class PlayerUiViewController[RM >: Tank, RV, CVController, CVContainer]
     def setCompletedLevelCount(count: Int) =
         playerSidebarView.levelNumberView.setLevelNumber(count + 1)
 
-    protected def addViewToContext(uiContainer: CVContainer): Unit
+    protected def addViewToContext(uiContainer: CVSlot): Unit
 
     private def onModelCreated(m: RM) =
         m match

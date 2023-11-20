@@ -1,10 +1,12 @@
 package org.aas.sbtanks.entities.repository
 
 import org.aas.sbtanks.common.Steppable
-import org.aas.sbtanks.entities.repository.EntityRepositoryContext
 import org.aas.sbtanks.event.EventSource
 import scala.reflect.ClassTag
 
+/**
+  * Basic repository for model-view pairs
+  */
 abstract class EntityMvRepositoryContainer[Model, View]:
     case class ViewReplacedArgs(model: Model, oldView: Option[View], newView: Option[View])
 
@@ -16,6 +18,13 @@ abstract class EntityMvRepositoryContainer[Model, View]:
 
     private var modelViewReferences = Map.empty[Model, View]
 
+    /**
+      * Adds a model with an optional view to this repository
+      *
+      * @param model The model to add
+      * @param view An option with a view to associate with this model or an empty optional
+      * @return This repository
+      */
     def addModelView(model: Model, view: Option[View]): this.type =
         modelRepository = modelRepository :+ model
         modelViewReferences = view match
