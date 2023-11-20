@@ -27,6 +27,9 @@ class PlayerUiViewController[RM >: Tank, RV](using modelClassTag: ClassTag[RM], 
     def setEnemyCount(amount: Int) =
         playerSidebarView.remainingEnemiesView.setEnemyCount(amount)
 
+    def setCompletedLevelCount(count: Int) =
+        playerSidebarView.levelNumberView.setLevelNumber(count + 1)
+
     private def onModelCreated(m: RM) =
         m match
             case p: ControllablePlayerTank =>
