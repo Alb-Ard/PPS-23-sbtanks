@@ -49,7 +49,11 @@ case class PlayerTankBuilder(private val x: Double = 0,
                         case v if v <= 0 =>
                             destroyed(())
                             this
-                        case _ => this
+                        case _ =>
+                            respawn()
+                            this
+                def respawn() =
+                    this.setPosition(0, 0)
 
 
 object PlayerTankBuilder:

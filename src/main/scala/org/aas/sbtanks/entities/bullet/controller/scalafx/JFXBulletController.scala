@@ -5,6 +5,7 @@ import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.bullet.controller.BulletController
 import org.aas.sbtanks.entities.bullet.view.scalafx.JFXBulletView
 import org.aas.sbtanks.entities.repository.EntityRepositoryContext
+import scalafx.scene.layout.Pane
 import scalafx.stage.Stage
 
 class JFXBulletController(bullet: Bullet with PositionBehaviour with MovementBehaviour
@@ -13,6 +14,6 @@ class JFXBulletController(bullet: Bullet with PositionBehaviour with MovementBeh
 
 
 object JFXBulletController:
-    def factory()(context: EntityRepositoryContext[Stage], bullet: Bullet with PositionBehaviour with MovementBehaviour
+    def factory()(context: EntityRepositoryContext[Stage, Pane], bullet: Bullet with PositionBehaviour with MovementBehaviour
         with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour, bulletView: JFXBulletView) =
         new JFXBulletController(bullet, bulletView)

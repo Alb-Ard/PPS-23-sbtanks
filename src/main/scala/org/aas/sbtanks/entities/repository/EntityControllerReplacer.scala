@@ -8,7 +8,7 @@ import org.aas.sbtanks.common.Steppable
   *
   * @param context The context that will be passed to the controller factories
   */
-trait EntityControllerReplacer[Model, View, Context <: EntityRepositoryContext[?]](using context: Context):
+trait EntityControllerReplacer[Model, View, Context <: EntityRepositoryContext[?, ?]](using context: Context):
     this: EntityMvRepositoryContainer[Model, View] with EntityControllerRepository[Model, View, Context] =>
 
     private case class ControllerReplacer[ReplacerParams](validModelPredicate: Model => Boolean, replacer: ReplacerParams => Controller)

@@ -8,14 +8,15 @@ import scalafx.stage.Stage
 import scalafx.scene.Node
 import scalafx.Includes
 import org.aas.sbtanks.entities.tank.view.TankView
+import scalafx.scene.layout.Pane
 
 /**
   * Automatically adds views to the viewContainer in the given reporitory context
   *
   * @param context The context from which to take the viewContainer
   */
-trait JFXEntityViewAutoManager(using context: EntityRepositoryContext[Stage]) extends EntityViewAutoManager[Node] with Includes:
-    this: JFXEntityMvRepositoryContainer with EntityRepositoryContextAware[Stage, EntityRepositoryContext[Stage]] =>
+trait JFXEntityViewAutoManager(using context: EntityRepositoryContext[Stage, Pane]) extends EntityViewAutoManager[Node] with Includes:
+    this: JFXEntityMvRepositoryContainer with EntityRepositoryContextAware[Stage, Pane] =>
 
     protected override def addAutoManagedView(view: Node) =
         Platform.runLater { 
@@ -23,13 +24,13 @@ trait JFXEntityViewAutoManager(using context: EntityRepositoryContext[Stage]) ex
                 case tv if JFXEntityViewAutoManager.BACK_LAYER_VIEW_TYPES
                         .filter(c => c.isAssignableFrom(view.getClass()))
                         .nonEmpty => 0
-                case _ => Math.max(0, context.viewContainer.scene.value.content.length - 1)
-            context.viewContainer.scene.value.content.insert(insertIndex, view)
+                case _ => Math.max(0, context.viewContainer.children.size - 1)
+            context.viewContainer.children.insert(insertIndex, view)
         }
         this
 
     protected override def removeAutoManagedView(view: Node) =
-        Platform.runLater { context.viewContainer.scene.value.content.remove(view) }
+        Platform.runLater { context.viewContainer.children.remove(view) }
         this
     
 object JFXEntityViewAutoManager:

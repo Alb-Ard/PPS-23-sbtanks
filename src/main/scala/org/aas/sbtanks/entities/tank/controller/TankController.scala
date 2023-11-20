@@ -12,6 +12,7 @@ import org.aas.sbtanks.entities.tank.view.TankView
 import org.aas.sbtanks.entities.tank.structure.Tank
 import TankController.ControllableTank
 import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
+import org.aas.sbtanks.behaviours.DamageableBehaviour
 
 trait TankController(tanks: Seq[(ControllableTank, TankView)], viewScale: Double):
     tanks.foreach((t, v) => t.directionChanged += { (x, y) => 
@@ -27,3 +28,4 @@ object TankController:
         with PositionBehaviour
         with CollisionBehaviour
         with TankMultipleShootingBehaviour
+        with DamageableBehaviour
