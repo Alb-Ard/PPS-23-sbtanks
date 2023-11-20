@@ -9,16 +9,11 @@ import scalafx.scene.input.KeyEvent
 import scalafx.scene.image.Image
 import scalafx.scene.image.ImageView
 import scalafx.animation.AnimationTimer
-import org.aas.sbtanks.player.controller.scalafx.JFXPlayerInputController
+import org.aas.sbtanks.player.controller.scalafx.{JFXPlayerDeathController, JFXPlayerInputController, JFXPlayerTankController}
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 import org.aas.sbtanks.entities.tank.view.TankView
-import org.aas.sbtanks.behaviours.DirectionBehaviour
-import org.aas.sbtanks.behaviours.MovementBehaviour
-import org.aas.sbtanks.player.controller.scalafx.JFXPlayerTankController
-import org.aas.sbtanks.behaviours.CollisionBehaviour
-import org.aas.sbtanks.behaviours.PositionBehaviour
+import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehaviour, DamageableBehaviour, DirectionBehaviour, MovementBehaviour, PositionBehaviour}
 import org.aas.sbtanks.physics.CollisionLayer
-import org.aas.sbtanks.behaviours.ConstrainedMovementBehaviour
 import org.aas.sbtanks.obstacles.LevelObstacle
 import org.aas.sbtanks.player.PlayerTankBuilder
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
@@ -143,7 +138,10 @@ object Main extends JFXApp3 with scalafx.Includes:
             lastTimeNanos = currentTimeNanos
             // ** TEST **
             if testTime > 0 && testTime - deltaTime < 0 then
-                levelSequencer.completeLevel()
+                //levelSequencer.completeLevel()
+                val currentPlayer = entityRepository.entitiesOfModelType[PlayerTank with DamageableBehaviour].head._1
+                currentPlayer.damage(1)
+                testTime = 2D
             testTime -= deltaTime
             // **********
         })
