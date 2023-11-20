@@ -50,6 +50,7 @@ import scalafx.geometry.Pos
 import org.aas.sbtanks.player.controller.PlayerUiViewController
 import org.aas.sbtanks.lifecycle.LevelSequencer
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
+import org.aas.sbtanks.entities.repository.scalafx.JFXEntityRepositoryContextInitializer
 
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
@@ -67,17 +68,7 @@ object Main extends JFXApp3 with scalafx.Includes:
                 fill = Color.BLACK
                 stylesheets.add(getClass().getResource("/ui/style.css").toExternalForm())
 
-        val entityViewContainer = Pane()
-        val scenePane = BorderPane(center = null, right = null, top = null, bottom = null, left = null)
-        BorderPane.setAlignment(entityViewContainer, Pos.CENTER)
-        scenePane.center.set(entityViewContainer)
-
-        val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
-        scenePane.right.set(playerSidebar)
-
-        stage.scene.value.content.add(scenePane)
-
-        given EntityRepositoryContext[Stage, Pane] = EntityRepositoryContext(stage, entityViewContainer)
+        given EntityRepositoryContext[Stage, Pane] = EntityRepositoryContext(stage).switch(JFXEntityRepositoryContextInitializer.ofLevel)
         val entityRepository = new JFXEntityMvRepositoryContainer()
                 with JFXEntityControllerRepository
                 with JFXEntityViewAutoManager
@@ -91,7 +82,12 @@ object Main extends JFXApp3 with scalafx.Includes:
                 .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(viewScale * tileSize))
                 .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank], EnemyController.factory(viewScale * tileSize))
 
-        val playerUiViewController = PlayerUiViewController[AnyRef, Node](entityRepository, playerSidebar);
+        val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
+
+        val playerUiViewController = new PlayerUiViewController[AnyRef, Node, Stage, Pane](entityRepository, playerSidebar):
+            override protected def addViewToContext(container: Pane) =
+                container.children.add(playerSidebar)
+        
         entityRepository.addController(playerUiViewController)
 
         // ** TEST **

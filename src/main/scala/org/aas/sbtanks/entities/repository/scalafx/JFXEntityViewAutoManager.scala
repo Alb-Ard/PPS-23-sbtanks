@@ -19,18 +19,21 @@ trait JFXEntityViewAutoManager(using context: EntityRepositoryContext[Stage, Pan
     this: JFXEntityMvRepositoryContainer with EntityRepositoryContextAware[Stage, Pane] =>
 
     protected override def addAutoManagedView(view: Node) =
-        Platform.runLater { 
-            val insertIndex = view match
-                case tv if JFXEntityViewAutoManager.BACK_LAYER_VIEW_TYPES
-                        .filter(c => c.isAssignableFrom(view.getClass()))
-                        .nonEmpty => 0
-                case _ => Math.max(0, context.viewContainer.children.size - 1)
-            context.viewContainer.children.insert(insertIndex, view)
-        }
+        context.viewContainer match
+            case None => ()
+            case Some(c) =>        
+                Platform.runLater { 
+                    val insertIndex = view match
+                        case tv if JFXEntityViewAutoManager.BACK_LAYER_VIEW_TYPES
+                                .filter(c => c.isAssignableFrom(view.getClass()))
+                                .nonEmpty => 0
+                        case _ => Math.max(0, c.children.size - 1)
+                    c.children.insert(insertIndex, view)
+                }
         this
 
     protected override def removeAutoManagedView(view: Node) =
-        Platform.runLater { context.viewContainer.children.remove(view) }
+        Platform.runLater { context.viewContainer.foreach(c => c.children.remove(view)) }
         this
     
 object JFXEntityViewAutoManager:

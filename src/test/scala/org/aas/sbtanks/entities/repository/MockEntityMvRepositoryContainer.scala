@@ -26,10 +26,10 @@ object MockEntityMvRepositoryContainer:
                 with EntityRepositoryTagger[MockModel, MockView, Int]
                 with EntityRepositoryContextAware:
                     override def addAutoManagedView(view: MockView) = 
-                        summon[MockContext].viewContainer :+ view
+                        summon[MockContext].viewContainer.foreach(c => c :+ view)
                         this
                 
                     override def removeAutoManagedView(view: MockView) =
-                        summon[MockContext].viewContainer -= view
+                        summon[MockContext].viewContainer.foreach(c => c -= view)
                         this
                         
