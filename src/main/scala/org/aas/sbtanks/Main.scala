@@ -9,16 +9,11 @@ import scalafx.scene.input.KeyEvent
 import scalafx.scene.image.Image
 import scalafx.scene.image.ImageView
 import scalafx.animation.AnimationTimer
-import org.aas.sbtanks.player.controller.scalafx.JFXPlayerInputController
+import org.aas.sbtanks.player.controller.scalafx.{JFXPlayerDeathController, JFXPlayerInputController, JFXPlayerTankController}
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 import org.aas.sbtanks.entities.tank.view.TankView
-import org.aas.sbtanks.behaviours.DirectionBehaviour
-import org.aas.sbtanks.behaviours.MovementBehaviour
-import org.aas.sbtanks.player.controller.scalafx.JFXPlayerTankController
-import org.aas.sbtanks.behaviours.CollisionBehaviour
-import org.aas.sbtanks.behaviours.PositionBehaviour
+import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehaviour, DamageableBehaviour, DirectionBehaviour, MovementBehaviour, PositionBehaviour}
 import org.aas.sbtanks.physics.CollisionLayer
-import org.aas.sbtanks.behaviours.ConstrainedMovementBehaviour
 import org.aas.sbtanks.obstacles.LevelObstacle
 import org.aas.sbtanks.player.PlayerTankBuilder
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
@@ -111,7 +106,7 @@ object Main extends JFXApp3 with scalafx.Includes:
                       "U-P---U" +
                       "U-WWW-U" +
                       "U-WBW-U" +
-                      "UUUUUUU", 7, 20)
+                      "UUUUUUU", 7, 10)
         // **********
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
         /*
@@ -129,12 +124,18 @@ object Main extends JFXApp3 with scalafx.Includes:
 
          */
         val levelSequencer = LevelSequencer[AnyRef, Node](Seq(level1, level2), levelFactory, entityRepository)
-        levelSequencer.levelChanged += { (_, enemyCount) => playerUiViewController.setEnemyCount(enemyCount) }
+        levelSequencer.levelChanged += { (_, enemyCount) => 
+            playerUiViewController.setEnemyCount(enemyCount) 
+            playerUiViewController.setCompletedLevelCount(levelSequencer.completedLevelCount)
+        }
         levelSequencer.start()
 
+        val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer);
+        entityRepository.addController(playerDeathController)
         var lastTimeNanos = System.nanoTime().doubleValue
         // ** TEST **
         var testTime = 2D
+        val currentPlayer = entityRepository.entitiesOfModelType[PlayerTank with DamageableBehaviour].head._1
         // **********
         val updateTimer = AnimationTimer(_ => {
             val currentTimeNanos = System.nanoTime().doubleValue
@@ -143,7 +144,9 @@ object Main extends JFXApp3 with scalafx.Includes:
             lastTimeNanos = currentTimeNanos
             // ** TEST **
             if testTime > 0 && testTime - deltaTime < 0 then
-                levelSequencer.completeLevel()
+                //levelSequencer.completeLevel()
+                currentPlayer.damage(1)
+                testTime = 2D
             testTime -= deltaTime
             // **********
         })

@@ -12,14 +12,19 @@ import org.aas.sbtanks.entities.bullet.view.scalafx.JFXBulletView
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 import org.aas.sbtanks.entities.tank.behaviours.TankShootingBehaviour
-import org.aas.sbtanks.resources.scalafx.JFXImageLoader
-import scalafx.scene.image.Image
+
 
 class BulletCollisionSpec extends AnyFlatSpec with Matchers {
 
-    val viewScale = 4D
-    val tileSize = 16D
-    val bulletView = new Image(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
+//    val viewScale = 4D
+//    val tileSize = 16D
+//    val url = "entities/bullet/bullet.png"
+    //val bulletView = new Image(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
+
+    class MockView() extends BulletView:
+        override def look(rotation: Double): Unit = 1+1 //mock implementation
+
+        override def move(x: Double, y: Double): Unit = 1+1 //mock implementation
 
     class MockBullet(override val speed: Double, override val isPlayerBullet: Boolean) extends Bullet(speed, isPlayerBullet)
         with PositionBehaviour
@@ -48,7 +53,7 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers {
         val bullet = new MockBullet(1, false)
         PhysicsWorld.registerCollider(bullet)
         bullet.setDirection(0, 1)
-        val bulletController = new BulletController(bullet, new JFXBulletView(bulletView))
+        val bulletController = new BulletController(bullet, new MockView())
         var wasDestroyed = false
         bullet.destroyed += { _ => wasDestroyed = true }
         for _ <- 0 until 10 do bulletController.step(1.0)
@@ -67,10 +72,10 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers {
                 this
             }
         PhysicsWorld.registerCollider(tank)
-        val bullet = new MockBullet(1, false)
+        val bullet = new MockBullet(1, true)
         PhysicsWorld.registerCollider(bullet)
         bullet.setDirection(0, 1)
-        val bulletController = new BulletController(bullet, new JFXBulletView(bulletView))
+        val bulletController = new BulletController(bullet, new MockView())
         for _ <- 0 until 10 do bulletController.step(1.0)
         wasTankDamaged should be (true)
     }
