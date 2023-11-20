@@ -1,0 +1,15 @@
+UUUUUUUUUUUUUUU
+U-W--W--W--W--U
+U--W--W--W--W-U
+UW--W--W--W--WU
+U-W--W--W--W--U
+U--W--W--W--W-U
+UW--W--W--W--WU
+U-S--S--S--S--U
+U--W--W--W--W-U
+UW--W--W--W--WU
+U-W--W--W--W--U
+U--W--W--W--W-U
+UW--W-WWW-W--WU
+U-W-PWWBW--W--U
+UUUUUUUUUUUUUUU

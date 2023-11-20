@@ -13,3 +13,5 @@ U-W-W-W-W-W-W-U
 U-W-W-WWW-W-W-U
 U---P-WBW-----U
 UUUUUUUUUUUUUUU
+
+Seq(b,b,b,b,b,b,b,b,b,b,b,b,f,f,f,b,b,f,b,a)
