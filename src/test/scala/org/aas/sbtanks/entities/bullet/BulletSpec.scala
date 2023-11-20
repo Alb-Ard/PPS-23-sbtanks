@@ -17,15 +17,15 @@ class BulletSpec extends AnyFlatSpec with Matchers {
 
     val basicTank = new BasicTank() with PositionBehaviour() with DirectionBehaviour  with TankMultipleShootingBehaviour()
     val fastTank = new FastTank() with PositionBehaviour() with DirectionBehaviour with TankMultipleShootingBehaviour()
-    val basicBullet = basicTank.shoot(1)
-    val fastBullet = fastTank.shoot(2)
+    val basicBullet = basicTank.shoot(1, false)
+    val fastBullet = fastTank.shoot(2, false)
 
     "a bullet" should "be created when a tank shoots" in {
-        basicTank.shoot(1) should be(Seq(new Bullet(basicTank.tankData.bulletSpeed, false) with PositionBehaviour(basicTank.positionX + basicTank.directionX,
+        basicTank.shoot(1, false) should be(Seq(new Bullet(basicTank.tankData.bulletSpeed, false) with PositionBehaviour(basicTank.positionX + basicTank.directionX,
                                     basicTank.positionY + basicTank.directionY) with ConstrainedMovementBehaviour with DirectionBehaviour
                                     with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
                                     Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))))
-        fastTank.shoot(2) should be(Seq(new Bullet(fastTank.tankData.bulletSpeed, false)
+        fastTank.shoot(2, false) should be(Seq(new Bullet(fastTank.tankData.bulletSpeed, false)
                                     with PositionBehaviour(fastTank.positionX + fastTank.directionX,
                                     fastTank.positionY + fastTank.directionY) with ConstrainedMovementBehaviour with DirectionBehaviour
                                     with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,

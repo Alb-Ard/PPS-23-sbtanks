@@ -32,7 +32,7 @@ object JFXPlayerTankController:
     def factory(speedMultiplier: Double, viewScale: Double, bulletConsumer: (AnyRef, Node) => Any, tileSize: Double)(context: EntityRepositoryContext[Stage, Pane], tank: ControllableTank, view: TankView) =
         new JFXPlayerTankController(using context)(tank, speedMultiplier, view, viewScale):
             override def shoot() =
-                val bullet = tank.shoot(1).head
+                val bullet = tank.shoot(1, true).head
                 val bulletView = new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
                 bulletConsumer(bullet, bulletView)
                 this
