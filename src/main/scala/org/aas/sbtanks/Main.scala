@@ -130,11 +130,12 @@ object Main extends JFXApp3 with scalafx.Includes:
         }
         levelSequencer.start()
 
-        val playerDeathController = new JFXPlayerDeathController(entityRepository);
-        entityRepository.addController(playerDeathController) //sistemare questo test
+        val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer);
+        entityRepository.addController(playerDeathController)
         var lastTimeNanos = System.nanoTime().doubleValue
         // ** TEST **
         var testTime = 2D
+        val currentPlayer = entityRepository.entitiesOfModelType[PlayerTank with DamageableBehaviour].head._1
         // **********
         val updateTimer = AnimationTimer(_ => {
             val currentTimeNanos = System.nanoTime().doubleValue
@@ -144,7 +145,6 @@ object Main extends JFXApp3 with scalafx.Includes:
             // ** TEST **
             if testTime > 0 && testTime - deltaTime < 0 then
                 //levelSequencer.completeLevel()
-                val currentPlayer = entityRepository.entitiesOfModelType[PlayerTank with DamageableBehaviour].head._1
                 currentPlayer.damage(1)
                 testTime = 2D
             testTime -= deltaTime

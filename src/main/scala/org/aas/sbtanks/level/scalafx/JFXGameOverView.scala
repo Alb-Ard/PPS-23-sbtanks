@@ -1,17 +1,17 @@
 package org.aas.sbtanks.level.scalafx
 
-import org.aas.sbtanks.lifecycle.PointsManager
-import scalafx.scene.Scene
+import org.aas.sbtanks.lifecycle.{LevelSequencer, PointsManager}
+import scalafx.scene.{Node, Scene}
 import scalafx.application.JFXApp3
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.control.{Button, ButtonBar}
 import scalafx.scene.effect.DropShadow
-import scalafx.scene.layout.{VBox}
+import scalafx.scene.layout.VBox
 import scalafx.scene.paint.Color.*
 import scalafx.scene.paint.*
 import scalafx.scene.text.{Font, Text, TextAlignment, TextFlow}
 
-class JFXGameOverView extends VBox:
+class JFXGameOverView(level: LevelSequencer[?,?]) extends VBox:
 
     val stylesheet = getClass.getResource("/ui/press_start_2p.ttf").toExternalForm
 
@@ -26,7 +26,7 @@ class JFXGameOverView extends VBox:
                 stops = Stops(Red, DarkRed))
         },
         new Text {
-            text = "You died at Level: "
+            text = "You died at Level: " + (level.completedLevelCount + 1)
             font = Font.loadFont(stylesheet, 30)
             alignment = Pos.Center
             fill = new LinearGradient(
@@ -77,6 +77,7 @@ class JFXGameOverView extends VBox:
 object testJFXGameOver extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
     val tileSize = 16D
+    //val levelSequencer = new LevelSequencer[AnyRef, Node](Seq(), levelFactory, entityRepository)
 
 
     override def start(): Unit =
@@ -86,5 +87,5 @@ object testJFXGameOver extends JFXApp3 with scalafx.Includes:
             height = 720
             scene = new Scene:
                 fill = Color.Black
-                content = new JFXGameOverView
+                //content = new JFXGameOverView()
 
