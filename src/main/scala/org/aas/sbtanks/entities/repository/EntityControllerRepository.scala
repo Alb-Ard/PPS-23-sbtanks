@@ -18,6 +18,7 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
     private type ControllerWithoutViewFactory = ControllerFactory[(Context, Model)]
 
     private var controllers = Seq.empty[(Option[Model], Controller)]
+    private var editedControllers = Option.empty[Seq[(Option[Model], Controller)]]
     private var controllerWithViewFactories = Seq.empty[ControllerWithViewFactory]
     private var controllerWithoutViewFactories = Seq.empty[ControllerWithoutViewFactory]
 
@@ -26,6 +27,8 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
 
     override def step(delta: Double): this.type =
         controllers = controllers map { c => (c(0), c(1).step(delta)) }
+        controllers = editedControllers.getOrElse(controllers)
+        editedControllers = Option.empty
         this
 
     def registerControllerFactory[M <: Model, V <: View](validPredicate: Model => Boolean, factory: (Context, M, V) => Controller): this.type =
@@ -72,4 +75,4 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
                 this
 
     protected def editControllers(modifier: (Option[Model], Controller) => Controller) =
-        controllers = controllers.map(c => (c(0), modifier(c(0), c(1))))
+        editedControllers = Option(controllers.map(c => (c(0), modifier(c(0), c(1)))))
