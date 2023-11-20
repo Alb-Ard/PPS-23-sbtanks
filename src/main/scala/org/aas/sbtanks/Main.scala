@@ -93,20 +93,21 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView))))
                 .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(viewScale * tileSize))
-                .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank], EnemySpawnController.factory(viewScale * tileSize))
+                .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && m.asInstanceOf[Tank].tankData.health < 10, EnemySpawnController.factory(viewScale * tileSize, entityRepository))
+                .registerControllerReplacer(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && m.asInstanceOf[Tank].tankData.health > 10, EnemyController.factory(viewScale * tileSize))
 
         val playerUiViewController = PlayerUiViewController[AnyRef, Node](entityRepository, playerSidebar);
         entityRepository.addController(playerUiViewController)
 
 
         val tank = EnemyTankBuilder()
-            .setPosition(2.0, 6.0)
+            .setPosition(1.0, 1.0)
             .setCollisionSize(x = 1D - pixelSize, y = 1D - pixelSize)
             .build()
 
         val g = new EnemyTankGenerator(entityRepository, tank)
 
-        entityRepository.addController(g)
+        //entityRepository.addController(g)
 
         g.loadTank()
 

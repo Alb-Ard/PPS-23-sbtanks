@@ -22,7 +22,7 @@ class EnemyController(using context: EntityRepositoryContext[Stage, Pane])(priva
         this
 
 object EnemyController:
-    def factory(viewScale: Double)(context: EntityRepositoryContext[Stage, Pane], tank: ControllableTank, view: TankView) =
+    def factory(viewScale: Double)(oldController: Steppable, context: EntityRepositoryContext[Stage, Pane], tank: ControllableTank, view: TankView) =
         new EnemyController(using context)(tank, view, viewScale)
 
         
