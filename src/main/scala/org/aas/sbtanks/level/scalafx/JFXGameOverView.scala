@@ -26,7 +26,7 @@ class JFXGameOverView extends VBox:
                 stops = Stops(Red, DarkRed))
         },
         new Text {
-            text = "You died at Level: " //+ Level Sequence
+            text = "You died at Level: "
             font = Font.loadFont(stylesheet, 30)
             alignment = Pos.Center
             fill = new LinearGradient(
@@ -34,13 +34,6 @@ class JFXGameOverView extends VBox:
                 stops = Stops(Red, DarkRed))
         },
         new TextFlow {
-            /*
-                effect = new DropShadow {
-                    color = DarkGray
-                    radius = 15
-                    spread = 0.25
-                }
-             */
             padding = Insets(40, 40, 40, 40)
             children = Seq(
                 new Text {

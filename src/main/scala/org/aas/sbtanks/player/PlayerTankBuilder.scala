@@ -53,7 +53,7 @@ case class PlayerTankBuilder(private val x: Double = 0,
                             respawn()
                             this
                 def respawn() =
-                    this.setPosition(0, 0)
+                    this.setPosition(0, 0) //sistemare qui la posizione iniziale che deve essere inserita
 
 
 object PlayerTankBuilder:

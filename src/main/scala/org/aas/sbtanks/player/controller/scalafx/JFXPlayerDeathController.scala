@@ -22,7 +22,7 @@ class JFXPlayerDeathController(using context: EntityRepositoryContext[Stage, Pan
             case _ => ()
     }
     def gameover(): Unit =
-       new JFXGameOverView()
+       new JFXGameOverView() //qua vi sarà una modifica per aggiungere la V-Box al momento opportuno
 
 
     private def onModelCreated(m: AnyRef) =

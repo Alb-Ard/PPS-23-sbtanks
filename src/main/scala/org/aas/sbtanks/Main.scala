@@ -127,6 +127,8 @@ object Main extends JFXApp3 with scalafx.Includes:
         levelSequencer.levelChanged += { (_, enemyCount) => playerUiViewController.setEnemyCount(enemyCount) }
         levelSequencer.start()
 
+        val playerDeathController = new JFXPlayerDeathController(entityRepository);
+        entityRepository.addController(playerDeathController) //sistemare questo test
         var lastTimeNanos = System.nanoTime().doubleValue
         // ** TEST **
         var testTime = 2D
