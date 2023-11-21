@@ -1,6 +1,6 @@
 package org.aas.sbtanks.entities.tank.behaviours
 
-import org.aas.sbtanks.behaviours.{CollisionBehaviour, MovementBehaviour, DamageableBehaviour, DirectionBehaviour, PositionBehaviour}
+import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehaviour, DamageableBehaviour, DirectionBehaviour, MovementBehaviour, PositionBehaviour}
 import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.physics.CollisionLayer
@@ -29,4 +29,3 @@ trait TankMultipleShootingBehaviour:
                 override def applyDamage(amount: Int) =
                     destroyed(())
                     this
-

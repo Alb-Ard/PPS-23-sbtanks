@@ -2,11 +2,10 @@ package org.aas.sbtanks.entities.bullet.controller
 
 import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.tank.structure.Tank
-import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehaviour, DamageableBehaviour, DirectionBehaviour, PositionBehaviour}
+import org.aas.sbtanks.behaviours.{CollisionBehaviour, DamageableBehaviour, DirectionBehaviour, MovementBehaviour, PositionBehaviour}
 import org.aas.sbtanks.physics.Collider
 import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.behaviours.DamageableBehaviour.damage
-import org.aas.sbtanks.behaviours.MovementBehaviour
 import org.aas.sbtanks.entities.bullet.view.BulletView
 import org.aas.sbtanks.player.PlayerTank
 
@@ -18,6 +17,7 @@ class BulletController(bullet: Bullet with PositionBehaviour with MovementBehavi
 
     override def step(delta: Double) =
         bullet.moveRelative(bullet.directionX * bullet.speed, bullet.directionY * bullet.speed)
+        println("Bullet Position: (" + bullet.positionX + ", " + bullet.positionY + ")")
         this
 
     private def checkCollision(colliders: Seq[Collider]): Unit =

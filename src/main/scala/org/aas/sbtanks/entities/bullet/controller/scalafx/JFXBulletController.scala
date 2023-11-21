@@ -1,6 +1,6 @@
 package org.aas.sbtanks.entities.bullet.controller.scalafx
 
-import org.aas.sbtanks.behaviours.{CollisionBehaviour, DamageableBehaviour, DirectionBehaviour, MovementBehaviour, PositionBehaviour}
+import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehaviour, DamageableBehaviour, DirectionBehaviour, MovementBehaviour, PositionBehaviour}
 import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.bullet.controller.BulletController
@@ -14,7 +14,7 @@ class JFXBulletController(bullet: Bullet with PositionBehaviour with MovementBeh
 
 
 object JFXBulletController:
-    type CompleteBullet = Bullet
+    private type CompleteBullet = Bullet
         with PositionBehaviour
         with MovementBehaviour
         with DirectionBehaviour
