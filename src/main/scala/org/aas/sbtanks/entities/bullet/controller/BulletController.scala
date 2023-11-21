@@ -17,7 +17,9 @@ class BulletController(bullet: Bullet with PositionBehaviour with MovementBehavi
 
     override def step(delta: Double) =
         bullet.moveRelative(bullet.directionX * bullet.speed, bullet.directionY * bullet.speed)
+        println("Bullet Speed: " + bullet.speed)
         println("Bullet Position: (" + bullet.positionX + ", " + bullet.positionY + ")")
+        println("Bullet Direction: (" + bullet.directionX + ", " + bullet.directionY + ")")
         this
 
     private def checkCollision(colliders: Seq[Collider]): Unit =

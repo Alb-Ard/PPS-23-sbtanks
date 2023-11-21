@@ -26,7 +26,6 @@ abstract class JFXPlayerTankController[VSK, VS](using context: EntityRepositoryC
         stage.addEventHandler(KeyEvent.KeyReleased, inputEvents.handleKeyReleasedEvent)
 
 object JFXPlayerTankController:
-    //def factory(speedMultiplier: Double, viewScale: Double, bulletConsumer: (AnyRef, Node) => Any, tileSize: Double)(context: EntityRepositoryContext[Stage], tank: ControllableTank, view: TankView) =
     def factory(speedMultiplier: Double, viewScale: Double, bulletConsumer: (AnyRef, Node) => Any, tileSize: Double)(context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: TankView) =
         new JFXPlayerTankController(using context)(tank, speedMultiplier, view, viewScale):
             override def shoot() =

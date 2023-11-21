@@ -21,9 +21,10 @@ trait TankMultipleShootingBehaviour:
             with PositionBehaviour(self.positionX + offset._1, self.positionY + offset._2)
             with MovementBehaviour
             with DirectionBehaviour
-            with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
+            with CollisionBehaviour(0.5, 0.5, CollisionLayer.BulletsLayer,
                 Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer, CollisionLayer.NonWalkableLayer))
             with DamageableBehaviour:
                 override def applyDamage(amount: Int) =
                     destroyed(())
                     this
+                setDirection(self.directionX, self.directionY)
