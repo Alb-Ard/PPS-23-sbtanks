@@ -22,7 +22,7 @@ trait TankMultipleShootingBehaviour:
             with MovementBehaviour
             with DirectionBehaviour
             with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
-                Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))
+                Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer, CollisionLayer.NonWalkableLayer))
             with DamageableBehaviour:
                 override def applyDamage(amount: Int) =
                     destroyed(())
