@@ -1,6 +1,6 @@
 package org.aas.sbtanks.entities.tank.behaviours
 
-import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehaviour, DamageableBehaviour, DirectionBehaviour, MovementBehaviour, PositionBehaviour}
+import org.aas.sbtanks.behaviours.{CollisionBehaviour, DamageableBehaviour, DirectionBehaviour, MovementBehaviour, PositionBehaviour}
 import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.physics.CollisionLayer
@@ -13,8 +13,6 @@ trait TankMultipleShootingBehaviour:
             with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour] = Seq.empty
         for(n <- Range(1, nShots + 1))
             shotsFired = shotsFired :+ generateBullet((self.directionX * n, self.directionY * n), isPlayerBullet)
-            //shotsFired.::(generateBullet((self.directionX * n, self.directionY * n)))
-            //Seq(generateBullet((self.directionX, self.directionY)), generateBullet((self.directionX * 2, self.directionY * 2)))
         shotsFired
 
 
