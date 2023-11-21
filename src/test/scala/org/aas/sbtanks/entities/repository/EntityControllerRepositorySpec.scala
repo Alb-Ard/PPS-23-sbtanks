@@ -13,30 +13,27 @@ class EntityControllerRepositorySpec extends AnyFlatSpec with Matchers with Enti
     it should "be able to register a controller factory for a model with a view" in withEntityRepository { repository =>
         repository.registerControllerFactory(m => true, (c, m, v) => new Object() with Steppable {
             override def step(delta: Double) = this
-        })
+        }).executeQueuedCommands()
         repository.controllerFactoryCount should be (1)
     }
 
     it should "be able to register a controller factory for a model without a view" in withEntityRepository { repository =>
         repository.registerControllerFactory(m => true, (c, m) => new Object() with Steppable {
             override def step(delta: Double) = this
-        })
+        }).executeQueuedCommands()
         repository.controllerFactoryCount should be (1)
     }
 
     it should "be able to register multiple controller factories of different types" in withEntityRepository { repository =>
         repository.registerControllerFactory(m => true, (c, m, v) => new Object() with Steppable {
             override def step(delta: Double) = this
-        })
-        repository.registerControllerFactory(m => true, (c, m, v) => new Object() with Steppable {
+        }).registerControllerFactory(m => true, (c, m, v) => new Object() with Steppable {
             override def step(delta: Double) = this
-        })
-        repository.registerControllerFactory(m => true, (c, m) => new Object() with Steppable {
+        }).registerControllerFactory(m => true, (c, m) => new Object() with Steppable {
             override def step(delta: Double) = this
-        })        
-        repository.registerControllerFactory(m => true, (c, m) => new Object() with Steppable {
+        }).registerControllerFactory(m => true, (c, m) => new Object() with Steppable {
             override def step(delta: Double) = this
-        })
+        }).executeQueuedCommands()
         repository.controllerFactoryCount should be (4)
     }
 
@@ -46,11 +43,11 @@ class EntityControllerRepositorySpec extends AnyFlatSpec with Matchers with Enti
             m should be (model)
 
             override def step(delta: Double) = this
-        })
+        }).executeQueuedCommands()
         repository.controllerFactoryCount should be (1)
-        repository.addModelView(model, Option.empty)
+        repository.addModelView(model, Option.empty).executeQueuedCommands()
         repository.controllerCount should be (1)
-        repository.addModelView(Object(), Option.empty)
+        repository.addModelView(Object(), Option.empty).executeQueuedCommands()
         repository.controllerCount should be (1)
     }
 
@@ -62,10 +59,10 @@ class EntityControllerRepositorySpec extends AnyFlatSpec with Matchers with Enti
             v should be (view)
 
             override def step(delta: Double) = this
-        })
+        }).executeQueuedCommands()
         repository.controllerFactoryCount should be (1)
-        repository.addModelView(model, Option(view))
+        repository.addModelView(model, Option(view)).executeQueuedCommands()
         repository.controllerCount should be (1)
-        repository.addModelView(Object(), Option(view))
+        repository.addModelView(Object(), Option(view)).executeQueuedCommands()
         repository.controllerCount should be (1)
     }

@@ -3,6 +3,7 @@ package org.aas.sbtanks.entities.repository
 import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.event.EventSource
 import scala.reflect.ClassTag
+import scala.collection.immutable.Queue
 
 /**
   * Basic repository for model-view pairs
@@ -15,8 +16,20 @@ abstract class EntityMvRepositoryContainer[Model, View]:
     val modelViewRemoved = EventSource[(Model, Option[View])]()
 
     private var modelRepository = Seq.empty[Model]
-
     private var modelViewReferences = Map.empty[Model, View]
+    private var commandQueue = Queue.empty[() => Any]
+
+    /**
+      * Exeucted the commands queued from the previous call
+      *
+      * @return This repository
+      */
+    def executeQueuedCommands(): this.type =
+        while !commandQueue.isEmpty do
+            val (command, newQueue) = commandQueue.dequeue
+            commandQueue = newQueue
+            command()
+        this
 
     /**
       * Adds a model with an optional view to this repository
@@ -66,6 +79,10 @@ abstract class EntityMvRepositoryContainer[Model, View]:
             case None => modelViewReferences
             case Some(v) => modelViewReferences - model
         modelViewRemoved(model, view)
+        this
+    
+    protected def queueCommand(command: () => Any): this.type =
+        commandQueue = commandQueue :+ command
         this
     
 object EntityMvRepositoryContainer:

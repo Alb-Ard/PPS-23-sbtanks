@@ -140,7 +140,7 @@ object Main extends JFXApp3 with scalafx.Includes:
         val updateTimer = AnimationTimer(_ => {
             val currentTimeNanos = System.nanoTime().doubleValue
             val deltaTime = (currentTimeNanos - lastTimeNanos).doubleValue / 1000D / 1000D / 1000D
-            entityRepository.step(deltaTime)
+            entityRepository.step(deltaTime).executeQueuedCommands()
             lastTimeNanos = currentTimeNanos
             // ** TEST **
             if testTime > 0 && testTime - deltaTime < 0 then

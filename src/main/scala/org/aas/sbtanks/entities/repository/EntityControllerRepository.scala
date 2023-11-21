@@ -60,9 +60,9 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
       * @param controller The controller to add
       * @return This repository
       */
-    def addController(controller: Controller): this.type =
+    def addController(controller: Controller): this.type = queueCommand { () =>
         controllers = controllers :+ (Option.empty, controller)
-        this
+    }
 
     /**
      * Manually removes a controller to this repository. Can remove both manually and automatically added controllers
@@ -70,9 +70,9 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
      * @param controller The controller to add
      * @return This repository
      */
-    def removeController(controller: Controller): this.type =
+    def removeController(controller: Controller): this.type = queueCommand { () =>
         controllers = controllers.filterNot(c => c(1) == controller)
-        this
+    }
 
     /**
       * Gets the total amount of controllers in this repository
@@ -88,7 +88,7 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
       */
     def controllerFactoryCount = controllerWithViewFactories.size + controllerWithoutViewFactories.size
 
-    protected def createMvController(model: Model, view: Option[View]): this.type =
+    protected def createMvController(model: Model, view: Option[View]): this.type = queueCommand { () =>
         val controller = view match
             case None => controllerWithoutViewFactories.find(factory => factory.validModelPredicate(model))
                 .map(factory => factory.provider) match
@@ -102,14 +102,15 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
             case None => this
             case Some(c) => 
                 controllers = controllers :+ ((Option(model), c))
-                this
+    }
 
-    protected def removeMvController(model: Model): this.type =
+    protected def removeMvController(model: Model): this.type = queueCommand { () =>
         controllers.find(c => c(0) == model) match
             case None => this
             case Some(c) =>
                 controllers = controllers.filterNot(c => c(0) == model)
-                this
+    }
 
-    protected def editControllers(modifier: (Option[Model], Controller) => Controller) =
+    protected def editControllers(modifier: (Option[Model], Controller) => Controller) = queueCommand { () =>
         controllers = controllers.map(c => (c(0), modifier(c(0), c(1))))
+    }

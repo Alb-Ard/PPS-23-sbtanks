@@ -12,30 +12,27 @@ class EntityControllerReplacerSpec extends AnyFlatSpec with Matchers with Entity
     it should "be able to register a controller replacer for a model with a view" in withEntityRepository { repository =>
         repository.registerControllerReplacer(m => true, (c, ctx, m, v) => new Object() with Steppable {
             override def step(delta: Double) = this
-        })
+        }).executeQueuedCommands()
         repository.controllerReplacerCount should be (1)
     }
 
     it should "be able to register a controller replacer for a model without a view" in withEntityRepository { repository =>
         repository.registerControllerReplacer(m => true, (c, ctx, m) => new Object() with Steppable {
             override def step(delta: Double) = this
-        })
+        }).executeQueuedCommands()
         repository.controllerReplacerCount should be (1)
     }
 
     it should "be able to register multiple controller replacers of different types" in withEntityRepository { repository =>
         repository.registerControllerReplacer(m => true, (c, ctx, m, v) => new Object() with Steppable {
             override def step(delta: Double) = this
-        })
-        repository.registerControllerReplacer(m => true, (c, ctx, m, v) => new Object() with Steppable {
+        }).registerControllerReplacer(m => true, (c, ctx, m, v) => new Object() with Steppable {
             override def step(delta: Double) = this
-        })
-        repository.registerControllerReplacer(m => true, (c, ctx, m) => new Object() with Steppable {
+        }).registerControllerReplacer(m => true, (c, ctx, m) => new Object() with Steppable {
             override def step(delta: Double) = this
-        })        
-        repository.registerControllerReplacer(m => true, (c, ctx, m) => new Object() with Steppable {
+        }).registerControllerReplacer(m => true, (c, ctx, m) => new Object() with Steppable {
             override def step(delta: Double) = this
-        })
+        }).executeQueuedCommands()
         repository.controllerReplacerCount should be (4)
     }
 
@@ -45,7 +42,7 @@ class EntityControllerReplacerSpec extends AnyFlatSpec with Matchers with Entity
             m should be (model)
 
             override def step(delta: Double) = this
-        })
+        }).executeQueuedCommands()
         var wasControllerReplaced = false
         val newView = Object()
         repository.registerControllerReplacer(model.equals, (c, ctx, m, v) => new Object() with Steppable {
@@ -54,10 +51,10 @@ class EntityControllerReplacerSpec extends AnyFlatSpec with Matchers with Entity
             wasControllerReplaced = true
 
             override def step(delta: Double) = this
-        })
-        repository.addModelView(model, Option.empty)
+        }).executeQueuedCommands()
+        repository.addModelView(model, Option.empty).executeQueuedCommands()
         repository.controllerCount should be (1)
-        repository.replaceView(model, Option(newView))
+        repository.replaceView(model, Option(newView)).executeQueuedCommands()
         repository.controllerCount should be (1)
         wasControllerReplaced should be (true)
     }
@@ -68,17 +65,17 @@ class EntityControllerReplacerSpec extends AnyFlatSpec with Matchers with Entity
             m should be (model)
 
             override def step(delta: Double) = this
-        })
+        }).executeQueuedCommands()
         var wasControllerReplaced = false
         repository.registerControllerReplacer(model.equals, (c, ctx, m) => new Object() with Steppable {
             m should be (model)
             wasControllerReplaced = true
 
             override def step(delta: Double) = this
-        })
-        repository.addModelView(model, Option.empty)
+        }).executeQueuedCommands()
+        repository.addModelView(model, Option.empty).executeQueuedCommands()
         repository.controllerCount should be (1)
-        repository.replaceView(model, Option.empty)
+        repository.replaceView(model, Option.empty).executeQueuedCommands()
         repository.controllerCount should be (1)
         wasControllerReplaced should be (true)
     }
