@@ -3,7 +3,7 @@ package org.aas.sbtanks.obstacles
 import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.obstacles.view.ObstacleView
 import org.aas.sbtanks.behaviours.PositionBehaviour
-import org.aas.sbtanks.entities.repository.EntityRepositoryContext
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 import org.aas.sbtanks.obstacles.view.scalafx.JFXAnimatedObstacleView
 
 final case class LevelObstacleController(model: LevelObstacle with PositionBehaviour, view: ObstacleView, positionMultiplier: Double) extends Steppable:
@@ -20,5 +20,5 @@ final case class LevelObstacleController(model: LevelObstacle with PositionBehav
 
 
 object LevelObstacleController:
-    def factory[VC](positionMultiplier: Double)(context: EntityRepositoryContext[VC], model: LevelObstacle with PositionBehaviour, view: ObstacleView) =
+    def factory(positionMultiplier: Double)(context: EntityRepositoryContext[?, ?, ?], model: LevelObstacle with PositionBehaviour, view: ObstacleView) =
         LevelObstacleController(model, view, positionMultiplier)

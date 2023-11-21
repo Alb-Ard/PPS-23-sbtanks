@@ -18,7 +18,7 @@ trait Tank(dataSupplier: TankTypeData):
 
 
 
-object Tank extends App:
+object Tank:
     class BasicTank extends Tank(BasicTankData)
 
     class FastTank extends Tank(FastTankData)

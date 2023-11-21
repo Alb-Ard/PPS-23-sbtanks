@@ -1,10 +1,12 @@
 package org.aas.sbtanks.entities.repository
 
 import org.aas.sbtanks.common.Steppable
-import org.aas.sbtanks.entities.repository.EntityRepositoryContext
 import org.aas.sbtanks.event.EventSource
 import scala.reflect.ClassTag
 
+/**
+  * Basic repository for model-view pairs
+  */
 abstract class EntityMvRepositoryContainer[Model, View]:
     case class ViewReplacedArgs(model: Model, oldView: Option[View], newView: Option[View])
 
@@ -13,44 +15,41 @@ abstract class EntityMvRepositoryContainer[Model, View]:
     val modelViewRemoved = EventSource[(Model, Option[View])]()
 
     private var modelRepository = Seq.empty[Model]
-    private var viewRepository = Seq.empty[View]
 
     private var modelViewReferences = Map.empty[Model, View]
 
+    /**
+      * Adds a model with an optional view to this repository
+      *
+      * @param model The model to add
+      * @param view An option with a view to associate with this model or an empty optional
+      * @return This repository
+      */
     def addModelView(model: Model, view: Option[View]): this.type =
         modelRepository = modelRepository :+ model
-        viewRepository = view match
-            case None => 
-                viewRepository
-            case Some(v) =>
-                viewRepository = viewRepository :+ v
-                modelViewReferences = modelViewReferences + ((model, v))
-                viewRepository
+        modelViewReferences = view match
+            case None => modelViewReferences
+            case Some(v) => modelViewReferences + ((model, v))
         modelViewAdded(model, view)
         this
 
     def replaceView(model: Model, newView: Option[View]): this.type =
-        val (newViewRepository: Seq[View], oldView: Option[View]) = modelViewReferences.get(model).map(v => {
-            viewRepository.filterNot(v.equals)
-            modelViewReferences = modelViewReferences - model
-            (viewRepository, Option(v))
-        }).getOrElse((viewRepository, Option.empty[View]))
-        viewRepository = newView match
-            case None => 
-                newViewRepository
-            case Some(v) =>
-                modelViewReferences = modelViewReferences + ((model, v))
-                newViewRepository :+ v
+        val (newModelViewReferences: Map[Model, View], oldView: Option[View]) = modelViewReferences.get(model)
+            .map(v => (modelViewReferences - model, Option(v)))
+            .getOrElse((modelViewReferences, Option.empty[View]))
+        modelViewReferences = newView match
+            case None => modelViewReferences
+            case Some(v) => modelViewReferences + ((model, v))
         modelViewReplaced(ViewReplacedArgs(model, oldView, newView))
         this
 
     def entityModelCount = modelRepository.size
 
-    def entityViewCount = viewRepository.size
+    def entityViewCount = modelViewReferences.size
 
     def entitiesOfModelType[M1 <: Model](using modelClassTag: ClassTag[M1], viewClassTag: ClassTag[View]) = 
         modelRepository.filter(modelClassTag.runtimeClass.isInstance)
-                .map(m => (m, modelViewReferences.get(m)))
+                .map(m => (m.asInstanceOf[M1], modelViewReferences.get(m)))
 
     def entitiesOfMvTypes[M1 <: Model, V1 <: View](using modelClassTag: ClassTag[M1], viewClassTag: ClassTag[V1]) =
         modelRepository.filter(modelClassTag.runtimeClass.isInstance)
@@ -63,12 +62,9 @@ abstract class EntityMvRepositoryContainer[Model, View]:
     def removeModelView(model: Model): this.type =
         modelRepository = modelRepository.filterNot(model.equals)
         val view = modelViewReferences.get(model)
-        viewRepository = view match
-            case None =>
-                viewRepository
-            case Some(v) => 
-                modelViewReferences = modelViewReferences - model
-                viewRepository.filterNot(v.equals)
+        modelViewReferences = view match
+            case None => modelViewReferences
+            case Some(v) => modelViewReferences - model
         modelViewRemoved(model, view)
         this
     
@@ -76,3 +72,5 @@ object EntityMvRepositoryContainer:
     extension [M, V](repository: EntityMvRepositoryContainer[M, V])
         def entitiesOfViewType[V1 <: V](using modelClassTag: ClassTag[M], viewClassTag: ClassTag[V1]) = 
             repository.entitiesOfMvTypes[M, V1]
+        
+        def entities(using modelClassTag: ClassTag[M], viewClassTag: ClassTag[V]) = repository.entitiesOfModelType[M]

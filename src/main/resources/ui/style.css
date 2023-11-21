@@ -1,0 +1,11 @@
+@font-face {
+    font-family: "Press Start 2P";
+    src: url("press_start_2p.ttf");
+}
+
+.sidebar-text {
+    font-family: "Press Start 2P";
+    font-size: 28;
+    -fx-font-family: "Press Start 2P";
+    -fx-font-size: 28;
+}

@@ -1,5 +1,6 @@
 package org.aas.sbtanks.level.scalafx
 
+import org.aas.sbtanks.enemies.controller.EnemyTankBuilder
 import org.aas.sbtanks.level.LevelFactory
 import scalafx.scene.Node
 import org.aas.sbtanks.obstacles.LevelObstacle

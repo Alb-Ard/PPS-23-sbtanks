@@ -22,7 +22,7 @@ import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.entities.tank.controller.TankInputController
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 import org.aas.sbtanks.entities.tank.view.TankView
-import org.aas.sbtanks.entities.repository.EntityRepositoryContext
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 
 class MockTankView extends TankView:
     override def isMoving(value: Boolean): Unit = ()
@@ -34,7 +34,7 @@ class MockJFXPlayerTankController(tank: ControllableTank) extends TankInputContr
     override protected def shoot() = this
 
 object MockJFXPlayerTankController:
-    val MOCK_STAGE = EntityRepositoryContext[Stage](new JFXApp3.PrimaryStage())
+    val MOCK_STAGE = EntityRepositoryContext[Stage, Any, Any](new JFXApp3.PrimaryStage())
 
     val MOVE_UP_INPUT = KeyEvent(jfxsi.KeyEvent(jfxsi.KeyEvent.KEY_PRESSED, "w", "w", W, false, false, false, false))
     val MOVE_DOWN_INPUT = KeyEvent(jfxsi.KeyEvent(jfxsi.KeyEvent.KEY_PRESSED, "s", "s", S, false, false, false, false))
