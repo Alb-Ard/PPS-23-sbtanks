@@ -27,8 +27,8 @@ import org.aas.sbtanks.entities.repository.scalafx.JFXEntityControllerRepository
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityViewAutoManager
-import org.aas.sbtanks.entities.repository.EntityRepositoryContext
-import org.aas.sbtanks.entities.repository.EntityRepositoryContextAware
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContextAware
 import org.aas.sbtanks.player.PlayerTankData
 import org.aas.sbtanks.player.PlayerTank
 import org.aas.sbtanks.obstacles.LevelObstacleController
@@ -47,6 +47,8 @@ import scalafx.geometry.Pos
 import org.aas.sbtanks.player.controller.PlayerUiViewController
 import org.aas.sbtanks.lifecycle.LevelSequencer
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
+import org.aas.sbtanks.entities.repository.context.scalafx.JFXEntityRepositoryContextInitializer
+import org.aas.sbtanks.common.ViewSlot
 
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
@@ -64,21 +66,11 @@ object Main extends JFXApp3 with scalafx.Includes:
                 fill = Color.BLACK
                 stylesheets.add(getClass().getResource("/ui/style.css").toExternalForm())
 
-        val entityViewContainer = Pane()
-        val scenePane = BorderPane(center = null, right = null, top = null, bottom = null, left = null)
-        BorderPane.setAlignment(entityViewContainer, Pos.CENTER)
-        scenePane.center.set(entityViewContainer)
-
-        val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
-        scenePane.right.set(playerSidebar)
-
-        stage.scene.value.content.add(scenePane)
-
-        given EntityRepositoryContext[Stage, Pane] = EntityRepositoryContext(stage, entityViewContainer)
+        given EntityRepositoryContext[Stage, ViewSlot, Pane] = EntityRepositoryContext(stage).switch(JFXEntityRepositoryContextInitializer.ofLevel(ViewSlot.Game, ViewSlot.Ui))
         val entityRepository = new JFXEntityMvRepositoryContainer()
                 with JFXEntityControllerRepository
-                with JFXEntityViewAutoManager
-                with EntityControllerReplacer[AnyRef, Node, EntityRepositoryContext[Stage, Pane]]
+                with JFXEntityViewAutoManager(ViewSlot.Game)
+                with EntityControllerReplacer[AnyRef, Node, EntityRepositoryContext[Stage, ViewSlot, Pane]]
                 with DestroyableEntityAutoManager[AnyRef, Node]
                 with EntityRepositoryTagger[AnyRef, Node, Int]
                 with EntityColliderAutoManager[AnyRef, Node]
@@ -89,7 +81,11 @@ object Main extends JFXApp3 with scalafx.Includes:
                 .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank], EnemyController.factory(viewScale * tileSize))
                 .registerControllerFactory(m => m.isInstanceOf[Bullet], JFXBulletController.factory())
 
-        val playerUiViewController = PlayerUiViewController[AnyRef, Node](entityRepository, playerSidebar);
+        val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
+        val playerUiViewController = new PlayerUiViewController[AnyRef, Node, Stage, ViewSlot, Pane](entityRepository, playerSidebar, ViewSlot.Ui):
+            override protected def addViewToContext(container: Pane) =
+                container.children.add(playerSidebar)
+        
         entityRepository.addController(playerUiViewController)
 
         // ** TEST **
@@ -128,19 +124,23 @@ object Main extends JFXApp3 with scalafx.Includes:
             playerUiViewController.setEnemyCount(enemyCount) 
             playerUiViewController.setCompletedLevelCount(levelSequencer.completedLevelCount)
         }
+
+        val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer, ViewSlot.Ui):
+            override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) = 
+                currentContext.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
+        entityRepository.addController(playerDeathController)
+
         levelSequencer.start()
 
-        val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer);
-        entityRepository.addController(playerDeathController)
         var lastTimeNanos = System.nanoTime().doubleValue
         // ** TEST **
         var testTime = 2D
-        val currentPlayer = entityRepository.entitiesOfModelType[PlayerTank with DamageableBehaviour].head._1
+        val currentPlayer = entityRepository.entitiesOfModelType[PlayerTank with DamageableBehaviour].head(0)
         // **********
         val updateTimer = AnimationTimer(_ => {
             val currentTimeNanos = System.nanoTime().doubleValue
             val deltaTime = (currentTimeNanos - lastTimeNanos).doubleValue / 1000D / 1000D / 1000D
-            entityRepository.step(deltaTime)
+            entityRepository.step(deltaTime).executeQueuedCommands()
             lastTimeNanos = currentTimeNanos
             // ** TEST **
             if testTime > 0 && testTime - deltaTime < 0 then
