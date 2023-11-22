@@ -24,10 +24,10 @@ case class PositionProvider(width: Double, height: Double)(tank: PositionBehavio
      * @return `true` if the position is free, `false` otherwise.
      */
     private def checkPosition(x: Double, y: Double) =
-        PhysicsWorld.getBoxOverlaps(AABB(x, y, width, height), tank.layerMasks, Seq(tank)).isEmpty
+        PhysicsWorld.getBoxOverlaps(AABB(x, y, tank.boundingBox.width, tank.boundingBox.height), tank.layerMasks, Seq(tank)).isEmpty
 
     private def providePosition() =
-        (math.round(Random.nextDouble() * width), math.round(Random.nextDouble() * height))
+        (math.round(Random.nextDouble() * (width - 1)), math.round(Random.nextDouble() * (height - 1)  ))
 
     /**
      * Finds the first free position for the tank, considering collision behavior within its own layermask.
@@ -37,6 +37,8 @@ case class PositionProvider(width: Double, height: Double)(tank: PositionBehavio
         var position = providePosition()
         while !checkPosition(position(0), position(1)) do
             position = providePosition()
+            
+        PhysicsWorld.registerCollider(tank)
         tank.setPosition(position(0), position(1))
 
 

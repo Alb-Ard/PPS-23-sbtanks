@@ -24,6 +24,7 @@ import org.aas.sbtanks.player.PlayerTankBuilder
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import org.aas.sbtanks.common.view.scalafx.JFXImageViewAnimator
 import org.aas.sbtanks.enemies.controller.{EnemyController, EnemySpawnController, EnemyTankBuilder, EnemyTankGenerator}
+import org.aas.sbtanks.enemies.spawn.EnemyFactory
 import org.aas.sbtanks.obstacles.view.scalafx.JFXObstacleView
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityMvRepositoryContainer
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityControllerRepository
@@ -52,6 +53,7 @@ import org.aas.sbtanks.lifecycle.LevelSequencer
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 
 import scala.collection.immutable.Queue
+import scala.collection.mutable
 
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
@@ -99,17 +101,19 @@ object Main extends JFXApp3 with scalafx.Includes:
         val playerUiViewController = PlayerUiViewController[AnyRef, Node](entityRepository, playerSidebar);
         entityRepository.addController(playerUiViewController)
 
-
+        /*
         val tank = EnemyTankBuilder()
             .setPosition(1.0, 1.0)
             .setCollisionSize(x = 1D - pixelSize, y = 1D - pixelSize)
             .build()
 
-        val g = new EnemyTankGenerator(entityRepository, tank)
+        val tank2 = EnemyTankBuilder()
+            .setPosition(5.0, 1.0)
+            .setCollisionSize(x = 1D - pixelSize, y = 1D - pixelSize)
+            .build()
+         */
 
-        //entityRepository.addController(g)
 
-        g.loadTank()
 
 
 
@@ -135,6 +139,11 @@ object Main extends JFXApp3 with scalafx.Includes:
         val levelSequencer = LevelSequencer[AnyRef, Node](Seq(level1, level2), levelFactory, entityRepository)
         levelSequencer.levelChanged += { (_, enemyCount) => playerUiViewController.setEnemyCount(enemyCount) }
         levelSequencer.start()
+
+        val g = new EnemyTankGenerator(entityRepository, mutable.Queue(EnemyFactory.createFromString("BBB", 7, 7).map(_.asInstanceOf[ControllableTank]): _*))
+
+        entityRepository.addController(g)
+
 
 
 
