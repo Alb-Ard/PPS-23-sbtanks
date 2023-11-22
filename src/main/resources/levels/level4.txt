@@ -13,3 +13,5 @@ USW---SSS---WSU
 U-----WWW-----U
 U---P-WBW-----U
 UUUUUUUUUUUUUUU
+
+a,a,p,p,b,b,f,f,f,a,a,a,b,b,b,p,p,b,b,a

@@ -47,6 +47,7 @@ import scalafx.geometry.Pos
 import org.aas.sbtanks.player.controller.PlayerUiViewController
 import org.aas.sbtanks.lifecycle.LevelSequencer
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
+import org.aas.sbtanks.level.LevelLoader
 
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
@@ -109,6 +110,7 @@ object Main extends JFXApp3 with scalafx.Includes:
                       "UUUUUUU", 7, 10)
         // **********
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
+        val levelLoader = new LevelLoader
         /*
         levelFactory.createFromString("UUUUUUUUUUU" +
                                       "U--TTTTT--U" +
@@ -123,7 +125,7 @@ object Main extends JFXApp3 with scalafx.Includes:
                                       "UUUUUUUUUUU", 11, entityRepository)
 
          */
-        val levelSequencer = LevelSequencer[AnyRef, Node](Seq(level1, level2), levelFactory, entityRepository)
+        val levelSequencer = LevelSequencer[AnyRef, Node](levelLoader.getLevelSeq(5)._1, levelFactory, entityRepository)
         levelSequencer.levelChanged += { (_, enemyCount) => 
             playerUiViewController.setEnemyCount(enemyCount) 
             playerUiViewController.setCompletedLevelCount(levelSequencer.completedLevelCount)
@@ -144,8 +146,8 @@ object Main extends JFXApp3 with scalafx.Includes:
             lastTimeNanos = currentTimeNanos
             // ** TEST **
             if testTime > 0 && testTime - deltaTime < 0 then
-                //levelSequencer.completeLevel()
-                currentPlayer.damage(1)
+                levelSequencer.completeLevel()
+                //currentPlayer.damage(1)
                 testTime = 2D
             testTime -= deltaTime
             // **********
