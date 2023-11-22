@@ -4,6 +4,7 @@ import org.aas.sbtanks.enemies.controller.EnemyTankBuilder
 import org.aas.sbtanks.entities.tank.factories.*
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.enemies.spawn.PositionProvider
+import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 
 /**
  * Object responsible for creating enemy tanks based on a character code.
@@ -35,6 +36,7 @@ object EnemyFactory:
         input.filter(mapping.contains)
             .map(createEnemy)
             .map(PositionProvider(width, height)(_).findFirstFreePosition())
+            .map(_.asInstanceOf[ControllableTank])
 
 
 /**
