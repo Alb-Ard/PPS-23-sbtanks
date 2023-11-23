@@ -7,3 +7,4 @@ trait Collider:
     val layerMasks: Seq[CollisionLayer]
     
     def boundingBox: AABB
+    def overlapsChanged(overlappingColliders: Seq[Collider]): Unit
