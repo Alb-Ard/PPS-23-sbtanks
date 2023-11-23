@@ -1,7 +1,8 @@
 package org.aas.sbtanks.enemies.controller
 
 import org.aas.sbtanks.common.Steppable
-import org.aas.sbtanks.entities.repository.{EntityControllerRepository, EntityMvRepositoryContainer, EntityRepositoryContext}
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
+import org.aas.sbtanks.entities.repository.{EntityControllerRepository, EntityMvRepositoryContainer}
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 
 import scala.reflect.ClassTag
@@ -23,9 +24,9 @@ import scala.collection.mutable
 
 
 
-type EntityControllerWithMv[AnyRef, Node] =  EntityMvRepositoryContainer[AnyRef, Node] with EntityControllerRepository[AnyRef, Node, EntityRepositoryContext[Stage, Pane]]
+//type EntityControllerWithMv[AnyRef, Node] =  EntityMvRepositoryContainer[AnyRef, Node] with EntityControllerRepository[AnyRef, Node, EntityRepositoryContext[Stage, ?, ?]]
 
-class EnemyTankGenerator(entityRepository: EntityMvRepositoryContainer[AnyRef, Node], var tanks: mutable.Queue[ControllableTank], val tileSize: Double = 16D, val viewScale: Double = 4D, val tileAnimationSpeed: Double = 1) extends Steppable:
+class EnemyTankGenerator(entityRepository: EntityMvRepositoryContainer[AnyRef, Node] with EntityControllerRepository[AnyRef, Node, ?], var tanks: mutable.Queue[ControllableTank], val tileSize: Double = 16D, val viewScale: Double = 4D, val tileAnimationSpeed: Double = 1) extends Steppable:
 
 
     private var timeToSpawn: Double = 3.0
@@ -37,7 +38,7 @@ class EnemyTankGenerator(entityRepository: EntityMvRepositoryContainer[AnyRef, N
         if timeToSpawn <= 0 then
             timeToSpawn = 3.0
             if tanks.isEmpty then
-                println("FINISH")
+                entityRepository.removeController(this)
             else
                generate(tanks.dequeue())
         this

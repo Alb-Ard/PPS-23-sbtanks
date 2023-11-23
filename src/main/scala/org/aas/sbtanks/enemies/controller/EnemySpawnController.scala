@@ -1,7 +1,7 @@
 package org.aas.sbtanks.enemies.controller
 
 import org.aas.sbtanks.common.Steppable
-import org.aas.sbtanks.entities.repository.EntityRepositoryContext
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.entities.tank.view.TankView
 import org.aas.sbtanks.obstacles.view.ObstacleView
@@ -13,7 +13,7 @@ import org.aas.sbtanks.enemies.controller.EnemySpawnController.createTankv
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 
-class EnemySpawnController(using context: EntityRepositoryContext[Stage, Pane])(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], private val enemyTank: ControllableTank, private val enemyView: ObstacleView, viewScale: Double) extends Steppable:
+class EnemySpawnController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], private val enemyTank: ControllableTank, private val enemyView: ObstacleView, viewScale: Double) extends Steppable:
     private var timeToSpawn: Double = 3.0
 
     val tileSize = 16D
@@ -29,7 +29,7 @@ class EnemySpawnController(using context: EntityRepositoryContext[Stage, Pane])(
         this
 
 object EnemySpawnController:
-    def factory(viewScale: Double, entityRepo: EntityMvRepositoryContainer[AnyRef, Node])(context: EntityRepositoryContext[Stage, Pane], tank: ControllableTank, view: ObstacleView) =
+    def factory(viewScale: Double, entityRepo: EntityMvRepositoryContainer[AnyRef, Node])(context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: ObstacleView) =
         new EnemySpawnController(using context)(entityRepo, tank, view, viewScale)
 
     def createTankv(x: Double, y: Double, tankType: String, tankAttributes: Seq[String], viewScale: Double, tileSize: Double, pixelSize: Double) =

@@ -9,29 +9,26 @@ import scalafx.scene.input.KeyEvent
 import scalafx.scene.image.Image
 import scalafx.scene.image.ImageView
 import scalafx.animation.AnimationTimer
-import org.aas.sbtanks.player.controller.scalafx.JFXPlayerInputController
+import org.aas.sbtanks.player.controller.scalafx.{JFXPlayerDeathController, JFXPlayerInputController, JFXPlayerTankController}
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 import org.aas.sbtanks.entities.tank.view.TankView
-import org.aas.sbtanks.behaviours.DirectionBehaviour
-import org.aas.sbtanks.behaviours.MovementBehaviour
-import org.aas.sbtanks.player.controller.scalafx.JFXPlayerTankController
-import org.aas.sbtanks.behaviours.CollisionBehaviour
-import org.aas.sbtanks.behaviours.PositionBehaviour
+import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehaviour, DamageableBehaviour, DirectionBehaviour, MovementBehaviour, PositionBehaviour}
 import org.aas.sbtanks.physics.CollisionLayer
-import org.aas.sbtanks.behaviours.ConstrainedMovementBehaviour
 import org.aas.sbtanks.obstacles.LevelObstacle
 import org.aas.sbtanks.player.PlayerTankBuilder
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import org.aas.sbtanks.common.view.scalafx.JFXImageViewAnimator
-import org.aas.sbtanks.enemies.controller.EnemyController
+import org.aas.sbtanks.entities.bullet.Bullet
+import org.aas.sbtanks.entities.bullet.controller.scalafx.JFXBulletController
+import org.aas.sbtanks.enemies.controller.{EnemyController, EnemySpawnController, EnemyTankGenerator}
 import org.aas.sbtanks.obstacles.view.scalafx.JFXObstacleView
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityMvRepositoryContainer
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityControllerRepository
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityViewAutoManager
-import org.aas.sbtanks.entities.repository.EntityRepositoryContext
-import org.aas.sbtanks.entities.repository.EntityRepositoryContextAware
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContextAware
 import org.aas.sbtanks.player.PlayerTankData
 import org.aas.sbtanks.player.PlayerTank
 import org.aas.sbtanks.obstacles.LevelObstacleController
@@ -50,6 +47,11 @@ import scalafx.geometry.Pos
 import org.aas.sbtanks.player.controller.PlayerUiViewController
 import org.aas.sbtanks.lifecycle.LevelSequencer
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
+import org.aas.sbtanks.entities.repository.context.scalafx.JFXEntityRepositoryContextInitializer
+import org.aas.sbtanks.common.ViewSlot
+import org.aas.sbtanks.enemies.spawn.EnemyFactory
+
+import scala.collection.mutable
 
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
@@ -58,7 +60,7 @@ object Main extends JFXApp3 with scalafx.Includes:
     val windowSize = (1280, 720)
     val interfaceScale = 4D
 
-    override def start(): Unit = 
+    override def start(): Unit =
         stage = new JFXApp3.PrimaryStage:
             title = "sbTanks"
             width = windowSize(0)
@@ -69,20 +71,20 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         given EntityRepositoryContext[Stage, ViewSlot, Pane] = EntityRepositoryContext(stage).switch(JFXEntityRepositoryContextInitializer.ofLevel(ViewSlot.Game, ViewSlot.Ui))
         val entityRepository = new JFXEntityMvRepositoryContainer()
-                with JFXEntityControllerRepository
-                with JFXEntityViewAutoManager(ViewSlot.Game)
-                with EntityControllerReplacer[AnyRef, Node, EntityRepositoryContext[Stage, ViewSlot, Pane]]
-                with DestroyableEntityAutoManager[AnyRef, Node]
-                with EntityRepositoryTagger[AnyRef, Node, Int]
-                with EntityColliderAutoManager[AnyRef, Node]
-                with EntityRepositoryContextAware
+            with JFXEntityControllerRepository
+            with JFXEntityViewAutoManager(ViewSlot.Game)
+            with EntityControllerReplacer[AnyRef, Node, EntityRepositoryContext[Stage, ViewSlot, Pane]]
+            with DestroyableEntityAutoManager[AnyRef, Node]
+            with EntityRepositoryTagger[AnyRef, Node, Int]
+            with EntityColliderAutoManager[AnyRef, Node]
+            with EntityRepositoryContextAware
 
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView)), tileSize))
-                .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(viewScale * tileSize))
-                .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && m.asInstanceOf[Tank].tankData.health < 10, EnemySpawnController.factory(viewScale * tileSize, entityRepository))
-                .registerControllerReplacer(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && m.asInstanceOf[Tank].tankData.health > 10, EnemyController.factory(viewScale * tileSize))
-                .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank], EnemyController.factory(viewScale * tileSize))
-                .registerControllerFactory(m => m.isInstanceOf[Bullet], JFXBulletController.factory())
+            .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(viewScale * tileSize))
+            .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && m.asInstanceOf[Tank].tankData.health < 10, EnemySpawnController.factory(viewScale * tileSize, entityRepository))
+            .registerControllerReplacer(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && m.asInstanceOf[Tank].tankData.health > 10, EnemyController.factory(viewScale * tileSize))
+            .registerControllerFactory(m => m.isInstanceOf[Bullet], JFXBulletController.factory())
+        
 
         val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
         val playerUiViewController = new PlayerUiViewController[AnyRef, Node, Stage, ViewSlot, Pane](entityRepository, playerSidebar, ViewSlot.Ui):
@@ -93,22 +95,22 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         // ** TEST **
         val level1 = ("UUUUUUU" +
-                      "U-TTT-U" +
-                      "U-SwS-U" +
-                      "U--P--U" +
-                      "U-WWW-U" +
-                      "U-WBW-U" +
-                      "UUUUUUU", 7, 10)
+            "U-TTT-U" +
+            "U-SwS-U" +
+            "U--P--U" +
+            "U-WWW-U" +
+            "U-WBW-U" +
+            "UUUUUUU", 7, 10)
         val level2 = ("UUUUUUU" +
-                      "U-----U" +
-                      "UTSWSTU" +
-                      "U-P---U" +
-                      "U-WWW-U" +
-                      "U-WBW-U" +
-                      "UUUUUUU", 7, 20)
+            "U-----U" +
+            "UTSWSTU" +
+            "U-P---U" +
+            "U-WWW-U" +
+            "U-WBW-U" +
+            "UUUUUUU", 7, 10)
         // **********
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
-        /*
+
         levelFactory.createFromString("UUUUUUUUUUU" +
                                       "U--TTTTT--U" +
                                       "U--SSwSS--U" +
@@ -121,32 +123,31 @@ object Main extends JFXApp3 with scalafx.Includes:
                                       "U--WWBWW--U" +
                                       "UUUUUUUUUUU", 11, entityRepository)
 
-         */
+
         val levelSequencer = LevelSequencer[AnyRef, Node](Seq(level1, level2), levelFactory, entityRepository)
+        /*
         levelSequencer.levelChanged += { (_, enemyCount) =>
             playerUiViewController.setEnemyCount(enemyCount)
             playerUiViewController.setCompletedLevelCount(levelSequencer.completedLevelCount)
         }
+        */
 
         val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer, ViewSlot.Ui):
             override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) =
                 currentContext.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
         entityRepository.addController(playerDeathController)
 
-        levelSequencer.start()
+        //levelSequencer.start()
+
 
         val g = new EnemyTankGenerator(entityRepository, mutable.Queue(EnemyFactory.createFromString("BBB", 7, 7).map(_.asInstanceOf[ControllableTank]): _*))
 
         entityRepository.addController(g)
 
-
-
-
-
         var lastTimeNanos = System.nanoTime().doubleValue
         // ** TEST **
-        var testTime = 2D
-        val currentPlayer = entityRepository.entitiesOfModelType[PlayerTank with DamageableBehaviour].head(0)
+        //var testTime = 2D
+        //val currentPlayer = entityRepository.entitiesOfModelType[PlayerTank with DamageableBehaviour].head(0)
         // **********
         val updateTimer = AnimationTimer(_ => {
             val currentTimeNanos = System.nanoTime().doubleValue
@@ -154,11 +155,11 @@ object Main extends JFXApp3 with scalafx.Includes:
             entityRepository.step(deltaTime).executeQueuedCommands()
             lastTimeNanos = currentTimeNanos
             // ** TEST **
-            if testTime > 0 && testTime - deltaTime < 0 then
-                //levelSequencer.completeLevel()
-                currentPlayer.damage(1)
-                testTime = 2D
-            testTime -= deltaTime
+            //if testTime > 0 && testTime - deltaTime < 0 then
+            //    //levelSequencer.completeLevel()
+            //    currentPlayer.damage(1)
+            //    testTime = 2D
+            //testTime -= deltaTime
             // **********
         })
         updateTimer.start()
