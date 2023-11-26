@@ -1,0 +1,17 @@
+UUUUUUUUUUUUUUU
+U----WWWWW----U
+U-W-W-W-W-W-W-U
+U-W-W-W-W-W-W-U
+U-W-W-W-W-W-W-U
+U-W-W-W-W-W-W-U
+USW--S---S--WSU
+USW--S---S--WSU
+U-W-W-W-W-W-W-U
+U-W-W-W-W-W-W-U
+U-W-W-W-W-W-W-U
+U-W-W-W-W-W-W-U
+U-W-W-WWW-W-W-U
+U---P-WBW-----U
+UUUUUUUUUUUUUUU
+
+b,b,b,b,b,b,b,b,b,b,b,b,f,f,f,b,b,f,b,a
