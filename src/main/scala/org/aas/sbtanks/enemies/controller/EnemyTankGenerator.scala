@@ -1,6 +1,7 @@
 package org.aas.sbtanks.enemies.controller
 
 import org.aas.sbtanks.common.Steppable
+import org.aas.sbtanks.enemies.view.scalafx.JFXEnemySpawnView
 import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 import org.aas.sbtanks.entities.repository.{EntityControllerRepository, EntityMvRepositoryContainer}
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
@@ -24,9 +25,9 @@ import scala.collection.mutable
 
 
 
-//type EntityControllerWithMv[AnyRef, Node] =  EntityMvRepositoryContainer[AnyRef, Node] with EntityControllerRepository[AnyRef, Node, EntityRepositoryContext[Stage, ?, ?]]
+type EntityControllerWithMv[M, V] =  EntityMvRepositoryContainer[M, V] with EntityControllerRepository[M, V, ?]
 
-class EnemyTankGenerator(entityRepository: EntityMvRepositoryContainer[AnyRef, Node] with EntityControllerRepository[AnyRef, Node, ?], var tanks: mutable.Queue[ControllableTank], val tileSize: Double = 16D, val viewScale: Double = 4D, val tileAnimationSpeed: Double = 1) extends Steppable:
+class EnemyTankGenerator(entityRepository: EntityControllerWithMv[AnyRef, Node], var tanks: mutable.Queue[ControllableTank], val tileSize: Double = 16D, val viewScale: Double = 4D, val tileAnimationSpeed: Double = 1) extends Steppable:
 
 
     private var timeToSpawn: Double = 3.0
@@ -49,13 +50,9 @@ class EnemyTankGenerator(entityRepository: EntityMvRepositoryContainer[AnyRef, N
 
     def generate(tank: ControllableTank) =
 
-        val v = LevelObstacle.SteelWall(2.0, 6.0).map(o => {
-            JFXObstacleView.createAnimated(JFXImageLoader.loadFromResources(o.imagesPath, tileSize, viewScale), tileAnimationSpeed)
-        })
-
         entityRepository.addModelView(
             tank,
-            Option(v.head)
+            Option(JFXEnemySpawnView(tileSize, viewScale, tileAnimationSpeed))
         )
 
 

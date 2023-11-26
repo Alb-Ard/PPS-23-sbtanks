@@ -1,6 +1,8 @@
 package org.aas.sbtanks.enemies.view
 
-trait EnemySpawnView:
+import org.aas.sbtanks.common.view.MoveableView
+
+trait EnemySpawnView extends MoveableView:
 
     def initSpawnAnimation(): this.type
 
