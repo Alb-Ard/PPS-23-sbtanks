@@ -130,8 +130,8 @@ object Main extends JFXApp3 with scalafx.Includes:
             lastTimeNanos = currentTimeNanos
             // ** TEST **
             if testTime > 0 && testTime - deltaTime < 0 then
-                levelSequencer.completeLevel()
-                //currentPlayer.damage(1)
+                //levelSequencer.completeLevel()
+                currentPlayer.damage(1)
                 testTime = 2D
             testTime -= deltaTime
             // **********
