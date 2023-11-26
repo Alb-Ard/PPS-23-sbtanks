@@ -1,15 +1,19 @@
 package org.aas.sbtanks.level.scalafx
 
+import javafx.event.EventHandler
+import javafx.scene.input
 import org.aas.sbtanks.lifecycle.{LevelSequencer, PointsManager}
 import scalafx.scene.{Node, Scene}
 import scalafx.application.JFXApp3
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.control.{Button, ButtonBar}
 import scalafx.scene.effect.DropShadow
+import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.VBox
 import scalafx.scene.paint.Color.*
 import scalafx.scene.paint.*
 import scalafx.scene.text.{Font, Text, TextAlignment, TextFlow}
+import scalafx.Includes.*
 
 class JFXGameOverView(level: LevelSequencer[?,?]) extends VBox:
 
@@ -63,13 +67,16 @@ class JFXGameOverView(level: LevelSequencer[?,?]) extends VBox:
                     font = Font.loadFont(stylesheet, 20)
                     id = "retry"
                     margin = Insets(0, 80, 0, 80)
-                    //onMouseClicked = goes back to first level
+                    onAction = () => {
+                        //TO DO - RESTART THE GAME
+                        //LevelSequencer[AnyRef, Node]()
+                    }
                 },
-                new Button("Go to Title") {
+                new Button("Quit") {
                     font = Font.loadFont(stylesheet, 20)
                     id = "title_screen"
                     margin = Insets(0, 80, 0, 80)
-                    //onMouseClicked = goes back to menu
+                    onAction = () => System.exit(0)
                 }
             )
         })
