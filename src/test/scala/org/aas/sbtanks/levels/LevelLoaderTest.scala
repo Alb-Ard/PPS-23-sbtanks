@@ -3,7 +3,7 @@ package org.aas.sbtanks.levels
 import org.aas.sbtanks.level.LevelLoader
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-class levelLoaderTest extends AnyFlatSpec with Matchers:
+class LevelLoaderTest extends AnyFlatSpec with Matchers:
 
     val loader = LevelLoader()
 
