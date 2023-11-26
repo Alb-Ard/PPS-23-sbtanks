@@ -20,7 +20,7 @@ class LevelLoader: //da qui leggerò i file txt (guarda le librerie che si occup
         val levelIterator = fromResource("levels/level"+levelNumber+".txt").getLines()
         while(levelIterator.hasNext)
             levelLines += levelIterator.next()
-        (levelLines.take(15).foldLeft("")(_ + _), levelLines.last)
+        (levelLines.take(11).foldLeft("")(_ + _), levelLines.last)
 object TestLevelLoader extends App:
 
     val levelLoader = new LevelLoader
