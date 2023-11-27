@@ -1,0 +1,13 @@
+UUUUUUUUUUU
+U---WWW---U
+U-WWWWWWW-U
+U--WWWWW--U
+U---SSS---U
+U---------U
+U-WWW-WWW-U
+U--TTWTT--U
+U---WWW---U
+U--PWBW---U
+UUUUUUUUUUU
+
+b,b,f,b,b,a,b,b,p,f,f,f,a,a,a,p,b,b,b,a

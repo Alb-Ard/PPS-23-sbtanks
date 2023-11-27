@@ -1,0 +1,13 @@
+UUUUUUUUUUU
+U-TTTTTTT-U
+U--wwwww--U
+U--wwwww--U
+UWTwwwwwTWU
+UWTwwwwwTWU
+UWTwwwwwTWU
+USTTTTTTTSU
+US--WWW--SU
+USSPWBW-SSU
+UUUUUUUUUUU
+
+a,p,b,b,b,p,a,f,f,f,a,p,b,b,b,p,a,f,f,f
