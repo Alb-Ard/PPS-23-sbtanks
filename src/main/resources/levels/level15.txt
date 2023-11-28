@@ -10,4 +10,4 @@ U---WWW---U
 U--PWBW---U
 UUUUUUUUUUU
 
-b,a,f,b,b,a,p,p,b,f,b,f,a,b,a,a,a,p,f,f
+bafbbappbfbfabaaapff

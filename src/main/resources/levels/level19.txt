@@ -10,4 +10,4 @@ UWW-WWWWWWU
 USSPWBWSSSU
 UUUUUUUUUUU
 
-p,p,p,p,p,f,f,f,f,f,a,a,a,a,a,b,b,p,f,f
+pppppfffffaaaaabbpff

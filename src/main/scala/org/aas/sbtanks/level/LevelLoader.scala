@@ -11,7 +11,7 @@ class LevelLoader: //da qui leggerò i file txt (guarda le librerie che si occup
         val levels = new ListBuffer[(String, Int, Int)]
         val enemySequencePerLevel = new ListBuffer[String]
         for(n <- Range.inclusive(1,amount))
-            levels.addOne(getLevel(n)._1, 11, 10)
+            levels.addOne(getLevel(n)._1, 11, getLevel(n)._2.size)
             enemySequencePerLevel += getLevel(n)._2
         (levels.toSeq, enemySequencePerLevel.toSeq)
 
@@ -24,6 +24,5 @@ class LevelLoader: //da qui leggerò i file txt (guarda le librerie che si occup
 object TestLevelLoader extends App:
 
     val levelLoader = new LevelLoader
-    //println(levelLoader.getLevel(1)._1 + levelLoader.getLevel(1)._2)
     println(levelLoader.getLevelSeq(1))
 

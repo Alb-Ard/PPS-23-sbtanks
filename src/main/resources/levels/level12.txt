@@ -10,4 +10,4 @@ US--WWW--SU
 USSPWBW-SSU
 UUUUUUUUUUU
 
-a,p,b,b,b,p,a,f,f,f,a,p,b,b,b,p,a,f,f,f
+apbbbpafffapbbbpafff
