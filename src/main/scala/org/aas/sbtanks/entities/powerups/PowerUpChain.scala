@@ -17,7 +17,7 @@ class PowerUpChain[E](powerUps: Seq[PowerUp[E]]) extends PowerUp[E]:
     override def revert[A <: E](entity: A): A =
         powerUps.foldRight(entity)((powerUp, acc) => powerUp.revert(acc))
 
-    def getPowerUps: Seq[PowerUp[E]] = powerUps
+    def getPowerUps: Seq[PowerUp[E]] = this.powerUps
 
     def chain(next: PowerUp[E]): PowerUpChain[E] = PowerUpChain(next combineWith powerUps )
 
@@ -59,7 +59,6 @@ class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E
             next(e.supplier()))
         )
         super.chain(next)
-        this
 
     override def unchain(last: PowerUp[E]): PowerUpChain[E] =
         val validBindings = powerUpBindings.getOrElse(last, Seq.empty)
@@ -70,7 +69,6 @@ class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E
         entities = entities.filterNot(b => validBindings.exists(_.supplier() == b.supplier()))
 
         super.unchain(last)
-        this
 
 
 
