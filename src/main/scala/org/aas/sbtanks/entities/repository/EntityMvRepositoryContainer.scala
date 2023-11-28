@@ -91,3 +91,7 @@ object EntityMvRepositoryContainer:
             repository.entitiesOfMvTypes[M, V1]
         
         def entities(using modelClassTag: ClassTag[M], viewClassTag: ClassTag[V]) = repository.entitiesOfModelType[M]
+    
+        def clear(using modelClassTag: ClassTag[M], viewClassTag: ClassTag[V])(): repository.type = 
+            repository.entities.foreach((m, _) => repository.removeModelView(m))
+            repository

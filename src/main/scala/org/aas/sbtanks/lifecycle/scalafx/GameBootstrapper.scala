@@ -33,6 +33,8 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
     private val gameLoop = GameLoop(entityRepository, Seq(entityRepository))
     private val pauseUiView = JFXPauseMenu(gameLoop)
 
+    private var cleanup: Option[() => Any] = Option.empty
+
     /**
       * Starts the game
       *
@@ -52,6 +54,17 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
         }
         entityRepository.addController(playerDeathController)
         entityRepository.addController(playerUiViewController)
+        cleanup = Option(() => {
+            entityRepository.removeController(playerDeathController)
+            entityRepository.removeController(playerUiViewController)
+        })
         levelSequencer.start()
         gameLoop.setPaused(false)
+        this
+    
+    def endGame(): this.type =
+        gameLoop.setPaused(true)
+        entityRepository.clear()
+        cleanup.foreach(c => c())
+        levelSequencer.reset()
         this
