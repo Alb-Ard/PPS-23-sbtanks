@@ -42,7 +42,7 @@ object JFXEntityRepositoryContextInitializer extends scalafx.Includes:
                 Map((levelKey, levelContainer), (uiKey, uiContainer))
 
     /**
-      * Creates an initialize for a ui-only context
+      * Creates an initializer for a ui-only context
       *
       * @param uiKey
       */
