@@ -18,11 +18,11 @@ class LevelLoaderTest extends AnyFlatSpec with Matchers:
                                                         "U-W-W-W-W-U" +
                                                         "U-W-WWW-W-U" +
                                                         "U-P-WBW---U" +
-                                                        "UUUUUUUUUUU", 11, 10)))
+                                                        "UUUUUUUUUUU", 11, 20)))
     }
 
     it should "be able to return a list of enemies" in {
-        loader.getLevelSeq(1)._2 should be (Seq("b,b,b,b,b,b,b,b,b,b,b,b,f,f,f,b,b,f,b,a"))
+        loader.getLevelSeq(1)._2 should be (Seq("bbbbbbbbbbbbfffbbfba"))
     }
 
     it should "be abe to read multiple files" in {
