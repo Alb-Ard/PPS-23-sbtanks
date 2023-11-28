@@ -4,15 +4,12 @@ import org.aas.sbtanks.behaviours.DamageableBehaviour
 import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.entities.repository.{EntityMvRepositoryContainer}
 import org.aas.sbtanks.entities.repository.context.{EntityRepositoryContext, EntityRepositoryContextAware}
-import org.aas.sbtanks.entities.tank.structure.Tank
-import org.aas.sbtanks.level.scalafx.JFXLevelFactory
 import org.aas.sbtanks.level.scalafx.JFXGameOverView
 import org.aas.sbtanks.lifecycle.LevelSequencer
 import org.aas.sbtanks.player.PlayerTank
 import scalafx.scene.Node
 import scalafx.scene.layout.Pane
 import scalafx.stage.Stage
-import org.aas.sbtanks.entities.repository.context.scalafx.JFXEntityRepositoryContextInitializer
 
 abstract class JFXPlayerDeathController[VSlotKey](using context: EntityRepositoryContext[Stage, VSlotKey, Pane])(repository: EntityMvRepositoryContainer[AnyRef, Node], levelSequencer: LevelSequencer[AnyRef, Node], uiSlotKey: VSlotKey)
     extends EntityRepositoryContextAware with Steppable:

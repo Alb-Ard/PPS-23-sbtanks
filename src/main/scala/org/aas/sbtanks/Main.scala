@@ -34,6 +34,7 @@ import org.aas.sbtanks.lifecycle.LevelSequencer
 import org.aas.sbtanks.entities.repository.context.scalafx.JFXEntityRepositoryContextInitializer
 import org.aas.sbtanks.common.ViewSlot
 import org.aas.sbtanks.level.LevelLoader
+import org.aas.sbtanks.lifecycle.PointsManager
 
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
@@ -110,6 +111,9 @@ object Main extends JFXApp3 with scalafx.Includes:
             playerUiViewController.setEnemyCount(enemyCount) 
             playerUiViewController.setCompletedLevelCount(levelSequencer.completedLevelCount)
         }
+
+        PointsManager.addAmount(500)
+
 
         val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer, ViewSlot.Ui):
             override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) = 

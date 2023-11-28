@@ -50,7 +50,7 @@ class JFXGameOverView(level: LevelSequencer[?,?]) extends VBox:
                     margin = Insets(0, 0, 0, 70)
                 },
                 new Text {
-                    text = "Highest Score: " + PointsManager.amount
+                    text = "Highest Score: " + PointsManager.bestScore
                     font = Font.loadFont(stylesheet, 40)
                     fill = new LinearGradient(
                         endX = 0,
@@ -68,6 +68,7 @@ class JFXGameOverView(level: LevelSequencer[?,?]) extends VBox:
                     id = "retry"
                     margin = Insets(0, 80, 0, 80)
                     onAction = () => {
+                        PointsManager.resetAmount()
                         //TO DO - RESTART THE GAME
                         //LevelSequencer[AnyRef, Node]()
                     }
@@ -80,19 +81,3 @@ class JFXGameOverView(level: LevelSequencer[?,?]) extends VBox:
                 }
             )
         })
-
-object testJFXGameOver extends JFXApp3 with scalafx.Includes:
-    val viewScale = 4D
-    val tileSize = 16D
-    //val levelSequencer = new LevelSequencer[AnyRef, Node](Seq(), levelFactory, entityRepository)
-
-
-    override def start(): Unit =
-        stage = new JFXApp3.PrimaryStage:
-            title = "sbTanks"
-            width = 1280
-            height = 720
-            scene = new Scene:
-                fill = Color.Black
-                //content = new JFXGameOverView()
-
