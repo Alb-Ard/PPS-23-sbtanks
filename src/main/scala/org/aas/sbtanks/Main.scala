@@ -34,6 +34,10 @@ import org.aas.sbtanks.lifecycle.LevelSequencer
 import org.aas.sbtanks.entities.repository.context.scalafx.JFXEntityRepositoryContextInitializer
 import org.aas.sbtanks.common.ViewSlot
 import org.aas.sbtanks.level.LevelLoader
+import org.aas.sbtanks.lifecycle.GameLoop
+import org.aas.sbtanks.lifecycle.view.scalafx.JFXPauseMenu
+import org.aas.sbtanks.entities.repository.EntityRepositoryPausableAdapter
+import org.aas.sbtanks.common.Pausable
 
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
@@ -59,6 +63,7 @@ object Main extends JFXApp3 with scalafx.Includes:
                 with DestroyableEntityAutoManager[AnyRef, Node]
                 with EntityRepositoryTagger[AnyRef, Node, Int]
                 with EntityColliderAutoManager[AnyRef, Node]
+                with EntityRepositoryPausableAdapter[AnyRef, Node, EntityRepositoryContext[Stage, ViewSlot, Pane]]
                 with EntityRepositoryContextAware
 
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView)), tileSize))
@@ -70,41 +75,10 @@ object Main extends JFXApp3 with scalafx.Includes:
         val playerUiViewController = new PlayerUiViewController[AnyRef, Node, Stage, ViewSlot, Pane](entityRepository, playerSidebar, ViewSlot.Ui):
             override protected def addViewToContext(container: Pane) =
                 container.children.add(playerSidebar)
-        
         entityRepository.addController(playerUiViewController)
 
-        // ** TEST **
-        val level1 = ("UUUUUUU" +
-                      "U-TTT-U" +
-                      "U-SwS-U" +
-                      "U--P--U" +
-                      "U-WWW-U" +
-                      "U-WBW-U" +
-                      "UUUUUUU", 7, 10)
-        val level2 = ("UUUUUUU" +
-                      "U-----U" +
-                      "UTSWSTU" +
-                      "U-P---U" +
-                      "U-WWW-U" +
-                      "U-WBW-U" +
-                      "UUUUUUU", 7, 10)
-        // **********
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
-        val levelLoader = new LevelLoader
-        /*
-        levelFactory.createFromString("UUUUUUUUUUU" +
-                                      "U--TTTTT--U" +
-                                      "U--SSwSS--U" +
-                                      "U--SwwwS--U" +
-                                      "U--TSTST--U" +
-                                      "U----P----U" +
-                                      "U--SwwwS--U" +
-                                      "U--TSTST--U" +
-                                      "U--WWWWW--U" +
-                                      "U--WWBWW--U" +
-                                      "UUUUUUUUUUU", 11, entityRepository)
-
-         */
+        val levelLoader = LevelLoader()
         val levelSequencer = LevelSequencer[AnyRef, Node](levelLoader.getLevelSeq(5)._1, levelFactory, entityRepository)
         levelSequencer.levelChanged += { (_, enemyCount) => 
             playerUiViewController.setEnemyCount(enemyCount) 
@@ -115,25 +89,7 @@ object Main extends JFXApp3 with scalafx.Includes:
             override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) = 
                 currentContext.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
         entityRepository.addController(playerDeathController)
-
         levelSequencer.start()
-
-        var lastTimeNanos = System.nanoTime().doubleValue
-        // ** TEST **
-        var testTime = 2D
-        val currentPlayer = entityRepository.entitiesOfModelType[PlayerTank with DamageableBehaviour].head(0)
-        // **********
-        val updateTimer = AnimationTimer(_ => {
-            val currentTimeNanos = System.nanoTime().doubleValue
-            val deltaTime = (currentTimeNanos - lastTimeNanos).doubleValue / 1000D / 1000D / 1000D
-            entityRepository.step(deltaTime).executeQueuedCommands()
-            lastTimeNanos = currentTimeNanos
-            // ** TEST **
-            if testTime > 0 && testTime - deltaTime < 0 then
-                //levelSequencer.completeLevel()
-                //currentPlayer.damage(1)
-                testTime = 2D
-            testTime -= deltaTime
-            // **********
-        })
-        updateTimer.start()
+        val gameLoop = GameLoop(entityRepository, Seq(entityRepository))
+        val pauseUiView = JFXPauseMenu(gameLoop)
+        gameLoop.setPaused(false)
