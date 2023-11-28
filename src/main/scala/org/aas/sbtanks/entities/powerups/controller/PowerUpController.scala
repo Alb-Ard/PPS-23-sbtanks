@@ -23,13 +23,10 @@ import scalafx.stage.Stage
  * @param powerUp    The pickable power-up instance associated with this controller.
  * @param view       The view representing the power-up in the game.
  * @param viewScale  The scale factor for the power-up view visualization.
+ * @param pickup     An event source for notifying observers when a power-up is picked up.
  */
-class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage, VSK, VS])(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], powerUp: PickablePowerUp[E], view: PowerUpView, viewScale: Double) extends Steppable:
+class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage, VSK, VS])(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], powerUp: PickablePowerUp[E], view: PowerUpView, viewScale: Double, pickup: EventSource[PowerUp[E]]) extends Steppable:
 
-    /**
-     * An event source for notifying observers when a power-up is picked up.
-     */
-    private val pickup: EventSource[PowerUp[E]] = EventSource[PowerUp[E]]
 
     private var timeToDisappear: Double = 5.0
 
@@ -72,9 +69,9 @@ class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage
             entityRepo.removeModelView(powerUp)
         this
 
-object EnemySpawnController:
-    def factory[E](viewScale: Double, entityRepo: EntityMvRepositoryContainer[AnyRef, Node])(context: EntityRepositoryContext[Stage, ?, ?], powerUp: PickablePowerUp[E], view: PowerUpView) =
-        new PowerUpController(using context)(entityRepo, powerUp, view, viewScale)
+object PowerUpController:
+    def factory[E](viewScale: Double, entityRepo: EntityMvRepositoryContainer[AnyRef, Node])(context: EntityRepositoryContext[Stage, ?, ?], powerUp: PickablePowerUp[E], view: PowerUpView, pickup: EventSource[PowerUp[E]]) =
+        new PowerUpController(using context)(entityRepo, powerUp, view, viewScale, pickup)
 
 
 
