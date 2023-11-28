@@ -25,27 +25,11 @@ import org.aas.sbtanks.lifecycle.view.scalafx.JFXPauseMenu
   */
 class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(interfaceScale: Double, windowSize: (Int, Int)):
     private val entityRepository = JFXEntityMvRepositoryFactory.create()
-
     private val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
-    private val playerUiViewController = new PlayerUiViewController[AnyRef, Node, Stage, ViewSlot, Pane](entityRepository, playerSidebar, ViewSlot.Ui):
-        override protected def addViewToContext(container: Pane) =
-            container.children.add(playerSidebar)
-    entityRepository.addController(playerUiViewController)
-
     private val levelFactory = JFXLevelFactory(JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE, 1)
     private val levelLoader = LevelLoader()
     private val levels = levelLoader.getLevelSeq(5)
     private val levelSequencer = LevelSequencer[AnyRef, Node](levels(0), levelFactory, entityRepository)
-    levelSequencer.levelChanged += { (_, enemyCount) => 
-        playerUiViewController.setEnemyCount(enemyCount) 
-        playerUiViewController.setCompletedLevelCount(levelSequencer.completedLevelCount)
-    }
-
-    private val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer, ViewSlot.Ui):
-        override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) = 
-            currentContext.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
-    entityRepository.addController(playerDeathController)
-
     private val gameLoop = GameLoop(entityRepository, Seq(entityRepository))
     private val pauseUiView = JFXPauseMenu(gameLoop)
 
@@ -55,6 +39,19 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
       * @return This game boostrapper
       */
     def startGame(): this.type =
+        context.switch(JFXEntityRepositoryContextInitializer.ofLevel(ViewSlot.Game, ViewSlot.Ui))
+        val playerUiViewController = new PlayerUiViewController[AnyRef, Node, Stage, ViewSlot, Pane](entityRepository, playerSidebar, ViewSlot.Ui):
+            override protected def addViewToContext(container: Pane) =
+                container.children.add(playerSidebar)
+        val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer, ViewSlot.Ui):
+            override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) = 
+                currentContext.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
+        levelSequencer.levelChanged += { (_, enemyCount) => 
+            playerUiViewController.setEnemyCount(enemyCount) 
+            playerUiViewController.setCompletedLevelCount(levelSequencer.completedLevelCount)
+        }
+        entityRepository.addController(playerDeathController)
+        entityRepository.addController(playerUiViewController)
         levelSequencer.start()
         gameLoop.setPaused(false)
         this

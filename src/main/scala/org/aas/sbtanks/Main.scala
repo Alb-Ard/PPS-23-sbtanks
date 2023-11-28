@@ -41,11 +41,10 @@ import org.aas.sbtanks.entities.repository.EntityRepositoryPausableAdapter
 import org.aas.sbtanks.common.Pausable
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityMvRepositoryFactory
 import org.aas.sbtanks.lifecycle.scalafx.JFXGameBootstrapper
+import org.aas.sbtanks.lifecycle.view.scalafx.JFXMainMenu
+import scalafx.application.Platform
 
 object Main extends JFXApp3 with scalafx.Includes:
-    val viewScale = 4D
-    val tileSize = 16D
-    val tankUnitMoveSpeed = 1D / tileSize
     val windowSize = (1280, 720)
     val interfaceScale = 4D
 
@@ -58,5 +57,11 @@ object Main extends JFXApp3 with scalafx.Includes:
                 fill = Color.BLACK
                 stylesheets.add(getClass().getResource("/ui/style.css").toExternalForm())
 
-        given EntityRepositoryContext[Stage, ViewSlot, Pane] = EntityRepositoryContext(stage).switch(JFXEntityRepositoryContextInitializer.ofLevel(ViewSlot.Game, ViewSlot.Ui))
-        val bootstrapper = JFXGameBootstrapper(interfaceScale, windowSize).startGame()
+        given EntityRepositoryContext[Stage, ViewSlot, Pane] = EntityRepositoryContext(stage).switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
+        val bootstrapper = JFXGameBootstrapper(interfaceScale, windowSize)
+
+        val mainMenu = JFXMainMenu(interfaceScale)
+        summon[EntityRepositoryContext[Stage, ViewSlot, Pane]].viewSlots(ViewSlot.Ui).children.add(mainMenu)
+        mainMenu.startSinglePlayerGameRequested += { _ => bootstrapper.startGame() }
+        mainMenu.optionsRequested += { _ => ??? }
+        mainMenu.quitRequested += { _ => Platform.exit() }
