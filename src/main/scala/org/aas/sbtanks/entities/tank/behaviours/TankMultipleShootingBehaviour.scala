@@ -1,6 +1,6 @@
 package org.aas.sbtanks.entities.tank.behaviours
 
-import org.aas.sbtanks.behaviours.{CollisionBehaviour, MovementBehaviour, DamageableBehaviour, DirectionBehaviour, PositionBehaviour}
+import org.aas.sbtanks.behaviours.{CollisionBehaviour, DamageableBehaviour, DirectionBehaviour, MovementBehaviour, PositionBehaviour}
 import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.physics.CollisionLayer
@@ -13,8 +13,7 @@ trait TankMultipleShootingBehaviour:
             with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour] = Seq.empty
         for(n <- Range(1, nShots + 1))
             shotsFired = shotsFired :+ generateBullet((self.directionX * n, self.directionY * n), isPlayerBullet)
-            //shotsFired.::(generateBullet((self.directionX * n, self.directionY * n)))
-            //Seq(generateBullet((self.directionX, self.directionY)), generateBullet((self.directionX * 2, self.directionY * 2)))
+        shotsFired.foreach(b => b.setDirection(self.directionX, self.directionY))
         shotsFired
 
 
@@ -23,10 +22,9 @@ trait TankMultipleShootingBehaviour:
             with PositionBehaviour(self.positionX + offset._1, self.positionY + offset._2)
             with MovementBehaviour
             with DirectionBehaviour
-            with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,
-                Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))
+            with CollisionBehaviour(0.5, 0.5, CollisionLayer.BulletsLayer,
+                Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer, CollisionLayer.NonWalkableLayer))
             with DamageableBehaviour:
                 override def applyDamage(amount: Int) =
                     destroyed(())
                     this
-
