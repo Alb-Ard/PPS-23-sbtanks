@@ -12,7 +12,7 @@ trait TankMultipleShootingBehaviour:
         var shotsFired: Seq[Bullet with PositionBehaviour with MovementBehaviour
             with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour] = Seq.empty
         for(n <- Range(1, nShots + 1))
-            shotsFired = shotsFired :+ generateBullet((self.directionX * n, self.directionY * n), isPlayerBullet)
+            shotsFired = shotsFired :+ generateBullet((self.directionX * (n * 0.1), self.directionY * (n * 0.1)), isPlayerBullet)
         shotsFired.foreach(b => b.setDirection(self.directionX, self.directionY))
         shotsFired
 
