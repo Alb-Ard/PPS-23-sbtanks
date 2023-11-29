@@ -9,7 +9,7 @@ import org.aas.sbtanks.entities.tank.structure.Tank
 object Timer:
     import TimerPowerUpUtils.*
 
-    case object TimerPowerUp
+    case class TimerPowerUp()
         extends ContextualFuncPowerUp[CachedContext[(Int, Int)], Tank](CachedContext[(Int, Int)]())(f, g)
         with TimeablePowerUp(STOP_TIME_POWER_UP_DURATION)
 
