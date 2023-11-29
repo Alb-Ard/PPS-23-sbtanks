@@ -29,7 +29,7 @@ class MockTankView extends TankView:
     override def look(rotation: Double): Unit = ()
     override def move(x: Double, y: Double): Unit = ()
 
-class MockJFXPlayerTankController(tank: ControllableTank) extends TankInputController(tank, MockTankView(), 1 / 16D, 1, JFXPlayerInputController()):
+class MockJFXPlayerTankController(tank: ControllableTank) extends TankInputController(tank, MockTankView(), 1 / 16D, 1, 16D, JFXPlayerInputController()):
     def simulateInput(event: KeyEvent) = inputEvents.handleKeyPressEvent(event)
     override protected def shoot() = this
 

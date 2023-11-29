@@ -13,8 +13,8 @@ import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.common.Pausable
 
-abstract class TankInputController[+A <: TankInputEvents](tank: ControllableTank, view: TankView, speedMultiplier: Double, viewScale: Double, protected val inputEvents: A)
-    extends TankController(Seq((tank, view)), viewScale)
+abstract class TankInputController[+A <: TankInputEvents](tank: ControllableTank, view: TankView, speedMultiplier: Double, viewScale: Double, tileSize: Double, protected val inputEvents: A)
+    extends TankController(Seq((tank, view)), viewScale, tileSize)
     with Steppable
     with Pausable:
 

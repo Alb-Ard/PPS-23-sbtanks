@@ -24,6 +24,12 @@ class LevelSequencer[M >: PlayerTank, V](using modelClassTag: ClassTag[M], viewC
         case None => this
         case Some(_) => advanceToNextLevel()
 
+    def reset(): this.type = 
+        endCurrentLevel()
+        currentLevel = Option.empty
+        remainingLevelsQueue = Queue.from(levels)
+        this
+
     private def advanceToNextLevel(): this.type =
         val player = endCurrentLevel()
         remainingLevelsQueue.dequeueOption match
@@ -37,14 +43,14 @@ class LevelSequencer[M >: PlayerTank, V](using modelClassTag: ClassTag[M], viewC
                 levelChanged(currentLevel.get, enemyCount)
         this
     
-    def endCurrentLevel() =
+    private def endCurrentLevel() =
         currentLevel.map(l => l.end())
             .getOrElse(Seq.empty)
             .filter(mv => mv(0).isInstanceOf[PlayerTank])
             .headOption
             .map(mv => mv(0).asInstanceOf[PlayerTank])
         
-    def copyPlayerHealth(oldPlayer: Option[PlayerTank]) =
+    private def copyPlayerHealth(oldPlayer: Option[PlayerTank]) =
         oldPlayer.foreach(p => entityRepository
             .entitiesOfModelType[PlayerTank]
             .headOption
