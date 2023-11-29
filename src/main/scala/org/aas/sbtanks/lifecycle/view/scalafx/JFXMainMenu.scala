@@ -10,6 +10,7 @@ import scalafx.scene.Node
 import org.aas.sbtanks.event.EventSource
 import scalafx.scene.paint.Color
 import scalafx.scene.layout.Background
+import org.aas.sbtanks.common.view.scalafx.JFXViewComponentFactory
 
 /**
   * View shown to the player when starting the application. Lets the user start a new game, go to the settings view and exit the application
@@ -18,15 +19,15 @@ import scalafx.scene.layout.Background
   */
 class JFXMainMenu(interfaceScale: Double) extends GridPane:
     /**
-      * Event invoked when the used requests to start a new single-player game
+      * Event invoked when the user requests to start a new single-player game
       */
     val startSinglePlayerGameRequested = EventSource[Unit]
     /**
-      * Event invoked when the used request to see the options view
+      * Event invoked when the user request to see the options view
       */
     val optionsRequested = EventSource[Unit]
     /**
-      * Event invoked when the used request to quit the application
+      * Event invoked when the user request to quit the application
       */
     val quitRequested = EventSource[Unit]
 
@@ -62,15 +63,5 @@ class JFXMainMenu(interfaceScale: Double) extends GridPane:
         GridPane.setColumnIndex(node, column)
         node
 
-    private def createButton(text: String) = 
-        val button = Button(text)
-        button.prefWidth = BUTTON_SIZE(0) * interfaceScale
-        button.prefHeight = BUTTON_SIZE(1) * interfaceScale
-        button.styleClass.addAll("main-menu-text", "main-menu-button")
-        val icon = ImageView(Image("ui/main_menu_selected_item_icon.png", BUTTON_ICON_SIZE(0) * interfaceScale, BUTTON_ICON_SIZE(1) * interfaceScale, true, false, false))
-        button.graphic = icon
-        icon.opacity = 0
-        button.onMouseEntered = (e) => icon.opacity = 1
-        button.onMouseExited = (e) => icon.opacity = 0
-        button
+    private def createButton(text: String) = JFXViewComponentFactory.createButton(BUTTON_SIZE, BUTTON_ICON_SIZE, interfaceScale, text)
 

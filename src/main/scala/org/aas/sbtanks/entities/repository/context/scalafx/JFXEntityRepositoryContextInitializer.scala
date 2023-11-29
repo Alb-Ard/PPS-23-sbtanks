@@ -28,7 +28,7 @@ object JFXEntityRepositoryContextInitializer extends scalafx.Includes:
       * @param uiKey
       * @return
       */
-    def ofLevel[VSlotKey](levelKey: VSlotKey, uiKey: VSlotKey): JFXInitializer[VSlotKey] =
+    def ofLevel[VSlotKey](levelKey: VSlotKey, uiKey: VSlotKey, overlayKey: VSlotKey): JFXInitializer[VSlotKey] =
         new JFXInitializer[VSlotKey]:
             override def create(controller: Stage, currentSlots: ViewSlotsMap) =
                 val levelContainer = new Pane():
@@ -37,12 +37,17 @@ object JFXEntityRepositoryContextInitializer extends scalafx.Includes:
                     background = Background.EMPTY
                 val scenePane = new BorderPane(null, null, null, null, null):
                     background = Background.EMPTY
+                val overlayPane = new Pane:
+                    background = Background.EMPTY
+                val mainPane = new StackPane:
+                    background = Background.EMPTY
                 scenePane.center.set(levelContainer)
                 scenePane.right.set(uiContainer)
                 BorderPane.setAlignment(levelContainer, Pos.CENTER)
                 BorderPane.setAlignment(uiContainer, Pos.CENTER)
-                controller.scene.value.root = scenePane
-                Map((levelKey, levelContainer), (uiKey, uiContainer))
+                mainPane.children.addAll(scenePane, overlayPane)
+                controller.scene.value.root = mainPane
+                Map((levelKey, levelContainer), (uiKey, uiContainer), (overlayKey, overlayPane))
 
     /**
       * Creates an initializer for a ui-only context

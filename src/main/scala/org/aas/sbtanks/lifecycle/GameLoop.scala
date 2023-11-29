@@ -1,9 +1,9 @@
 package org.aas.sbtanks.lifecycle
 
-import scalafx.animation.AnimationTimer
-import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer
-import org.aas.sbtanks.common.Steppable
+import _root_.scalafx.animation.AnimationTimer
 import org.aas.sbtanks.common.Pausable
+import org.aas.sbtanks.common.Steppable
+import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer
 
 class GameLoop(repository: EntityMvRepositoryContainer[?, ?] with Steppable, pausables: Seq[Pausable]) extends Pausable:
     private var lastTimeNanos = System.nanoTime().doubleValue
