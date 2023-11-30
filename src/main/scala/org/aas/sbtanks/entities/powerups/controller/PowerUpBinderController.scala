@@ -1,6 +1,6 @@
 package org.aas.sbtanks.entities.powerups.controller
 
-import org.aas.sbtanks.behaviours.{CollisionBehaviour, PositionBehaviour}
+import org.aas.sbtanks.behaviours.{CollisionBehaviour, DamageableBehaviour, PositionBehaviour}
 import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.entities.powerups.PowerUp.PowerUp
 import org.aas.sbtanks.entities.powerups.effects.Grenade.GrenadePowerUp
@@ -55,12 +55,15 @@ class PowerUpBinderController[VSK, VS](using context: EntityRepositoryContext[St
      *
      * @param deltaTime The elapsed time since the last update to subtract to.
      */
-    private def decreaseTimeablesTime(deltaTime: Double) =
-        tankPowerUpsBinder.getPowerUps.collect:
-            case element: TimeablePowerUp =>
-                element.decreaseDuration(deltaTime)
-                if element.isExpired then
-                    tankPowerUpsBinder.unchain(element)
+    private def decreaseTimeablesTime(deltaTime: Double): Unit =
+        tankPowerUpsBinder.getPowerUps
+              .collect:
+                  case element: TimeablePowerUp => element
+              .map(_.decreaseDuration(deltaTime))
+              .filter(_.isExpired)
+              .foreach:
+                  tankPowerUpsBinder.unchain
+
 
 
     /**
@@ -75,6 +78,28 @@ class PowerUpBinderController[VSK, VS](using context: EntityRepositoryContext[St
             p,
             Option(new JFXPowerUpView(Image("resources/powerups/powerup_star.png")))
         )
+
+    /**
+     * Registers entities by binding power-ups to tanks and sets up destruction event handling.
+     *
+     * @param tanks The sequence of tanks to bind power-ups to.
+     * @return The updated controller instance.
+     */
+    private def registerEntities(tanks: Seq[Tank]): this.type =
+
+        tanks.map(t => {
+                tankPowerUpsBinder.bind(t)
+                t
+            })
+            /*
+                TODO: make sure to register callback only for charged tanks
+             */
+            .flatMap(_.asInstanceOf[Option[Tank with DamageableBehaviour]])
+            .foreach:
+                _.destroyed += {_ => this.setNewPickablePowerUp()}
+
+        this
+
 
 
 
