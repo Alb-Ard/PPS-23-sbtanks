@@ -4,27 +4,32 @@ import org.aas.sbtanks.behaviours.{CollisionBehaviour, DamageableBehaviour, Dire
 import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.physics.CollisionLayer
+import org.aas.sbtanks.entities.bullet.controller.BulletController.CompleteBullet
 
 trait TankMultipleShootingBehaviour:
-    self: Tank with PositionBehaviour with DirectionBehaviour =>
+    this: Tank with PositionBehaviour with DirectionBehaviour =>
+
+    private val BULLET_OFFSET = 0.1D
+    private val BULLET_COLLISION_SIZE = 0.75D
+    private val BULLET_COLLISION_OFFSET = (1D - BULLET_COLLISION_SIZE) / 2D
 
     def shoot(nShots: Int, isPlayerBullet: Boolean) =
-        var shotsFired: Seq[Bullet with PositionBehaviour with MovementBehaviour
-            with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour] = Seq.empty
+        var shotsFired: Seq[CompleteBullet] = Seq.empty
         for(n <- Range(1, nShots + 1))
-            shotsFired = shotsFired :+ generateBullet((self.directionX * (n * 0.1), self.directionY * (n * 0.1)), isPlayerBullet)
-        shotsFired.foreach(b => b.setDirection(self.directionX, self.directionY))
+            shotsFired = shotsFired :+ generateBullet(n, isPlayerBullet)
         shotsFired
 
-
-    private def generateBullet(offset: (Double, Double), isPlayerBullet: Boolean) =
-        new Bullet(self.tankData.bulletSpeed, isPlayerBullet)
-            with PositionBehaviour(self.positionX + offset._1, self.positionY + offset._2)
+    private def generateBullet(index: Int, isPlayerBullet: Boolean) =
+        val direction = (lastValidDirectionX.getOrElse(0D), lastValidDirectionY.getOrElse(1D))
+        val offset = (direction(0) * index * BULLET_OFFSET, direction(1) * index * BULLET_OFFSET)
+        new Bullet(tankData.bulletSpeed, isPlayerBullet)
+            with PositionBehaviour(positionX + offset(0), positionY + offset(1))
             with MovementBehaviour
-            with DirectionBehaviour
-            with CollisionBehaviour(0.5, 0.5, CollisionLayer.BulletsLayer,
+            with DirectionBehaviour(direction(0), direction(1))
+            with CollisionBehaviour(BULLET_COLLISION_SIZE, BULLET_COLLISION_SIZE, CollisionLayer.BulletsLayer,
                 Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))
             with DamageableBehaviour:
                 override def applyDamage(amount: Int) =
                     destroyed(())
                     this
+        .setOffset(BULLET_COLLISION_OFFSET, BULLET_COLLISION_OFFSET)

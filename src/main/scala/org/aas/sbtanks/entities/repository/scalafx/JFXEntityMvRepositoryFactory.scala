@@ -28,8 +28,14 @@ import org.aas.sbtanks.entities.repository.EntityViewAutoManager
   * A factory used to create an entity repository with the default extensions
   */
 object JFXEntityMvRepositoryFactory:
+    /**
+      * The default view context used by the repositories this factory creates
+      */
     type DefaultContext = EntityRepositoryContext[Stage, ViewSlot, Pane]
 
+    /**
+      * The complete type of the repositories this factory creates
+      */
     type DefaultEntityRepository = JFXEntityMvRepositoryContainer 
         with EntityControllerRepository[AnyRef, Node, DefaultContext]
         with EntityViewAutoManager[Node]
@@ -40,9 +46,17 @@ object JFXEntityMvRepositoryFactory:
         with EntityRepositoryPausableAdapter[AnyRef, Node, DefaultContext]
         with EntityRepositoryContextAware[Stage, ViewSlot, Pane]
 
+    /**
+      * A scaling factor for the game graphics
+      */
     val VIEW_SCALE = 4D
+    /**
+      * The size, in pixels, of a game grid tile
+      */
     val TILE_SIZE = 16D
-    val TANK_UNIT_MOVE_SPEED = 1D / TILE_SIZE
+
+    private val TANK_UNIT_MOVE_SPEED = 1D / TILE_SIZE
+    private val BULLET_UNIT_MOVE_SPEED = TANK_UNIT_MOVE_SPEED * 2D
     
     /**
       * Creates an entity repository with the default extensions, controller factories and replacers
@@ -63,4 +77,4 @@ object JFXEntityMvRepositoryFactory:
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(TANK_UNIT_MOVE_SPEED, VIEW_SCALE, TILE_SIZE, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView))))
                 .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(VIEW_SCALE * TILE_SIZE))
                 .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank], EnemyController.factory(VIEW_SCALE, TILE_SIZE))
-                .registerControllerFactory(m => m.isInstanceOf[Bullet], JFXBulletController.factory())
+                .registerControllerFactory(m => m.isInstanceOf[Bullet], JFXBulletController.factory(BULLET_UNIT_MOVE_SPEED, VIEW_SCALE, TILE_SIZE))

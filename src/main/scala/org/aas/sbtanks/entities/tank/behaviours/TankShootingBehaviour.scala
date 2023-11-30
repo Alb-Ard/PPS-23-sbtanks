@@ -5,12 +5,13 @@ import org.aas.sbtanks.behaviours.{CollisionBehaviour, DamageableBehaviour, Dire
 import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.entities.tank.structure.Tank
 
+@deprecated
 trait TankShootingBehaviour:
-    self: Tank with PositionBehaviour with DirectionBehaviour =>
+    this: Tank with PositionBehaviour with DirectionBehaviour =>
 
     def shoot() =
-        new Bullet(self.tankData.bulletSpeed, false)
-            with PositionBehaviour(self.positionX + self.directionX, self.positionY + self.directionY)
+        new Bullet(tankData.bulletSpeed, false)
+            with PositionBehaviour(positionX + directionX, positionY + directionY)
             with MovementBehaviour
             with DirectionBehaviour
             with CollisionBehaviour(1, 1, CollisionLayer.BulletsLayer,

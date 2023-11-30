@@ -8,32 +8,44 @@ import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.behaviours.DamageableBehaviour.damage
 import org.aas.sbtanks.entities.bullet.view.BulletView
 import org.aas.sbtanks.player.PlayerTank
+import org.aas.sbtanks.entities.bullet.controller.BulletController.CompleteBullet
 
-class BulletController(bullet: Bullet with PositionBehaviour with MovementBehaviour
-                        with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour, bulletView: BulletView) extends Steppable:
+class BulletController(bullet: CompleteBullet, bulletView: BulletView, speedMultiplier: Double, viewScale: Double, tileSize: Double) extends Steppable:
 
     bullet.overlapping += checkCollision
-    bullet.positionChanged += bulletView.move
+    bullet.positionChanged += { (x, y) => bulletView.move(x * viewScale * tileSize, y * viewScale * tileSize) }
+    bulletView.lookInDirection(bullet.directionX, bullet.directionY)
 
     override def step(delta: Double) =
-        bullet.moveRelative(bullet.directionX * bullet.speed, bullet.directionY * bullet.speed)
-        println("Bullet Speed: " + bullet.speed)
-        println("Bullet Position: (" + bullet.positionX + ", " + bullet.positionY + ")")
-        println("Bullet Direction: (" + bullet.directionX + ", " + bullet.directionY + ")")
+        bullet.moveRelative(bullet.directionX * bullet.speed * speedMultiplier, bullet.directionY * bullet.speed * speedMultiplier)
         this
 
     private def checkCollision(colliders: Seq[Collider]): Unit =
-        colliders.foreach(c => c match
+        if (colliders.map(c => c match
             case el: Tank with DamageableBehaviour => {
                 if(checkBulletPlayer(el))
                     el.damage()
+                    true
+                else
+                    false
             }
             case el: DamageableBehaviour => {
                 el.damage()
+                true
             }
-            case el => el
-        )
-        bullet.damage()
+            case el => {
+                true
+            } 
+        ).contains(true))
+            bullet.damage()
 
     private def checkBulletPlayer(tank: Tank): Boolean =
         (bullet.isPlayerBullet && !tank.isInstanceOf[PlayerTank]) || (!bullet.isPlayerBullet && tank.isInstanceOf[PlayerTank])
+
+object BulletController:
+    type CompleteBullet = Bullet
+        with PositionBehaviour
+        with MovementBehaviour
+        with DirectionBehaviour
+        with CollisionBehaviour
+        with DamageableBehaviour

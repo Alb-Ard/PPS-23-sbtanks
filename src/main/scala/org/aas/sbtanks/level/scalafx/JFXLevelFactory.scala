@@ -19,7 +19,7 @@ import org.aas.sbtanks.level.LevelFactory.StringEntity.StringEmpty
 import org.aas.sbtanks.player.PlayerTankBuilder
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 
-final case class JFXLevelFactory(tileSize: Double, viewScale: Double, tileAnimationSpeed: Double) extends LevelFactory[AnyRef, Node]:
+final case class JFXLevelFactory(tileSize: Double, viewScale: Double, tileAnimationSpeed: Double, tankAnimationSpeed: Double) extends LevelFactory[AnyRef, Node]:
     val pixelSize = 1D / tileSize
 
     override protected def createEntityMv(entity: StringEntity, x: Double, y: Double): Seq[(AnyRef, Node)] = 
@@ -56,5 +56,5 @@ final case class JFXLevelFactory(tileSize: Double, viewScale: Double, tileAnimat
                 tileSize - pixelSize,
                 tileSize,
                 viewScale))
-        val tankView = JFXTankView(images, tileSize)
+        val tankView = JFXTankView(images, tankAnimationSpeed)
         Seq((tank, tankView))

@@ -105,10 +105,10 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
     }
 
     protected def removeMvController(model: Model): this.type = queueCommand { () =>
-        controllers.find(c => c(0) == model) match
+        controllers.find(c => c(0).contains(model)) match
             case None => this
             case Some(c) =>
-                controllers = controllers.filterNot(c => c(0) == model)
+                controllers = controllers.filterNot(c => c(0).contains(model))
     }
 
     protected def editControllers(modifier: (Option[Model], Controller) => Controller) = queueCommand { () =>

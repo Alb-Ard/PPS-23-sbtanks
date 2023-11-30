@@ -58,7 +58,6 @@ case class PlayerTankBuilder(private val x: Double = 0,
 
 object PlayerTankBuilder:
     val DEFAULT_COLLISION_MASK: Set[CollisionLayer] = Set(
-        CollisionLayer.BulletsLayer,
         CollisionLayer.WallsLayer,
         CollisionLayer.NonWalkableLayer
     )

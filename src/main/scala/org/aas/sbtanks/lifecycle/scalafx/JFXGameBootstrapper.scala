@@ -32,7 +32,7 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
 
     private val entityRepository = JFXEntityMvRepositoryFactory.create()
     private val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
-    private val levelFactory = JFXLevelFactory(JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE, 1)
+    private val levelFactory = JFXLevelFactory(JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE, 1, 16)
     private val levelLoader = LevelLoader()
     private val levels = levelLoader.getLevelSeq(5)
     private val levelSequencer = LevelSequencer[AnyRef, Node](levels(0), levelFactory, entityRepository)
