@@ -36,12 +36,11 @@ import org.aas.sbtanks.common.ViewSlot
 import org.aas.sbtanks.level.LevelLoader
 import org.aas.sbtanks.lifecycle.PointsManager
 import org.aas.sbtanks.lifecycle.GameLoop
-import org.aas.sbtanks.lifecycle.view.scalafx.JFXPauseMenu
+import org.aas.sbtanks.lifecycle.view.scalafx.{JFXMainMenu, JFXOptionsMenu, JFXPauseMenu}
 import org.aas.sbtanks.entities.repository.EntityRepositoryPausableAdapter
 import org.aas.sbtanks.common.Pausable
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityMvRepositoryFactory
 import org.aas.sbtanks.lifecycle.scalafx.JFXGameBootstrapper
-import org.aas.sbtanks.lifecycle.view.scalafx.JFXMainMenu
 import scalafx.application.Platform
 import scalafx.beans.property.IntegerProperty
 
@@ -68,10 +67,17 @@ object Main extends JFXApp3 with scalafx.Includes:
         val mainMenu = JFXMainMenu(INTERFACE_SCALE, windowSize)
         context.viewSlots(ViewSlot.Ui).children.add(mainMenu)
         mainMenu.startSinglePlayerGameRequested += { _ => launchGame() }
-        mainMenu.optionsRequested += { _ => ??? }
+        mainMenu.optionsRequested += { _ => launchOptionsMenu() }
         mainMenu.quitRequested += { _ => Platform.exit() }
 
     private def launchGame(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])() =
         val bootstrapper = JFXGameBootstrapper(INTERFACE_SCALE, windowSize)
         bootstrapper.gameEnded += { _ => launchMainMenu() }
-        bootstrapper.startGame() 
+        bootstrapper.startGame()
+
+    private def launchOptionsMenu(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(): Unit =
+        context.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
+        val optionsMenu = JFXOptionsMenu(INTERFACE_SCALE, windowSize)
+        context.viewSlots(ViewSlot.Ui).children.add(optionsMenu)
+        optionsMenu.mainMenuRequested += { _ => launchMainMenu() }
+        optionsMenu.resetHighScoreRequested += { _ => PointsManager.resetHighScore() }
