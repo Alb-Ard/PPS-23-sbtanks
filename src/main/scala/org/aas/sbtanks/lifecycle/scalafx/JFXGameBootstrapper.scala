@@ -83,5 +83,3 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
         levelSequencer.reset()
         gameEnded(())
         this
-
-    //def restart(): this.type =
