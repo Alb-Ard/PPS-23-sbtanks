@@ -13,6 +13,7 @@ trait Tank(dataSupplier: TankTypeData):
     def updateTankData(newData: TankData & TankDataUpdater): Unit = tankData = newData
 
     var tankData: TankData & TankDataUpdater = dataSupplier()
+    def isCharged = false
 
 
 
@@ -27,22 +28,7 @@ object Tank:
 
     class PowerTank extends Tank(PowerTankData)
 
-object Test extends App:
-    import Tank.*
 
-    val tank = new BasicTank()
-    
-
-    println(tank.tankData.health)
-    println(tank.tankData.speed)
-
-    tank updateTankData (tank.tankData.updateSpeed(_ * 2)
-        .updateHealth(_ + 5))
-
-
-
-    println(tank.tankData.health)
-    println(tank.tankData.speed)
 
 
 

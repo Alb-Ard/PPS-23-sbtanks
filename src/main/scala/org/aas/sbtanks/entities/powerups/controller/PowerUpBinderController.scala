@@ -19,6 +19,7 @@ import org.aas.sbtanks.Main.jfxImageView2sfx
 
 
 
+
 /**
  * A controller for managing power-up binding behaviors in the game.
  *
@@ -91,14 +92,16 @@ class PowerUpBinderController[VSK, VS](using context: EntityRepositoryContext[St
                 tankPowerUpsBinder.bind(t)
                 t
             })
-            /*
-                TODO: make sure to register callback only for charged tanks
-             */
             .flatMap(_.asInstanceOf[Option[Tank with DamageableBehaviour]])
             .foreach:
-                _.destroyed += {_ => this.setNewPickablePowerUp()}
-
+                case tank: Tank with DamageableBehaviour =>
+                    tank.destroyed += {_ =>
+                        tankPowerUpsBinder.unbind(tank)
+                        if (tank.isCharged) this.setNewPickablePowerUp()
+                    }
         this
+
+
 
 
 
