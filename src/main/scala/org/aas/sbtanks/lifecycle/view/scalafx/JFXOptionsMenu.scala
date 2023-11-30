@@ -25,8 +25,6 @@ import scalafx.beans.property.IntegerProperty
  */
 class JFXOptionsMenu(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)) extends VBox:
 
-    val stylesheet = getClass.getResource("/ui/press_start_2p.ttf").toExternalForm
-
     val resetHighScoreRequested = EventSource[Unit]
     val mainMenuRequested = EventSource[Unit]
 
@@ -65,41 +63,6 @@ class JFXOptionsMenu(interfaceScale: Double, windowSize: (IntegerProperty, Integ
     buttonBar.alignmentInParent = Pos.Center
     buttonBar.margin = Insets(50, 200, 0, 200)
     children.add(buttonBar)
-
-
-//    children = Seq(
-//        new Text {
-//            text = "Set Your Username"
-//            font = Font.loadFont(stylesheet, 70)
-//            alignment = Pos.Center
-//            fill = new LinearGradient(
-//                endX = 0,
-//                stops = Stops(SandyBrown, Brown))
-//        },
-//        new TextField {
-//            text = "Put your username here"
-//            font = Font.loadFont(stylesheet, 30)
-//            alignment = Pos.Center
-//        },
-//        new ButtonBar {
-//            padding = Insets(100, 130, 100, 0)
-//            buttons = Seq(
-//                new Button("Reset High Score") {
-//                    font = Font.loadFont(stylesheet, 20)
-//                    id = "resetScore"
-//                    margin = Insets(0, 80, 0, 80)
-//                    onAction = () => {
-//                        PointsManager.resetHighScore()
-//                    }
-//                },
-//                new Button("Go Back To Title Screen") {
-//                    font = Font.loadFont(stylesheet, 20)
-//                    id = "titleScreen"
-//                    margin = Insets(0, 80, 0, 80)
-//
-//                }
-//            )
-//        })
 
     private def createButton(text: String) = JFXViewComponentFactory.createButton(BUTTON_SIZE,
         BUTTON_ICON_SIZE,
