@@ -9,3 +9,21 @@
     -fx-font-family: "Press Start 2P";
     -fx-font-size: 28;
 }
+
+.main-menu-text {
+    font-family: "Press Start 2P";
+    font-size: 18;
+    -fx-font-family: "Press Start 2P";
+    -fx-font-size: 18;
+}
+
+.main-menu-button {
+    border: 0;
+    background-color: transparent;
+    color: white;
+    text-align: right;
+    -fx-border: 0;
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-text-align: right;
+}

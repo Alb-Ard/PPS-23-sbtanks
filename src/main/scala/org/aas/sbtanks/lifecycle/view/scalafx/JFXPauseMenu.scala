@@ -1,27 +1,52 @@
 package org.aas.sbtanks.lifecycle.view.scalafx
 
+import org.aas.sbtanks.common.Pausable
+import org.aas.sbtanks.common.view.scalafx.JFXViewComponentFactory
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContextAware
 import org.aas.sbtanks.lifecycle.GameLoop
-import scalafx.stage.Stage
-import scalafx.scene.input.KeyEvent
 import scalafx.Includes
 import scalafx.scene.input.KeyCode
-import org.aas.sbtanks.entities.repository.context.EntityRepositoryContextAware
-import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
+import scalafx.scene.input.KeyEvent
+import scalafx.scene.layout.Background
 import scalafx.scene.layout.Pane
-import org.aas.sbtanks.common.Pausable
+import scalafx.scene.layout.VBox
+import scalafx.scene.paint.Color
+import scalafx.scene.text.Text
+import scalafx.stage.Stage
+import org.aas.sbtanks.event.EventSource
 
-class JFXPauseMenu[CVSlotKey, CVSlot](using context: EntityRepositoryContext[Stage, CVSlotKey, CVSlot])(gameLoop: GameLoop)
-    extends Includes with EntityRepositoryContextAware[Stage, CVSlotKey, CVSlot]:
-        
-    registerSceneViewHandlers(context.viewController)
+/**
+  * A view for a pause menu that lets the player resume the game or quit to the main menu
+  *
+  * @param interfaceScale An interface scaling factor
+  */
+class JFXPauseMenu(interfaceScale: Double) extends VBox:
+    private val BUTTON_SIZE = (64, 8)
+    private val BUTTON_ICON_SIZE = (6, 6)
 
-    private def registerSceneViewHandlers(stage: Stage) =
-        stage.addEventHandler(KeyEvent.KeyPressed, onKeyPressed)
+    val resumeRequested = EventSource[Unit]
+    val quitRequested = EventSource[Unit]
 
-    private def onKeyPressed(event: KeyEvent) =
-        event.code match
-            case KeyCode.ESCAPE =>
-                event.consume()
-                gameLoop.togglePaused()
-            case _ => ()
+    background = Background.fill(Color.BLACK)
 
+    spacing = 8
+
+    private val pauseText = createText("PAUSED")
+    children.add(pauseText)
+
+    private val resumeButton = createButton("RESUME")
+    resumeButton.onMouseClicked = _ => resumeRequested(())
+    children.add(resumeButton)
+
+    private val quitButton = createButton("QUIT")
+    quitButton.onMouseClicked = _ => quitRequested(())
+    children.add(quitButton)
+
+    private def createButton(text: String) = JFXViewComponentFactory.createButton(BUTTON_SIZE,
+        BUTTON_ICON_SIZE,
+        interfaceScale,
+        text,
+        Seq("main-menu-text", "main-menu-button"))
+
+    private def createText(text: String) = JFXViewComponentFactory.createText(text, Seq("main-menu-text"))

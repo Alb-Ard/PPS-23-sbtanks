@@ -4,13 +4,18 @@ import org.aas.sbtanks.event.EventSource
 
 trait PointsContainer:
     val amountChanged = EventSource[(Int)]
+    val highScoreChanged = EventSource[(Int)]
 
     private var points = 0
-    private var highestScore = 0
+    private var highScoreValue = 0
 
     def addAmount(amount: Int): this.type =
         points += amount
-        if(highestScore < points) highestScore = points
+        highScoreValue = points match
+            case h if h > highScoreValue => 
+                highScoreChanged(h)
+                h
+            case _ => highScoreValue
         amountChanged(points)
         this
     
@@ -20,10 +25,10 @@ trait PointsContainer:
         this
 
     def resetHighScore(): Unit =
-        highestScore = 0
+        highScoreValue = 0
     
     def amount = points
 
-    def bestScore = highestScore
+    def highScore: Int = highScoreValue
 
 

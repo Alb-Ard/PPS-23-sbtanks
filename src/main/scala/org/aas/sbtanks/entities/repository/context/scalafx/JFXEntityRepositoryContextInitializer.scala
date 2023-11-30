@@ -13,6 +13,7 @@ import scalafx.scene.Node
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos
 import scalafx.scene.layout.StackPane
+import scalafx.scene.layout.Background
 
 /**
   * Object containing context initializers that use ScalaFX
@@ -27,29 +28,36 @@ object JFXEntityRepositoryContextInitializer extends scalafx.Includes:
       * @param uiKey
       * @return
       */
-    def ofLevel[VSlotKey](levelKey: VSlotKey, uiKey: VSlotKey): JFXInitializer[VSlotKey] =
+    def ofLevel[VSlotKey](levelKey: VSlotKey, uiKey: VSlotKey, overlayKey: VSlotKey): JFXInitializer[VSlotKey] =
         new JFXInitializer[VSlotKey]:
             override def create(controller: Stage, currentSlots: ViewSlotsMap) =
-                val levelContainer = Pane()
-                val uiContainer = Pane()
-                val scenePane = BorderPane(null, null, null, null, null)
+                val levelContainer = new Pane():
+                    background = Background.EMPTY
+                val uiContainer = new Pane():
+                    background = Background.EMPTY
+                val scenePane = new BorderPane(null, null, null, null, null):
+                    background = Background.EMPTY
+                val overlayPane = new Pane:
+                    background = Background.EMPTY
+                val mainPane = new StackPane:
+                    background = Background.EMPTY
                 scenePane.center.set(levelContainer)
                 scenePane.right.set(uiContainer)
                 BorderPane.setAlignment(levelContainer, Pos.CENTER)
                 BorderPane.setAlignment(uiContainer, Pos.CENTER)
-                controller.scene.value.content.clear()
-                controller.scene.value.content.add(scenePane)
-                Map((levelKey, levelContainer), (uiKey, uiContainer))
+                mainPane.children.addAll(scenePane, overlayPane)
+                controller.scene.value.root = mainPane
+                Map((levelKey, levelContainer), (uiKey, uiContainer), (overlayKey, overlayPane))
 
     /**
-      * Creates an initialize for a ui-only context
+      * Creates an initializer for a ui-only context
       *
       * @param uiKey
       */
     def ofView[VSlotKey](uiKey: VSlotKey): JFXInitializer[VSlotKey] =
         new JFXInitializer[VSlotKey]:
             override def create(controller: Stage, currentSlots: ViewSlotsMap) =
-                val uiContainer = Pane()
-                controller.scene.value.content.clear()
-                controller.scene.value.content.add(uiContainer)
+                val uiContainer = new Pane():
+                    background = Background.EMPTY
+                controller.scene.value.root = uiContainer
                 Map((uiKey, uiContainer))

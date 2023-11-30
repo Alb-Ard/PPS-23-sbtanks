@@ -14,8 +14,8 @@ import scalafx.Includes
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import org.aas.sbtanks.player.view.ui.PlayerHealthView
 
-abstract class JFXPlayerTankController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(tank: ControllableTank, speedMultiplier: Double, view: TankView, viewScale: Double)
-    extends TankInputController(tank, view, speedMultiplier, viewScale, JFXPlayerInputController())
+abstract class JFXPlayerTankController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(tank: ControllableTank, speedMultiplier: Double, view: TankView, viewScale: Double, tileSize: Double)
+    extends TankInputController(tank, view, speedMultiplier, viewScale, tileSize, JFXPlayerInputController())
     with EntityRepositoryContextAware
     with Includes:
 
@@ -26,8 +26,8 @@ abstract class JFXPlayerTankController[VSK, VS](using context: EntityRepositoryC
         stage.addEventHandler(KeyEvent.KeyReleased, inputEvents.handleKeyReleasedEvent)
 
 object JFXPlayerTankController:
-    def factory(speedMultiplier: Double, viewScale: Double, bulletConsumer: (AnyRef, Node) => Any, tileSize: Double)(context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: TankView) =
-        new JFXPlayerTankController(using context)(tank, speedMultiplier, view, viewScale):
+    def factory(speedMultiplier: Double, viewScale: Double, tileSize: Double, bulletConsumer: (AnyRef, Node) => Any)(context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: TankView) =
+        new JFXPlayerTankController(using context)(tank, speedMultiplier, view, viewScale, tileSize):
             override def shoot() =
                 val bullet = tank.shoot(1, true).head
                 val bulletView = new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
