@@ -20,16 +20,16 @@ import org.aas.sbtanks.Main.jfxImageView2sfx
 
 
 
+
 /**
  * A controller for managing power-up binding behaviors in the game.
  *
  *
- * @param context           The entity repository context providing access to the game stage.
  * @param entityRepo The repository container for managing entities MVCs.
  * @param tankPowerUpsBinder The power-up binder specifically only for tank-related power-ups.
  * @param pickup            An event source to be notified on when a tank-related power-up is picked up.
  */
-class PowerUpBinderController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], tankPowerUpsBinder: PowerUpChainBinder[Tank], pickup: EventSource[PowerUp[Tank]]) extends Steppable:
+class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], tankPowerUpsBinder: PowerUpChainBinder[Tank], pickup: EventSource[PowerUp[Tank]]) extends Steppable:
 
     /*
         TODO: need to get:
@@ -77,7 +77,7 @@ class PowerUpBinderController[VSK, VS](using context: EntityRepositoryContext[St
 
         entityRepo.addModelView(
             p,
-            Option(new JFXPowerUpView(Image("resources/powerups/powerup_star.png")))
+            Option(new JFXPowerUpView(Image("entities/powerups/powerup_star.png")))
         )
 
     /**
@@ -86,21 +86,20 @@ class PowerUpBinderController[VSK, VS](using context: EntityRepositoryContext[St
      * @param tanks The sequence of tanks to bind power-ups to.
      * @return The updated controller instance.
      */
-    private def registerEntities(tanks: Seq[Tank]): this.type =
+    def registerEntities(tanks: Seq[Tank]): this.type =
 
         tanks.map(t => {
                 tankPowerUpsBinder.bind(t)
                 t
             })
-            .flatMap(_.asInstanceOf[Option[Tank with DamageableBehaviour]])
-            .foreach:
+            .collect:
                 case tank: Tank with DamageableBehaviour =>
                     tank.destroyed += {_ =>
+                        println("ENTER DESTROYED")
                         tankPowerUpsBinder.unbind(tank)
                         if (tank.isCharged) this.setNewPickablePowerUp()
                     }
         this
-
 
 
 

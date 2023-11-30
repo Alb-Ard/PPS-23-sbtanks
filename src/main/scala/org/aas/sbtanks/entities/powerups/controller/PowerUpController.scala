@@ -30,6 +30,8 @@ class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage
 
     private var timeToDisappear: Double = 5.0
 
+    println("ENTER POWERUP")
+
     /**
      * Handles the overlapping collision event of the power-up with other entities.
      * It's used to remove its own mv wether a powerup is picked-up by the player tank
@@ -70,7 +72,7 @@ class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage
         this
 
 object PowerUpController:
-    def factory[E](viewScale: Double, entityRepo: EntityMvRepositoryContainer[AnyRef, Node])(context: EntityRepositoryContext[Stage, ?, ?], powerUp: PickablePowerUp[E], view: PowerUpView, pickup: EventSource[PowerUp[E]]) =
+    def factory[E](viewScale: Double, entityRepo: EntityMvRepositoryContainer[AnyRef, Node], pickup: EventSource[PowerUp[E]])(context: EntityRepositoryContext[Stage, ?, ?], powerUp: PickablePowerUp[E], view: PowerUpView) =
         new PowerUpController(using context)(entityRepo, powerUp, view, viewScale, pickup)
 
 
