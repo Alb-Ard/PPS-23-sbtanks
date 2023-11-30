@@ -10,10 +10,15 @@ import org.aas.sbtanks.entities.tank.factories.PowerTankData
 
 trait Tank(dataSupplier: TankTypeData):
 
-    def updateTankData(newData: TankData & TankDataUpdater): Unit = tankData = newData
+    var isCharged = false
 
     var tankData: TankData & TankDataUpdater = dataSupplier()
-    def isCharged = false
+
+    def updateTankData(newData: TankData & TankDataUpdater): Unit = tankData = newData
+
+    def setCharged(value: Boolean): this.type =
+        this.isCharged = value
+        this
 
 
 

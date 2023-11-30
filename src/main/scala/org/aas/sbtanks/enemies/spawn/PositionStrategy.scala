@@ -29,7 +29,7 @@ object PositionStrategy:
      */
     given upperHalfPositionStrategy: PositionStrategy[(Double, Double), (Double, Double)] with
         def providePosition(context: (Double, Double)): (Double, Double) =
-            (Random.nextInt(context(0).toInt).toDouble, Random.nextInt((context(1) / 2).toInt).toDouble)
+            (math.round(Random.nextDouble() * (context(0) - 1)), math.round(Random.nextDouble() * (context(1) - 1)))
 
 
 

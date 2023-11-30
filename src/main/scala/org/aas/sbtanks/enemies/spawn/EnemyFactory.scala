@@ -32,9 +32,13 @@ object EnemyFactory:
      * @param height The height of the game board.
      * @return A list of enemies with positions corresponding to the valid characters in the input string.
      */
-    def createFromString(input: String, width: Double, height: Double) =
+    def createFromString(input: String, width: Double, height: Double, eachCharged: Int = 4) =
         input.filter(mapping.contains)
             .map(createEnemy)
+            .zipWithIndex
+            .map:
+                case (enemyTank, index) =>
+                    enemyTank.setCharged(eachCharged != 0 && (index + 1) % eachCharged == 0)
             .map(PositionProvider(width, height)(_).findFirstFreePosition())
             .map(_.asInstanceOf[ControllableTank])
 
@@ -55,3 +59,5 @@ object EnemyFactoryUtils:
     )
 
 
+object x extends App:
+    println("dsad")
