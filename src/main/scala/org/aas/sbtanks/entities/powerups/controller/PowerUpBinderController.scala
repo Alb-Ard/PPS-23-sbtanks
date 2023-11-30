@@ -1,12 +1,22 @@
 package org.aas.sbtanks.entities.powerups.controller
 
+import org.aas.sbtanks.behaviours.{CollisionBehaviour, PositionBehaviour}
 import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.entities.powerups.PowerUp.PowerUp
+import org.aas.sbtanks.entities.powerups.effects.Grenade.GrenadePowerUp
+import org.aas.sbtanks.entities.powerups.view.JFXPowerUpView
 import org.aas.sbtanks.entities.powerups.{PowerUpChainBinder, TimeablePowerUp}
+import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer
 import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.event.EventSource
+import org.aas.sbtanks.physics.CollisionLayer
+import scalafx.scene.Node
+import scalafx.scene.image.Image
 import scalafx.stage.Stage
+import org.aas.sbtanks.Main.jfxImageView2sfx
+
+
 
 
 /**
@@ -14,10 +24,11 @@ import scalafx.stage.Stage
  *
  *
  * @param context           The entity repository context providing access to the game stage.
+ * @param entityRepo The repository container for managing entities MVCs.
  * @param tankPowerUpsBinder The power-up binder specifically only for tank-related power-ups.
  * @param pickup            An event source to be notified on when a tank-related power-up is picked up.
  */
-class PowerUpBinderController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(tankPowerUpsBinder: PowerUpChainBinder[Tank], pickup: EventSource[PowerUp[Tank]]) extends Steppable:
+class PowerUpBinderController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], tankPowerUpsBinder: PowerUpChainBinder[Tank], pickup: EventSource[PowerUp[Tank]]) extends Steppable:
 
     /*
         TODO: need to get:
@@ -39,10 +50,6 @@ class PowerUpBinderController[VSK, VS](using context: EntityRepositoryContext[St
         this.decreaseTimeablesTime(delta)
         this
 
-    /*
-        TODO: powerup dispatch
-     */
-
     /**
      * Decreases the duration of timeable power-ups and unchains expired timeable power-ups.
      *
@@ -54,4 +61,23 @@ class PowerUpBinderController[VSK, VS](using context: EntityRepositoryContext[St
                 element.decreaseDuration(deltaTime)
                 if element.isExpired then
                     tankPowerUpsBinder.unchain(element)
+
+
+    /**
+     * Sets a new pickable power-up in the game world.
+     * TODO: This method is a placeholder and requires a factory for power-up type and position generation.
+     */
+    private def setNewPickablePowerUp() =
+        // placeholder, need random factory
+        val p: PickablePowerUp[Tank] = new GrenadePowerUp with PositionBehaviour with CollisionBehaviour(1, 1, CollisionLayer.TanksLayer, Seq.empty)
+
+        entityRepo.addModelView(
+            p,
+            Option(new JFXPowerUpView(Image("resources/powerups/powerup_star.png")))
+        )
+
+
+
+
+
 

@@ -71,10 +71,12 @@ class PowerUpBinderSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEac
 
         val TIMER_DURATION = 2000L
 
-        binder.chain(TimerPowerUp).getPowerUps.head.asInstanceOf[TimeablePowerUp].decreaseDuration(1000)
+        val t = TimerPowerUp()
+
+        binder.chain(t).getPowerUps.head.asInstanceOf[TimeablePowerUp].decreaseDuration(1000)
 
 
-        binder.chain(TimerPowerUp)
+        binder.chain(t)
 
         binder.getPowerUps should have size(1)
 

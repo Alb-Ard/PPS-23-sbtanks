@@ -1,9 +1,11 @@
 package org.aas.sbtanks.entities.powerups.effects
 
+import org.aas.sbtanks.behaviours.DamageableBehaviour
 import org.aas.sbtanks.entities.powerups.effects.Grenade.GrenadePowerUp
 import org.aas.sbtanks.entities.powerups.effects.Helmet.HelmetPowerUp
 import org.aas.sbtanks.entities.powerups.effects.Timer.TimerPowerUp
 import org.aas.sbtanks.entities.tank.TankData
+import org.aas.sbtanks.entities.tank.factories.BasicTankData
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 import org.scalatest.BeforeAndAfterEach
@@ -24,28 +26,82 @@ class PowerUpEffectsSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEa
         tank = BasicTank()
 
     "A grenade powerup" should "lower the health of all enemies to zero" in:
-        GrenadePowerUp(tank).tankData.health should be (NO_HEALTH)
+        val g = new GrenadePowerUp
+
+        g(tank).tankData.health should be (NO_HEALTH)
 
     "A grenade powerup" should "not be reverted to its precedent state after its application" in:
-        GrenadePowerUp.revert(GrenadePowerUp(tank)).tankData.health should be (NO_HEALTH)
+        val g = new GrenadePowerUp
+
+        g.revert(g(tank)).tankData.health should be (NO_HEALTH)
 
 
-    //"A timer power up" should "lower the tank speed and bullet speed to zero for a limited amount of time" in:
-        //write a test that applies a TimerPowerUp to a tank and checks that the tank speed and bullet speed are zero, and that after a certain amount of time they are back to normal
-        /*
-        failAfter(1000 millis):
-            TimerPowerUp(tank).tankData.speed should be (0)
-            TimerPowerUp(tank).tankData.bulletSpeed should be (0) */
+    "A timeable powerup" should "be applied only for a certain amount of time" in:
+        import org.aas.sbtanks.entities.powerups.effects.TimerPowerUpUtils.STOP_TIME_POWER_UP_DURATION
+
+        val t = new TimerPowerUp
+
+        t.duration should be(STOP_TIME_POWER_UP_DURATION)
+
+        t.decreaseDuration(1000).duration should be(STOP_TIME_POWER_UP_DURATION - 1000)
 
     "A timer power up" should "lower the tank speed and bullet speed to zero and when reverted restore it to its precedent value" in:
 
-        TimerPowerUp(tank).tankData should matchPattern:
+        val t = new TimerPowerUp
+
+        t(tank).tankData should matchPattern:
             case TankData(_, 0, 0) =>
 
-        TimerPowerUp.revert(TimerPowerUp(tank)).tankData should be (tank.tankData)
+        t.revert(t(tank)).tankData should be (tank.tankData)
 
 
-    "An Helmet powerup" should "provide a tank with an invincibility status and when reverted restore it to its precedent value" in:
-        HelmetPowerUp(tank).tankData.health should be (Int.MaxValue)
+    "An Helmet powerup" should "provide a tank with an invincibility status where its not possible for it to be damaged" in:
+        var h = new HelmetPowerUp
 
-        HelmetPowerUp.revert(HelmetPowerUp(tank)).tankData.health should be (tank.tankData.health)
+        val damageableTank = new BasicTank() with DamageableBehaviour:
+            override protected def applyDamage(amount: Int): this.type =
+                updateTankData(tankData.updateHealth(_ - 1))
+                tankData.health match
+                    case v if v <= 0 =>
+                        destroyed(())
+                        this
+                    case _ => this
+
+
+        val undamageableTank = h(damageableTank)
+            .asInstanceOf[DamageableBehaviour]
+            .damage(1)
+            .asInstanceOf[Tank with DamageableBehaviour]
+
+        undamageableTank.tankData.health should be (BasicTankData.supplyData.health)
+
+        h.revert(undamageableTank)
+            .asInstanceOf[DamageableBehaviour]
+            .damage(1)
+            .asInstanceOf[Tank].tankData.health should be(BasicTankData.supplyData.health - 1)
+
+
+
+
+
+
+
+        /*
+        val p = new HelmetPowerUp with PositionBehaviour
+
+
+        tank = p(tank)
+
+        tank = tank.damage(1)
+        println(tank.tankData.health)
+
+
+        tank = p.revert(tank)
+
+        tank = tank.damage(1)
+        println(tank.tankData.health)
+         */
+
+
+
+        //HelmetPowerUp.revert(HelmetPowerUp(tank)).tankData.health should be (tank.tankData.health)
