@@ -32,14 +32,21 @@ class JFXPauseMenu(interfaceScale: Double) extends VBox:
 
     spacing = 8
 
-    private val pauseText = new Text("PAUSED"):
-        styleClass.add("main-menu-text")
+    private val pauseText = createText("PAUSED")
     children.add(pauseText)
 
-    private val resumeButton = JFXViewComponentFactory.createButton(BUTTON_SIZE, BUTTON_ICON_SIZE, interfaceScale, "RESUME")
+    private val resumeButton = createButton("RESUME")
     resumeButton.onMouseClicked = _ => resumeRequested(())
     children.add(resumeButton)
 
-    private val quitButton = JFXViewComponentFactory.createButton(BUTTON_SIZE, BUTTON_ICON_SIZE, interfaceScale, "QUIT")
+    private val quitButton = createButton("QUIT")
     quitButton.onMouseClicked = _ => quitRequested(())
     children.add(quitButton)
+
+    private def createButton(text: String) = JFXViewComponentFactory.createButton(BUTTON_SIZE,
+        BUTTON_ICON_SIZE,
+        interfaceScale,
+        text,
+        Seq("main-menu-text", "main-menu-button"))
+
+    private def createText(text: String) = JFXViewComponentFactory.createText(text, Seq("main-menu-text"))

@@ -50,7 +50,7 @@ class JFXGameOverView(level: LevelSequencer[?,?]) extends VBox:
                     margin = Insets(0, 0, 0, 70)
                 },
                 new Text {
-                    text = "Highest Score: " + PointsManager.bestScore
+                    text = "Highest Score: " + PointsManager.highScore
                     font = Font.loadFont(stylesheet, 40)
                     fill = new LinearGradient(
                         endX = 0,

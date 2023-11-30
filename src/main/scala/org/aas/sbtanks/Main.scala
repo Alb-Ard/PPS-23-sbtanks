@@ -43,32 +43,35 @@ import org.aas.sbtanks.entities.repository.scalafx.JFXEntityMvRepositoryFactory
 import org.aas.sbtanks.lifecycle.scalafx.JFXGameBootstrapper
 import org.aas.sbtanks.lifecycle.view.scalafx.JFXMainMenu
 import scalafx.application.Platform
+import scalafx.beans.property.IntegerProperty
 
 object Main extends JFXApp3 with scalafx.Includes:
-    val windowSize = (1280, 720)
-    val interfaceScale = 4D
+    val INTERFACE_SCALE = 4D
+    
+    val windowSize = (IntegerProperty(1280), IntegerProperty(720))
 
     override def start(): Unit = 
         stage = new JFXApp3.PrimaryStage:
             title = "sbTanks"
-            width = windowSize(0)
-            height = windowSize(1)
+            width = windowSize(0).value
+            height = windowSize(1).value
             scene = new Scene:
                 fill = Color.BLACK
                 stylesheets.add(getClass().getResource("/ui/style.css").toExternalForm())
-
+        windowSize(0) <== stage.scene.value.window.value.width
+        windowSize(1) <== stage.scene.value.window.value.height
         given EntityRepositoryContext[Stage, ViewSlot, Pane] = EntityRepositoryContext(stage)
         launchMainMenu()
 
     private def launchMainMenu(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(): Unit = 
         context.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
-        val mainMenu = JFXMainMenu(interfaceScale)
-        summon[EntityRepositoryContext[Stage, ViewSlot, Pane]].viewSlots(ViewSlot.Ui).children.add(mainMenu)
+        val mainMenu = JFXMainMenu(INTERFACE_SCALE, windowSize)
+        context.viewSlots(ViewSlot.Ui).children.add(mainMenu)
         mainMenu.startSinglePlayerGameRequested += { _ => launchGame() }
         mainMenu.optionsRequested += { _ => ??? }
         mainMenu.quitRequested += { _ => Platform.exit() }
 
     private def launchGame(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])() =
-        val bootstrapper = JFXGameBootstrapper(interfaceScale, windowSize)
+        val bootstrapper = JFXGameBootstrapper(INTERFACE_SCALE, windowSize)
         bootstrapper.gameEnded += { _ => launchMainMenu() }
         bootstrapper.startGame() 

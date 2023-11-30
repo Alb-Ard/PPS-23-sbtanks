@@ -17,6 +17,8 @@ import org.aas.sbtanks.lifecycle.GameLoop
 import org.aas.sbtanks.lifecycle.view.scalafx.JFXPauseMenu
 import org.aas.sbtanks.lifecycle.controller.scalafx.JFXPauseController
 import org.aas.sbtanks.event.EventSource
+import scalafx.beans.property.IntegerProperty
+import org.aas.sbtanks.lifecycle.PointsManager
 
 /**
   * A class used to manage all components required for a game
@@ -25,7 +27,7 @@ import org.aas.sbtanks.event.EventSource
   * @param interfaceScale A scaling factor for the game interface
   * @param windowSize The window size, in pixels
   */
-class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(interfaceScale: Double, windowSize: (Int, Int)):
+class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)):
     val gameEnded = EventSource[Unit]
 
     private val entityRepository = JFXEntityMvRepositoryFactory.create()
@@ -67,6 +69,7 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
                 .removeController(playerUiViewController)
                 .removeController(pauseController)
         })
+        PointsManager.addAmount(500)
         levelSequencer.start()
         gameLoop.setPaused(false)
         this
@@ -74,7 +77,7 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
     def endGame(): this.type =
         gameLoop.setPaused(true)
         entityRepository.clear()
-        cleanup.foreach(c => c())
+        cleanup.foreach(_())
         levelSequencer.reset()
         gameEnded(())
         this
