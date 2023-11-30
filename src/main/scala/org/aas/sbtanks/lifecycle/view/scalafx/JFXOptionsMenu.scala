@@ -2,6 +2,8 @@ package org.aas.sbtanks.lifecycle.view.scalafx
 
 import org.aas.sbtanks.common.view.scalafx.JFXViewComponentFactory
 import org.aas.sbtanks.event.EventSource
+import org.aas.sbtanks.event.scalafx.JFXEventSource._
+import scalafx.beans.property.IntegerProperty
 import org.aas.sbtanks.lifecycle.PointsManager
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.control.{Button, ButtonBar, TextField}
@@ -17,15 +19,23 @@ import scalafx.scene.effect.DropShadow
 import scalafx.scene.paint.Color.*
 import scalafx.scene.text.{Font, Text, TextAlignment, TextFlow}
 import scalafx.Includes.*
-import scalafx.beans.property.IntegerProperty
+import scalafx.beans.binding.Bindings
+
 /**
  * View shown to the player when choosing the option select from main menu. Lets the user change its username, reset the best
  * score or go back to the main menu
  *
+ * @param interfaceScale A scale sizing factor for the interface
+ * @param windowSize A tuple to determine the application's window's size
  */
 class JFXOptionsMenu(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)) extends VBox:
-
+    /**
+     * Event invoked when the user request to reset the highest saved score
+     */
     val resetHighScoreRequested = EventSource[Unit]
+    /**
+     * Event invoked when the user request to go back to the main menu
+     */
     val mainMenuRequested = EventSource[Unit]
 
     private val BUTTON_SIZE = (150, 10)
@@ -63,6 +73,14 @@ class JFXOptionsMenu(interfaceScale: Double, windowSize: (IntegerProperty, Integ
     buttonBar.alignmentInParent = Pos.Center
     buttonBar.margin = Insets(50, 200, 0, 200)
     children.add(buttonBar)
+
+    private val highScoreText = createText("HI- 0")
+    private val highScoreProperty = PointsManager.highScoreChanged.toIntProperty()
+    highScoreText.text <== Bindings.createStringBinding(() => "HI- " + highScoreProperty.value, highScoreProperty)
+    highScoreText.alignmentInParent = Pos.Center
+    highScoreText.fill = new LinearGradient(0, stops = Stops(Green, DarkGreen))
+    highScoreText.margin = Insets(20, 0, 20, 0)
+    children.add(highScoreText)
 
     private def createButton(text: String) = JFXViewComponentFactory.createButton(BUTTON_SIZE,
         BUTTON_ICON_SIZE,
