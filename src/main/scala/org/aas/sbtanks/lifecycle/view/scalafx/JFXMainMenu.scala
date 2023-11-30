@@ -2,7 +2,7 @@ package org.aas.sbtanks.lifecycle.view.scalafx
 
 import org.aas.sbtanks.common.view.scalafx.JFXViewComponentFactory
 import org.aas.sbtanks.event.EventSource
-import org.aas.sbtanks.event.scalafx.JFXEventSource._
+import org.aas.sbtanks.event.scalafx.JFXEventSource.*
 import org.aas.sbtanks.lifecycle.PointsManager
 import scalafx.geometry.HPos
 import scalafx.scene.Node
@@ -10,7 +10,7 @@ import scalafx.scene.control.Button
 import scalafx.scene.image.Image
 import scalafx.scene.image.ImageView
 import scalafx.scene.layout.Background
-import scalafx.scene.paint.Color
+import scalafx.scene.paint.{Color, LinearGradient, Stops}
 import scalafx.scene.layout.ColumnConstraints
 import scalafx.beans.property.IntegerProperty
 import scalafx.scene.text.Text
@@ -20,6 +20,7 @@ import scalafx.geometry.Insets
 import scalafx.scene.layout.Priority
 import scalafx.geometry.Pos
 import scalafx.beans.binding.Bindings
+import scalafx.scene.paint.Color.{DarkGreen, Green, White}
 
 /**
   * View shown to the player when starting the application. Lets the user start a new game, go to the settings view and exit the application
@@ -54,6 +55,8 @@ class JFXMainMenu(interfaceScale: Double, windowSize: (IntegerProperty, IntegerP
     private val highScoreProperty = PointsManager.highScoreChanged.toIntProperty()
     highScoreText.text <== Bindings.createStringBinding(() => "HI- " + highScoreProperty.value, highScoreProperty)
     highScoreText.alignmentInParent = Pos.Center
+    highScoreText.fill = new LinearGradient(0, stops = Stops(White, White))
+    highScoreText.margin = Insets(20, 0, 20, 0)
     children.add(highScoreText)
 
     private val titleImage = ImageView(Image("ui/title.png", TITLE_IMAGE_SIZE(0) * interfaceScale, TITLE_IMAGE_SIZE(1) * interfaceScale, true, false, false))

@@ -24,8 +24,10 @@ trait PointsContainer:
         amountChanged(0)
         this
 
-    def resetHighScore(): Unit =
+    def resetHighScore(): this.type =
         highScoreValue = 0
+        highScoreChanged(0)
+        this
     
     def amount = points
 

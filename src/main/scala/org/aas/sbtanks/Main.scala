@@ -36,7 +36,7 @@ import org.aas.sbtanks.common.ViewSlot
 import org.aas.sbtanks.level.LevelLoader
 import org.aas.sbtanks.lifecycle.PointsManager
 import org.aas.sbtanks.lifecycle.GameLoop
-import org.aas.sbtanks.lifecycle.view.scalafx.{JFXMainMenu, JFXOptionsMenu, JFXPauseMenu}
+import org.aas.sbtanks.lifecycle.view.scalafx.{JFXGameOverView, JFXMainMenu, JFXOptionsMenu, JFXPauseMenu}
 import org.aas.sbtanks.entities.repository.EntityRepositoryPausableAdapter
 import org.aas.sbtanks.common.Pausable
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityMvRepositoryFactory

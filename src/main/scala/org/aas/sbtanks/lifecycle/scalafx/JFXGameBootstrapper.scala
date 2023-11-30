@@ -54,6 +54,8 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
         val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer, ViewSlot.Ui):
             override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) = 
                 currentContext.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
+            override protected def restart(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]): JFXGameBootstrapper =
+                startGame()
         val pauseController = new JFXPauseController(gameLoop, pauseUiView):
             override def quit() =
                 endGame()
