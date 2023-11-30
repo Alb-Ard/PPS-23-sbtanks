@@ -1,9 +1,10 @@
 package org.aas.sbtanks.common.view.scalafx
 
-import scalafx.scene.control.Button
+import scalafx.scene.control.{Button, TextField}
 import scalafx.scene.image.ImageView
 import scalafx.scene.image.Image
 import scalafx.Includes
+import scalafx.geometry.Pos.Center
 import scalafx.scene.text.Text
 
 object JFXViewComponentFactory extends Includes:
@@ -19,4 +20,9 @@ object JFXViewComponentFactory extends Includes:
     
     def createText(text: String, classes: Seq[String]) =
         new Text(text):
+            styleClass.addAll(classes)
+
+    def createTextField(classes: Seq[String]) =
+        new TextField():
+            alignment = Center
             styleClass.addAll(classes)
