@@ -4,10 +4,10 @@ import org.aas.sbtanks.event.EventSource
 
 trait SavedDataContainer:
     val highScoreChanged = EventSource[(Int)]
-    val usernameChanged = EventSource[(String)]
+    //val usernameChanged = EventSource[(String)]
 
-    private var highScoreValue = 500
-    private var usernameText = "BOI!"
+    private var highScoreValue = 0
+    private var usernameText = "Diacono"
 
     def increaseHighScore(amount: Int): this.type =
         highScoreValue = amount
@@ -16,7 +16,7 @@ trait SavedDataContainer:
 
     def setUsername(username: String): this.type =
         usernameText = username
-        usernameChanged(usernameText)
+        //usernameChanged(usernameText)
         this
 
     def resetHighScore(): this.type =

@@ -38,12 +38,6 @@ object JFXEventSource:
             val property = getProperty(event, DoubleProperty(0))
             event += property.update
             property
-
-    extension (event: EventSource[String])
-        def toStringProperty() =
-            val property = getProperty(event, StringProperty(""))
-            event += property.update
-            property
     
     private def getProperty[P <: Observable](event: EventBase, defaultProperty: => P) =
         PROPERTIES.getOrElseUpdate(event, defaultProperty).asInstanceOf[P]

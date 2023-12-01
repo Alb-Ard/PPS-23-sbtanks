@@ -43,7 +43,10 @@ object Main extends JFXApp3 with scalafx.Includes:
         val mainMenu = JFXMainMenu(INTERFACE_SCALE, windowSize)
         context.viewSlots(ViewSlot.Ui).children.add(mainMenu)
         mainMenu.startSinglePlayerGameRequested += { _ => launchGame() }
-        mainMenu.optionsRequested += { _ => launchOptionsMenu() }
+        mainMenu.optionsRequested += { _ => {
+            SavedDataManager.increaseHighScore(500)
+            launchOptionsMenu()
+        }}
         mainMenu.quitRequested += { _ => Platform.exit() }
 
     private def launchGame(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])() =
