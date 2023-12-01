@@ -8,6 +8,7 @@ import org.scalatest.matchers.should.Matchers
 import org.aas.sbtanks.entities.tank.factories.{ArmorTankData, BasicTankData, FastTankData}
 import org.aas.sbtanks.level.MockLevelFactory
 import org.aas.sbtanks.physics.PhysicsWorld
+import org.aas.sbtanks.enemies.controller.EnemyTankBuilder
 
 class EnemyFactorySpec extends AnyFlatSpec with Matchers:
 
@@ -37,7 +38,7 @@ class EnemyFactorySpec extends AnyFlatSpec with Matchers:
         val freePositions: Seq[(Double, Double)] = Seq((1, 2), (3, 2))
 
 
-        MockLevelFactory()
+        MockLevelFactory((x, y) => EnemyTankBuilder().setPosition(x, y).build())
             .createFromString(
                     "UUUUU" +
                     "UUUUU" +

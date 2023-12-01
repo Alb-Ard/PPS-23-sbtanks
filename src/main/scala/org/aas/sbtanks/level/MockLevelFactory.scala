@@ -1,16 +1,15 @@
 package org.aas.sbtanks.level
 
-import org.aas.sbtanks.enemies.controller.EnemyTankBuilder
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
+import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.level.LevelFactory.StringEntity.{StringBase, StringBrickWall, StringEmpty, StringIce, StringIndestructibleWall, StringPlayer, StringSteelWall, StringTrees, StringWater}
 import org.aas.sbtanks.level.LevelFactory.stringEntityFromChar
-import org.aas.sbtanks.obstacles.LevelObstacle
+import org.aas.sbtanks.entities.obstacles.LevelObstacle
 import org.aas.sbtanks.physics.{Collider, PhysicsWorld}
 
 import scala.compiletime.uninitialized
 
-final case class MockLevelFactory() extends LevelFactory[AnyRef, Unit]:
-
+final case class MockLevelFactory(tankFactory: (x: Double, y: Double) => Tank) extends LevelFactory[AnyRef, Unit]:
     private var entity: AnyRef = uninitialized
 
     def createFromString(levelString: String, levelEdgeSize: Int) =
@@ -30,9 +29,7 @@ final case class MockLevelFactory() extends LevelFactory[AnyRef, Unit]:
 
         this
 
-    def getMainEntity: AnyRef = this.entity
-
-
+    def getMainEntity[X <: AnyRef]: X = entity.asInstanceOf[X]
 
 
     override protected def createEntityMv(entity: LevelFactory.StringEntity, x: Double, y: Double): Seq[(AnyRef, Unit)] =
@@ -50,13 +47,7 @@ final case class MockLevelFactory() extends LevelFactory[AnyRef, Unit]:
     private def createObstaclesMv(obstacles: Seq[LevelObstacle]) = obstacles.map(o => ((o, ())))
 
     private def createTankMv(x: Double, y: Double) =
-        val tank = EnemyTankBuilder()
-            .setPosition(x, y)
-            .build()
-
-
-        this.entity = tank
-
-        Seq((tank, ()))
+        entity = tankFactory(x, y)
+        Seq((entity, ()))
 
 
