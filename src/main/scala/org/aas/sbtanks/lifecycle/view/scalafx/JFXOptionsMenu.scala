@@ -53,8 +53,8 @@ class JFXOptionsMenu(interfaceScale: Double, windowSize: (IntegerProperty, Integ
     children.add(setUsernameText)
 
     private val setUsernameField = createTextField()
-    private val usernameProperty = SavedDataManager.usernameChanged.toStringProperty()
-    setUsernameField.text <== Bindings.createStringBinding(() => usernameProperty.value, usernameProperty)
+    //private val usernameProperty = SavedDataManager.usernameChanged.toStringProperty()
+    setUsernameField.text <== Bindings.createStringBinding(() => SavedDataManager.username)
     //setUsernameField.text = SavedDataManager.username
     setUsernameField.margin = Insets(0, 200, 0, 200)
     setUsernameField.alignmentInParent = Pos.Center
@@ -74,9 +74,9 @@ class JFXOptionsMenu(interfaceScale: Double, windowSize: (IntegerProperty, Integ
     buttonBar.margin = Insets(50, 200, 0, 200)
     children.add(buttonBar)
 
-    private val highScoreText = createText("HI- " + SavedDataManager.highScore)
-    private val highScoreProperty = SavedDataManager.highScoreChanged.toIntProperty()
-    highScoreText.text <== Bindings.createStringBinding(() => "HI- " + highScoreProperty.value, highScoreProperty)
+    private val highScoreText = createText("HI- " )
+    //private val highScoreProperty = SavedDataManager.highScoreChanged.toIntProperty()
+    highScoreText.text <== Bindings.createStringBinding(() => "HI- " + SavedDataManager.highScore)
     highScoreText.alignmentInParent = Pos.Center
     highScoreText.fill = new LinearGradient(0, stops = Stops(Green, DarkGreen))
     highScoreText.margin = Insets(20, 0, 20, 0)

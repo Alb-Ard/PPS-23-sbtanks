@@ -6,8 +6,8 @@ trait SavedDataContainer:
     val highScoreChanged = EventSource[(Int)]
     val usernameChanged = EventSource[(String)]
 
-    private var highScoreValue = 0
-    private var usernameText = ""
+    private var highScoreValue = 500
+    private var usernameText = "BOI!"
 
     def increaseHighScore(amount: Int): this.type =
         highScoreValue = amount
