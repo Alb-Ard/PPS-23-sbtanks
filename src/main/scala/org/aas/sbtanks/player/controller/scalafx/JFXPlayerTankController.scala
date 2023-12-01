@@ -28,8 +28,17 @@ abstract class JFXPlayerTankController[VSK, VS](using context: EntityRepositoryC
 object JFXPlayerTankController:
     def factory(speedMultiplier: Double, viewScale: Double, tileSize: Double, bulletConsumer: (AnyRef, Node) => Any)(context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: TankView) =
         new JFXPlayerTankController(using context)(tank, speedMultiplier, view, viewScale, tileSize):
+
+            var shootDelay = 0.0
+
+            override def step(delta: Double) =
+                shootDelay += 0.1
+                super.step(delta)
+
             override def shoot() =
-                val bullet = tank.shoot(1, true).head
-                val bulletView = new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
-                bulletConsumer(bullet, bulletView)
+                if(shootDelay >= 5.0)
+                    val bullet = tank.shoot(1, true).head
+                    val bulletView = new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
+                    bulletConsumer(bullet, bulletView)
+                    shootDelay = 0.0
                 this
