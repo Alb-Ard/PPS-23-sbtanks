@@ -4,7 +4,7 @@ import javafx.event.EventHandler
 import javafx.scene.input
 import org.aas.sbtanks.common.view.scalafx.JFXViewComponentFactory
 import org.aas.sbtanks.event.EventSource
-import org.aas.sbtanks.lifecycle.{LevelSequencer, PointsManager}
+import org.aas.sbtanks.lifecycle.{LevelSequencer, PointsManager, SavedDataManager}
 import scalafx.Includes.*
 import scalafx.application.JFXApp3
 import scalafx.beans.property.IntegerProperty
@@ -50,7 +50,7 @@ class JFXGameOverView(level: LevelSequencer[?,?], interfaceScale: Double, window
     gameScore.alignmentInParent = Pos.Center
     gameScore.fill = new LinearGradient(0, stops = Stops(Green, DarkGreen))
 
-    private val bestScore = createText("High Score: " + PointsManager.highScore)
+    private val bestScore = createText("High Score: " + SavedDataManager.highScore)
     gameScore.alignmentInParent = Pos.Center
     gameScore.fill = new LinearGradient(0, stops = Stops(Green, DarkGreen))
 

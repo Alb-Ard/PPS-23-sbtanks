@@ -16,10 +16,9 @@ import org.aas.sbtanks.entities.tank.behaviours.TankShootingBehaviour
 
 class BulletCollisionSpec extends AnyFlatSpec with Matchers {
 
-//    val viewScale = 4D
-//    val tileSize = 16D
-//    val url = "entities/bullet/bullet.png"
-    //val bulletView = new Image(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
+    val speedMultiplier: Double = 1.0
+    val viewScale: Double = 2.0
+    val tileSize: Double = 2.0
 
     class MockView() extends BulletView:
         override def look(rotation: Double): Unit = 1+1 //mock implementation
@@ -50,10 +49,10 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers {
         val tank = new MockTank(0, 2):
             override def applyDamage(amount: Int) = this
         PhysicsWorld.registerCollider(tank)
-        val bullet = new MockBullet(1, false)
+        val bullet = new MockBullet(1, true)
         PhysicsWorld.registerCollider(bullet)
         bullet.setDirection(0, 1)
-        val bulletController = new BulletController(bullet, new MockView())
+        val bulletController = new BulletController(bullet, new MockView(), speedMultiplier, viewScale, tileSize)
         var wasDestroyed = false
         bullet.destroyed += { _ => wasDestroyed = true }
         for _ <- 0 until 10 do bulletController.step(1.0)
@@ -75,7 +74,7 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers {
         val bullet = new MockBullet(1, true)
         PhysicsWorld.registerCollider(bullet)
         bullet.setDirection(0, 1)
-        val bulletController = new BulletController(bullet, new MockView())
+        val bulletController = new BulletController(bullet, new MockView(), speedMultiplier, viewScale, tileSize)
         for _ <- 0 until 10 do bulletController.step(1.0)
         wasTankDamaged should be (true)
     }

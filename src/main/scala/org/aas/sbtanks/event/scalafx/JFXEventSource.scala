@@ -1,9 +1,9 @@
 package org.aas.sbtanks.event.scalafx
 
 import org.aas.sbtanks.event.EventSource
+
 import scala.collection.mutable
-import scalafx.beans.property.IntegerProperty
-import scalafx.beans.property.DoubleProperty
+import scalafx.beans.property.{DoubleProperty, IntegerProperty, StringProperty}
 import org.aas.sbtanks.event.EventBase
 import scalafx.beans.Observable
 
@@ -36,6 +36,12 @@ object JFXEventSource:
           */
         def toDoubleProperty() =
             val property = getProperty(event, DoubleProperty(0))
+            event += property.update
+            property
+
+    extension (event: EventSource[String])
+        def toStringProperty() =
+            val property = getProperty(event, StringProperty(""))
             event += property.update
             property
     

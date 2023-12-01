@@ -3,7 +3,7 @@ package org.aas.sbtanks.lifecycle.view.scalafx
 import org.aas.sbtanks.common.view.scalafx.JFXViewComponentFactory
 import org.aas.sbtanks.event.EventSource
 import org.aas.sbtanks.event.scalafx.JFXEventSource.*
-import org.aas.sbtanks.lifecycle.PointsManager
+import org.aas.sbtanks.lifecycle.{PointsManager, SavedDataManager}
 import scalafx.geometry.HPos
 import scalafx.scene.Node
 import scalafx.scene.control.Button
@@ -51,8 +51,8 @@ class JFXMainMenu(interfaceScale: Double, windowSize: (IntegerProperty, IntegerP
     prefWidth <== windowSize(0)
     alignment = Pos.Center
 
-    private val highScoreText = createText("HI- 0")
-    private val highScoreProperty = PointsManager.highScoreChanged.toIntProperty()
+    private val highScoreText = createText("HI- " + SavedDataManager.highScore)
+    private val highScoreProperty = SavedDataManager.highScoreChanged.toIntProperty()
     highScoreText.text <== Bindings.createStringBinding(() => "HI- " + highScoreProperty.value, highScoreProperty)
     highScoreText.alignmentInParent = Pos.Center
     highScoreText.fill = new LinearGradient(0, stops = Stops(White, White))
