@@ -3,7 +3,7 @@ package org.aas.sbtanks.player
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
-import org.aas.sbtanks.obstacles.LevelObstacle
+import org.aas.sbtanks.entities.obstacles.LevelObstacle
 import org.aas.sbtanks.physics.PhysicsWorld
 import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer
 import org.aas.sbtanks.entities.repository.EntityColliderAutoManager

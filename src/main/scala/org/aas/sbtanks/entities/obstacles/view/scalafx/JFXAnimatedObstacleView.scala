@@ -1,4 +1,4 @@
-package org.aas.sbtanks.obstacles.view.scalafx
+package org.aas.sbtanks.entities.obstacles.view.scalafx
 
 import org.aas.sbtanks.common.view.JFXMoveableView
 import scalafx.scene.image.Image

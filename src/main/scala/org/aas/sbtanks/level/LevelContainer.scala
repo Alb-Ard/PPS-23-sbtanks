@@ -1,8 +1,8 @@
 package org.aas.sbtanks.level
 
 import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer
-import org.aas.sbtanks.obstacles.LevelObstacle
-import org.aas.sbtanks.obstacles.view.scalafx.JFXObstacleView
+import org.aas.sbtanks.entities.obstacles.LevelObstacle
+import org.aas.sbtanks.entities.obstacles.view.scalafx.JFXObstacleView
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import scala.reflect.ClassTag
 

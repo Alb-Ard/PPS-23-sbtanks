@@ -12,15 +12,16 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 import scala.language.postfixOps
+import org.aas.sbtanks.enemies.controller.EnemyTankBuilder
 
 class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
 
-
+    def enemyFactory(x: Double, y: Double) = EnemyTankBuilder().setPosition(x, y).build()
 
     "tank " should "go right or left but not down or up" in:
         PhysicsWorld.clearColliders()
 
-        val tank = MockLevelFactory()
+        val tank = MockLevelFactory(enemyFactory)
             .createFromString("UUUUUUU" +
                 "U-TTT-U" +
                 "U-SwS-U" +
@@ -44,7 +45,7 @@ class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
     "Tank ai movement" should "prioritize bottom directed movement when possible" in:
         PhysicsWorld.clearColliders()
 
-        val tank: MovementEntity = MockLevelFactory()
+        val tank: MovementEntity = MockLevelFactory(enemyFactory)
             .createFromString(
                 "UUUUU" +
                 "UU-UU" +
@@ -66,7 +67,7 @@ class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
     "Tank ai movement" should "run across top directions only if no other options is available while right and left directions choices are random" in:
         PhysicsWorld.clearColliders()
 
-        val tank: MovementEntity = MockLevelFactory()
+        val tank: MovementEntity = MockLevelFactory(enemyFactory)
             .createFromString(
                 "UUUUU" +
                     "UU-UU" +

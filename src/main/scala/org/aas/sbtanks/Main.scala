@@ -25,7 +25,7 @@ object Main extends JFXApp3 with scalafx.Includes:
     
     val windowSize = (IntegerProperty(1280), IntegerProperty(720))
 
-    override def start(): Unit = 
+    override def start(): Unit =
         stage = new JFXApp3.PrimaryStage:
             title = "sbTanks"
             width = windowSize(0).value

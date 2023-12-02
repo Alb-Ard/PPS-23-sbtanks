@@ -21,10 +21,16 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
                 }
 
                 case ((x, _), CanMoveTo) if x > 0.0 => pure(Bottom)
-                case ((x, _), CannotMoveTo) if x > 0.0 => pure(Left)
+                case ((x, _), CannotMoveTo) if x > 0.0 => Random.nextInt(2) match {
+                    case 0 => pure(Left)
+                    case 1 => pure(Top)
+                }
 
                 case ((x, _), CanMoveTo) if x < 0.0 => pure(Bottom)
-                case ((x, _), CannotMoveTo) if x < 0.0 => pure(Top)
+                case ((x, _), CannotMoveTo) if x < 0.0 => Random.nextInt(2) match {
+                    case 0 => pure(Right)
+                    case 1 => pure(Top)
+                }
 
                 case ((_, y), CanMoveTo) if y < 0.0 => Random.nextInt(2) match {
                     case 0 => pure(Right)
