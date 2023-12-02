@@ -92,15 +92,20 @@ object LevelObstacle:
 
     extension (obstacle: LevelObstacle with PositionBehaviour)
         /**
-          * Finds all obstacles near this obstacle, so all obstacles with a max distance of 1
+          * Finds all obstacles near this obstacle
           *
           * @param obstaclesProvider A function that returns a sequence of obstacles that will be searched
           * @return a sequence with the near obstacles
           */
-        def getNearObstacles(obstaclesProvider: () => Seq[LevelObstacle with PositionBehaviour]) =
-            val maxDistance = 1.001D
+        def getNearObstacles(obstaclesProvider: () => Seq[LevelObstacle with PositionBehaviour], distanceX: Double = 1, distanceY: Double = 1) =
+            val epsilon = 0.001D
+            val epsDistanceX = distanceX + epsilon
+            val epsDistanceY = distanceY + epsilon
             obstaclesProvider().map(o => (o, (obstacle.positionX - o.positionX, obstacle.positionY - o.positionY)))
-                .map((o, d) => (o, Math.max(d(0) * d(0), d(1) * d(1))))
-                .filter((_, d) => d <= maxDistance * maxDistance)
+                .map((o, d) => (o, (d(0) * d(0) <= epsDistanceX * epsDistanceX, d(1) * d(1) <= epsDistanceY * epsDistanceY)))
+                .filter((_, d) => (epsDistanceY > epsDistanceX) match
+                    case true => d(1)
+                    case _ => d(0)
+                )
                 .filter((o, _) => o != obstacle)
                 .map(_(0))

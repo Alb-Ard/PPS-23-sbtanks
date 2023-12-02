@@ -2,6 +2,7 @@ package org.aas.sbtanks.entities.bullet.controller
 
 import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.tank.structure.Tank
+import org.aas.sbtanks.entities.obstacles.LevelObstacle
 import org.aas.sbtanks.behaviours.{CollisionBehaviour, DamageableBehaviour, DirectionBehaviour, MovementBehaviour, PositionBehaviour}
 import org.aas.sbtanks.physics.Collider
 import org.aas.sbtanks.common.Steppable
@@ -12,7 +13,7 @@ import org.aas.sbtanks.entities.bullet.controller.BulletController.CompleteBulle
 
 class BulletController(bullet: CompleteBullet, bulletView: BulletView, speedMultiplier: Double, viewScale: Double, tileSize: Double) extends Steppable:
 
-    bullet.overlapping += checkCollision
+    bullet.overlapping += checkCollisions
     bullet.positionChanged += { (x, y) => bulletView.move(x * viewScale * tileSize, y * viewScale * tileSize) }
     bulletView.lookInDirection(bullet.directionX, bullet.directionY)
 
@@ -20,24 +21,24 @@ class BulletController(bullet: CompleteBullet, bulletView: BulletView, speedMult
         bullet.moveRelative(bullet.directionX * bullet.speed * speedMultiplier, bullet.directionY * bullet.speed * speedMultiplier)
         this
 
-    private def checkCollision(colliders: Seq[Collider]): Unit =
-        if (colliders.map(c => c match
-            case el: Tank with DamageableBehaviour => {
-                if(checkBulletPlayer(el))
-                    el.damage()
-                    true
-                else
-                    false
-            }
-            case el: DamageableBehaviour => {
-                el.damage()
-                true
-            }
-            case el => {
-                true
-            } 
-        ).contains(true))
+    private def checkCollisions(colliders: Seq[Collider]): Unit =
+        if (colliders.map(handleCollision).contains(true))
             bullet.damage()
+
+    private def handleCollision(collider: Collider) = collider match
+        case tank: Tank with DamageableBehaviour =>
+            if(checkBulletPlayer(tank))
+                tank.damage()
+                true
+            else
+                false
+        case obstacle: LevelObstacle => 
+            
+            true
+        case damageable: DamageableBehaviour =>
+            damageable.damage()
+            true
+        case c => true
 
     private def checkBulletPlayer(tank: Tank): Boolean =
         (bullet.isPlayerBullet && !tank.isInstanceOf[PlayerTank]) || (!bullet.isPlayerBullet && tank.isInstanceOf[PlayerTank])

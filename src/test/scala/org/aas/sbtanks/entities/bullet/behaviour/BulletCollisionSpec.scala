@@ -46,7 +46,7 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers {
         val bullet = new MockBullet(1, true)
         PhysicsWorld.registerCollider(bullet)
         bullet.setDirection(0, 1)
-        val bulletController = new BulletController(bullet, new MockView(), speedMultiplier, viewScale, tileSize)
+        val bulletController = new BulletController(bullet, new MockView(), 1, 1, 1)
         var wasDestroyed = false
         bullet.destroyed += { _ => wasDestroyed = true }
         for _ <- 0 until 10 do bulletController.step(1.0)
@@ -68,7 +68,7 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers {
         val bullet = new MockBullet(1, true)
         PhysicsWorld.registerCollider(bullet)
         bullet.setDirection(0, 1)
-        val bulletController = new BulletController(bullet, new MockView(), speedMultiplier, viewScale, tileSize)
+        val bulletController = new BulletController(bullet, new MockView(), 1, 1, 1)
         for _ <- 0 until 10 do bulletController.step(1.0)
         wasTankDamaged should be (true)
     }
