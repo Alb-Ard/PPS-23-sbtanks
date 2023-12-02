@@ -38,9 +38,9 @@ object Main extends JFXApp3 with scalafx.Includes:
         windowSize(1) <== stage.scene.value.window.value.height
         given EntityRepositoryContext[Stage, ViewSlot, Pane] = EntityRepositoryContext(stage)
         SavedDataManager.increaseHighScore(500)
-        JFXMediaPlayer.precache()
+        JFXMediaPlayer.loadSettingsFromDisk().precache()
         launchMainMenu()
-
+    
     private def launchMainMenu(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(): Unit = 
         context.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
         val mainMenu = JFXMainMenu(INTERFACE_SCALE, windowSize)
@@ -65,5 +65,8 @@ object Main extends JFXApp3 with scalafx.Includes:
         context.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
         val optionsMenu = JFXOptionsMenu(INTERFACE_SCALE, windowSize)
         context.viewSlots(ViewSlot.Ui).children.add(optionsMenu)
-        optionsMenu.mainMenuRequested += { _ => launchMainMenu() }
+        optionsMenu.mainMenuRequested += { _ =>
+            JFXMediaPlayer.saveSettingsToDisk()
+            launchMainMenu() 
+        }
         optionsMenu.resetHighScoreRequested += { _ => SavedDataManager.resetHighScore() }

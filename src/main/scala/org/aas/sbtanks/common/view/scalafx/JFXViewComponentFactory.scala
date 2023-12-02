@@ -6,6 +6,7 @@ import scalafx.scene.image.Image
 import scalafx.Includes
 import scalafx.geometry.Pos.Center
 import scalafx.scene.text.Text
+import scalafx.scene.control.Slider
 
 object JFXViewComponentFactory extends Includes:
     def createButton(size: (Int, Int), iconSize: (Int, Int), interfaceScale: Double, text: String, classes: Seq[String]) =
@@ -25,4 +26,8 @@ object JFXViewComponentFactory extends Includes:
     def createTextField(classes: Seq[String]) =
         new TextField():
             alignment = Center
+            styleClass.addAll(classes)
+    
+    def createSlider(min: Double, max: Double, value: Double, classes: Seq[String]) = 
+        new Slider(min, max, value):
             styleClass.addAll(classes)

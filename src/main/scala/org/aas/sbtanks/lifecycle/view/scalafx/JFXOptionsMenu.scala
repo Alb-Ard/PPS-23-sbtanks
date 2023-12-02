@@ -3,8 +3,10 @@ package org.aas.sbtanks.lifecycle.view.scalafx
 import org.aas.sbtanks.common.view.scalafx.JFXViewComponentFactory
 import org.aas.sbtanks.event.EventSource
 import org.aas.sbtanks.event.scalafx.JFXEventSource.*
-import scalafx.beans.property.IntegerProperty
 import org.aas.sbtanks.lifecycle.{LevelSequencer, PointsManager, SavedDataManager}
+import org.aas.sbtanks.resources.SoundMixerLane
+import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer
+import scalafx.beans.property.IntegerProperty
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.control.{Button, ButtonBar, TextField}
 import scalafx.scene.layout.{Background, VBox}
@@ -19,6 +21,7 @@ import scalafx.scene.paint.Color.*
 import scalafx.scene.text.{Font, Text, TextAlignment, TextFlow}
 import scalafx.Includes.*
 import scalafx.beans.binding.Bindings
+import scalafx.Includes
 
 /**
  * View shown to the player when choosing the option select from main menu. Lets the user change its username, reset the best
@@ -27,7 +30,7 @@ import scalafx.beans.binding.Bindings
  * @param interfaceScale A scale sizing factor for the interface
  * @param windowSize A tuple to determine the application's window's size
  */
-class JFXOptionsMenu(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)) extends VBox:
+class JFXOptionsMenu(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)) extends VBox with Includes:
     /**
      * Event invoked when the user request to reset the highest saved score
      */
@@ -58,6 +61,18 @@ class JFXOptionsMenu(interfaceScale: Double, windowSize: (IntegerProperty, Integ
     setUsernameField.margin = Insets(0, 200, 0, 200)
     setUsernameField.alignmentInParent = Pos.Center
     children.add(setUsernameField)
+
+    private val volumeSliders = SoundMixerLane.values.map(l => {
+        val label = createText(l.toString())
+        label.margin = Insets(30, 200, 0, 200)
+        label.fill = Color.White
+        label.alignmentInParent = Pos.Center
+        val slider = createSlider(0, 1, JFXMediaPlayer.getVolume(l))
+        slider.margin = Insets(10, 200, 0, 200)
+        slider.value.onChange((_, _, v)  => JFXMediaPlayer.setVolume(l, v.doubleValue()))
+        (slider, label)
+    })
+    volumeSliders.foreach(c => children.addAll(c(1), c(0)))
 
     private val resetScoreButton = createButton("RESET HIGH SCORE")
     resetScoreButton.onMouseClicked = _ => resetHighScoreRequested(())
@@ -90,4 +105,6 @@ class JFXOptionsMenu(interfaceScale: Double, windowSize: (IntegerProperty, Integ
     private def createText(text: String) = JFXViewComponentFactory.createText(text, Seq("main-menu-text"))
 
     private def createTextField() = JFXViewComponentFactory.createTextField(Seq("main-menu-text"))
+
+    private def createSlider(min: Double, max: Double, value: Double) = JFXViewComponentFactory.createSlider(min, max, value, Seq.empty)
 

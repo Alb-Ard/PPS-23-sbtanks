@@ -28,6 +28,15 @@ trait JFXSoundMixer:
         this
 
     /**
+      * Retrieves the volume for the given audio lane
+      *
+      * @param lane The lane for which to retrieve the volume
+      * @return The volume value, in the range [0, 1]
+      */
+    def getVolume(lane: SoundMixerLane) =
+        volumes(lane)
+
+    /**
       * Plays the given media
       *
       * @param media The media to play
@@ -36,10 +45,11 @@ trait JFXSoundMixer:
       */
     def play(media: Media, lane: SoundMixerLane) =
         val player = MediaPlayer(media)
-        player.play()
+        player.volume = getVolume(lane)
         activePlayers = activePlayers.updated(lane, activePlayers(lane) :+ player)
         player.onEndOfMedia = () => {
             activePlayers = activePlayers.updated(lane, activePlayers(lane).filterNot(p => p == player))
             mediaEnded(media)
         }
+        player.play()
         player
