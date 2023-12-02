@@ -13,8 +13,9 @@ import org.aas.sbtanks.event.EventSource
 import org.aas.sbtanks.physics.CollisionLayer
 import scalafx.scene.Node
 import scalafx.scene.image.Image
-import scalafx.stage.Stage
+import javafx.scene.image as jfxsi
 import org.aas.sbtanks.Main.jfxImageView2sfx
+import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 
 
 
@@ -73,12 +74,13 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
      */
     private def setNewPickablePowerUp() =
         // placeholder, need random factory
-        val p: PickablePowerUp[Tank] = new GrenadePowerUp with PositionBehaviour with CollisionBehaviour(1, 1, CollisionLayer.TanksLayer, Seq.empty)
+        val p: PickablePowerUp[Tank] = new GrenadePowerUp with PositionBehaviour(8.0, 2.0) with CollisionBehaviour(1, 1, CollisionLayer.TanksLayer, Seq(CollisionLayer.TanksLayer))
 
         entityRepo.addModelView(
             p,
-            Option(new JFXPowerUpView(Image("entities/powerups/powerup_star.png")))
+            Option(new JFXPowerUpView(JFXImageLoader.loadFromResources("entities/powerups/powerup_star.png", 16D, 4D)))
         )
+
 
     /**
      * Registers entities by binding power-ups to tanks and sets up destruction event handling.

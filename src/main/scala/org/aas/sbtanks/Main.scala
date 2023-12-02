@@ -50,8 +50,15 @@ import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 import org.aas.sbtanks.entities.repository.context.scalafx.JFXEntityRepositoryContextInitializer
 import org.aas.sbtanks.common.ViewSlot
 import org.aas.sbtanks.enemies.spawn.EnemyFactory
+import org.aas.sbtanks.entities.powerups.PowerUp.PowerUp
+import org.aas.sbtanks.entities.powerups.PowerUpChainBinder
+import org.aas.sbtanks.entities.powerups.controller.PowerUpBinderController
+import org.aas.sbtanks.event.EventSource
 
 import scala.collection.mutable
+import org.aas.sbtanks.entities.powerups.controller.PickablePowerUp
+import org.aas.sbtanks.entities.powerups.controller.PowerUpController
+import org.aas.sbtanks.entities.powerups.controller.PowerUpBinderController
 
 object Main extends JFXApp3 with scalafx.Includes:
     val viewScale = 4D
@@ -79,12 +86,16 @@ object Main extends JFXApp3 with scalafx.Includes:
             with EntityColliderAutoManager[AnyRef, Node]
             with EntityRepositoryContextAware
 
+        val pickup = EventSource[PowerUp[Tank]]
+
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView)), tileSize))
             .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(viewScale * tileSize))
             .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && m.asInstanceOf[Tank].tankData.health < 10, EnemySpawnController.factory(viewScale * tileSize, entityRepository))
             .registerControllerReplacer(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && m.asInstanceOf[Tank].tankData.health > 10, EnemyController.factory(viewScale * tileSize))
             .registerControllerFactory(m => m.isInstanceOf[Bullet], JFXBulletController.factory())
-        
+            .registerControllerFactory(m => m.isInstanceOf[PickablePowerUp[Tank]], PowerUpController.factory[Tank](viewScale * tileSize, entityRepository, pickup))
+
+
 
         val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
         val playerUiViewController = new PlayerUiViewController[AnyRef, Node, Stage, ViewSlot, Pane](entityRepository, playerSidebar, ViewSlot.Ui):
@@ -139,10 +150,21 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         //levelSequencer.start()
 
+        val enemies = EnemyFactory.createFromString("BBB", 7, 7, 1).map(_.asInstanceOf[ControllableTank])
 
-        val g = new EnemyTankGenerator(entityRepository, mutable.Queue(EnemyFactory.createFromString("BBB", 7, 7).map(_.asInstanceOf[ControllableTank]): _*))
+        val g = new EnemyTankGenerator(entityRepository, mutable.Queue(enemies: _*))
 
         entityRepository.addController(g)
+
+        val binder = new PowerUpChainBinder[Tank]
+
+        val p = new PowerUpBinderController(entityRepository, binder, pickup)
+
+        p.registerEntities(enemies)
+
+        entityRepository.addController(p)
+
+
 
         var lastTimeNanos = System.nanoTime().doubleValue
         // ** TEST **

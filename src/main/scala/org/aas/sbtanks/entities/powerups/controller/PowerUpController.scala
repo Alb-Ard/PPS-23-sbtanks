@@ -30,6 +30,9 @@ class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage
 
     private var timeToDisappear: Double = 5.0
 
+    view.move(8.0 * viewScale, 2.0 * viewScale)
+    view.show()
+
     println("ENTER POWERUP")
 
     /**
@@ -39,11 +42,12 @@ class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage
      * @param colliders The colliders with which the power-up is overlapping.
      */
     powerUp.overlapping += { (colliders) =>
-
-        checkTankCollision(colliders).headOption
-            pickup(powerUp)
-
-        entityRepo.removeModelView(powerUp)
+        
+        checkTankCollision(colliders).headOption match
+            case Some(_) =>
+                pickup(powerUp)
+                entityRepo.removeModelView(powerUp)
+            case _ =>
 
     }
 

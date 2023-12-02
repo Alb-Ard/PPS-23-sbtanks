@@ -4,10 +4,11 @@ import org.aas.sbtanks.entities.powerups.view.IntermittentVisible
 import scalafx.animation.{KeyFrame, Timeline}
 import scalafx.beans.property.BooleanProperty
 import javafx.scene.Node
+import scalafx.scene.image.ImageView
 import scalafx.util.Duration
 
 trait JFXIntermittentVisibleNode extends IntermittentVisible:
-    this: Node =>
+    this: ImageView =>
 
     private val isVisibleOnScene: BooleanProperty = BooleanProperty(true)
 
