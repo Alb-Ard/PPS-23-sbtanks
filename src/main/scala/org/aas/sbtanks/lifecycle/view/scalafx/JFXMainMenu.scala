@@ -53,6 +53,7 @@ class JFXMainMenu(interfaceScale: Double, windowSize: (IntegerProperty, IntegerP
 
     private val highScoreText = createText("HI- " + SavedDataManager.highScore)
     private val highScoreProperty = SavedDataManager.highScoreChanged.toIntProperty()
+    highScoreProperty.value = SavedDataManager.highScore
     highScoreText.text <== Bindings.createStringBinding(() => "HI- " + highScoreProperty.value, highScoreProperty)
     highScoreText.alignmentInParent = Pos.Center
     highScoreText.fill = new LinearGradient(0, stops = Stops(White, White))

@@ -9,8 +9,6 @@ trait PointsContainer:
 
     def addAmount(amount: Int): this.type =
         points += amount
-        if(SavedDataManager.highScore < points)
-            SavedDataManager.increaseHighScore(points)
         amountChanged(points)
         this
     

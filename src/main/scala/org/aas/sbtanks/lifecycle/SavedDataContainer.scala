@@ -9,6 +9,11 @@ trait SavedDataContainer:
     private var highScoreValue = 0
     private var usernameText = "Diacono"
 
+    PointsManager.amountChanged += { p => 
+        if(highScore < p)
+            increaseHighScore(p)    
+    }
+
     def increaseHighScore(amount: Int): this.type =
         highScoreValue = amount
         highScoreChanged(highScoreValue)

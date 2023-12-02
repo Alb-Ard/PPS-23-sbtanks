@@ -1,0 +1,24 @@
+package org.aas.sbtanks.resources.scalafx
+
+import scalafx.scene.media.MediaPlayer
+import scalafx.scene.media.Media
+import org.aas.sbtanks.resources.SoundMixerLane
+import java.io.File
+
+object JFXMediaPlayer extends JFXSoundMixer:
+    val MEDIA_START_MUSIC = (getMedia("1 - Track 1.mp3"), SoundMixerLane.Music)
+
+    /**
+      * Loads the medias marked as precachable to speedup reproduction
+      */
+    def precache(): this.type =
+        for m <- Seq(MEDIA_START_MUSIC) do
+            val _ = m
+        this
+
+    private def getMedia(name: String) =
+        Media(ClassLoader.getSystemResource("medias/" + name).toString())
+
+    extension (mixer: JFXSoundMixer)
+        def play(mediaData: (Media, SoundMixerLane)) =
+            mixer.play(mediaData(0), mediaData(1))
