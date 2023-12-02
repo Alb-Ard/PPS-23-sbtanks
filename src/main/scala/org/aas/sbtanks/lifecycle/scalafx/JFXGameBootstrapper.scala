@@ -37,7 +37,7 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
     private val levels = levelLoader.getLevelSeq(5)
     private val levelSequencer = LevelSequencer[AnyRef, Node](levels(0), levelFactory, entityRepository)
     private val gameLoop = GameLoop(entityRepository, Seq(entityRepository))
-    private val pauseUiView = JFXPauseMenu(interfaceScale)
+    private val pauseUiView = JFXPauseMenu(interfaceScale, windowSize)
 
     private var cleanup: Option[() => Any] = Option.empty
 

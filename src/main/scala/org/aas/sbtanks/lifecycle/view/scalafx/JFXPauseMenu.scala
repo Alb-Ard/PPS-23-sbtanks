@@ -15,32 +15,47 @@ import scalafx.scene.paint.Color
 import scalafx.scene.text.Text
 import scalafx.stage.Stage
 import org.aas.sbtanks.event.EventSource
+import scalafx.geometry.Pos
+import scalafx.scene.layout.Priority
+import scalafx.beans.property.IntegerProperty
+import scalafx.geometry.Insets
+import scalafx.scene.text.TextAlignment
 
 /**
   * A view for a pause menu that lets the player resume the game or quit to the main menu
   *
   * @param interfaceScale An interface scaling factor
   */
-class JFXPauseMenu(interfaceScale: Double) extends VBox:
+class JFXPauseMenu(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)) extends VBox:
     private val BUTTON_SIZE = (64, 8)
     private val BUTTON_ICON_SIZE = (6, 6)
 
     val resumeRequested = EventSource[Unit]
     val quitRequested = EventSource[Unit]
 
-    background = Background.fill(Color.BLACK)
-
+    background = Background.fill(Color.Black)
     spacing = 8
+    prefWidth <== windowSize(0)
+    prefHeight <== windowSize(1)
+    alignment = Pos.Center
 
     private val pauseText = createText("PAUSED")
+    pauseText.alignmentInParent = Pos.Center
+    pauseText.hgrow = Priority.ALWAYS
+    pauseText.margin = Insets(0, 0, 50, 0)
+    pauseText.textAlignment = TextAlignment.Center
     children.add(pauseText)
 
     private val resumeButton = createButton("RESUME")
     resumeButton.onMouseClicked = _ => resumeRequested(())
+    resumeButton.alignmentInParent = Pos.Center
+    resumeButton.hgrow = Priority.ALWAYS
     children.add(resumeButton)
 
     private val quitButton = createButton("QUIT")
     quitButton.onMouseClicked = _ => quitRequested(())
+    quitButton.alignmentInParent = Pos.Center
+    quitButton.hgrow = Priority.ALWAYS
     children.add(quitButton)
 
     private def createButton(text: String) = JFXViewComponentFactory.createButton(BUTTON_SIZE,

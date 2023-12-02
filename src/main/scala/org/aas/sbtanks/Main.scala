@@ -20,6 +20,8 @@ import org.aas.sbtanks.lifecycle.scalafx.JFXGameBootstrapper
 import scalafx.application.Platform
 import scalafx.beans.property.IntegerProperty
 import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer
+import scalafx.util.Duration
+import scalafx.scene.media.MediaPlayer
 
 object Main extends JFXApp3 with scalafx.Includes:
     val INTERFACE_SCALE = 4D
@@ -42,16 +44,24 @@ object Main extends JFXApp3 with scalafx.Includes:
         launchMainMenu()
     
     private def launchMainMenu(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(): Unit = 
+        def startGame(): Unit = launchGame()
+        def setHideMarker(mediaPlayer: MediaPlayer, name: String): Unit = 
+            mediaPlayer.media.markers.addOne(name -> mediaPlayer.totalDuration.value.divide(2))
+
         context.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
         val mainMenu = JFXMainMenu(INTERFACE_SCALE, windowSize)
         context.viewSlots(ViewSlot.Ui).children.add(mainMenu)
         mainMenu.startSinglePlayerGameRequested += { _ => 
             mainMenu.disable = true
-            JFXMediaPlayer.mediaEnded once { m => m match
-                case m if m == JFXMediaPlayer.MEDIA_START_MUSIC(0) => launchGame() 
-                case _ => ()
-            }
-            JFXMediaPlayer.play(JFXMediaPlayer.MEDIA_START_MUSIC)
+            val mediaPlayer = JFXMediaPlayer.play(JFXMediaPlayer.MEDIA_START_MUSIC)
+            val hideMenuMarkerName = "hide-menu"
+            mediaPlayer.onEndOfMedia = () => startGame()
+            mediaPlayer.onPlaying = () => setHideMarker(mediaPlayer, hideMenuMarkerName)
+            mediaPlayer.onMarker = v => v.getMarker().getKey() match
+                case hideMenuMarkerName => 
+                    mainMenu.visible = false
+                    mediaPlayer.media.markers.remove(hideMenuMarkerName)
+                case null => ()
         }
         mainMenu.optionsRequested += { _ => launchOptionsMenu() }
         mainMenu.quitRequested += { _ => Platform.exit() }
