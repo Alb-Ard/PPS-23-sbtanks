@@ -97,7 +97,6 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
             .collect:
                 case tank: Tank with DamageableBehaviour =>
                     tank.destroyed += {_ =>
-                        println("ENTER DESTROYED")
                         tankPowerUpsBinder.unbind(tank)
                         if (tank.isCharged) this.setNewPickablePowerUp()
                     }

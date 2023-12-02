@@ -8,6 +8,7 @@ import org.aas.sbtanks.entities.tank.TankData
 import org.aas.sbtanks.entities.tank.factories.BasicTankData
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
+import org.aas.sbtanks.player.PlayerTank
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.TimeLimits.failAfter
 import org.scalatest.flatspec.AnyFlatSpec
@@ -25,15 +26,59 @@ class PowerUpEffectsSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEa
 
         tank = BasicTank()
 
-    "A grenade powerup" should "lower the health of all enemies to zero" in:
+    "A grenade powerup" should "destroyed an enemy" in:
         val g = new GrenadePowerUp
 
-        g(tank).tankData.health should be (NO_HEALTH)
+        val damageableEnemyTank = new BasicTank() with DamageableBehaviour:
+            override protected def applyDamage(amount: Int): this.type =
+                updateTankData(tankData.updateHealth(_ - 1))
+                tankData.health match
+                    case v if v <= 0 =>
+                        destroyed(())
+                        this
+                    case _ => this
 
-    "A grenade powerup" should "not be reverted to its precedent state after its application" in:
+        damageableEnemyTank.destroyed += { _ =>
+            succeed
+        }
+
+        g(damageableEnemyTank)
+
+    "A grenade powerup" should "not be applied to players" in:
         val g = new GrenadePowerUp
 
-        g.revert(g(tank)).tankData.health should be (NO_HEALTH)
+        val damageableEnemyTank = new BasicTank() with DamageableBehaviour:
+            override protected def applyDamage(amount: Int): this.type =
+                updateTankData(tankData.updateHealth(_ - 1))
+                tankData.health match
+                    case v if v <= 0 =>
+                        destroyed(())
+                        this
+                    case _ => this
+
+
+        val damageablePlayerTank = new PlayerTank() with DamageableBehaviour:
+            override protected def applyDamage(amount: Int): this.type =
+                updateTankData(tankData.updateHealth(_ - 1))
+                tankData.health match
+                    case v if v <= 0 =>
+                        destroyed(())
+                        this
+                    case _ => this
+
+        damageablePlayerTank.destroyed += { _ =>
+            fail()
+        }
+
+
+        damageableEnemyTank.destroyed += { _ =>
+            succeed
+        }
+
+
+        g(damageablePlayerTank)
+        g(damageableEnemyTank)
+
 
 
     "A timeable powerup" should "be applied only for a certain amount of time" in:

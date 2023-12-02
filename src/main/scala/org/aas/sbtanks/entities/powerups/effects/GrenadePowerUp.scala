@@ -3,7 +3,7 @@ package org.aas.sbtanks.entities.powerups.effects
 import org.aas.sbtanks.entities.powerups.PowerUp.{PowerUp, PowerUpConstraint}
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
-import org.aas.sbtanks.behaviours.PositionBehaviour
+import org.aas.sbtanks.behaviours.{DamageableBehaviour, PositionBehaviour}
 import org.aas.sbtanks.entities.powerups.effects.Grenade.GrenadePowerUp
 import org.aas.sbtanks.player.PlayerTank
 
@@ -29,12 +29,15 @@ object GrenadePowerUpUtils:
 
     /**
      * Function 'f' represents the effect of the Grenade power-up on a tank.
-     * In this case, it updates the tank's health to 0.
+     * In this case, it make sure the tank is destroyed.
      */
-    val f: Tank => Tank = t => {t updateTankData(t.tankData.updateHealth(_ => 0)); t}
+    val f: Tank => Tank = t => {t.asInstanceOf[DamageableBehaviour].destroyed(()); t}
 
     /**
      * Function 'g' represents the identity function, indicating no additional modification to the tank.
+     * <p>
+     * Note: this reversion function is technically never called
+     * </p>
      */
     val g: Tank => Tank = identity
 
@@ -55,16 +58,40 @@ object x extends App:
 
 
 
-    val t: Tank with PositionBehaviour = new BasicTank with PositionBehaviour
+    val t = new BasicTank with PositionBehaviour with DamageableBehaviour:
+        override protected def applyDamage(amount: Int): this.type =
+            updateTankData(tankData.updateHealth(_ - 1))
+            tankData.health match
+                case v if v <= 0 =>
+                    destroyed(())
+                    this
+                case _ => this
 
-    val t2: Tank with PositionBehaviour = new PlayerTank with PositionBehaviour
+    val t2 = new PlayerTank with PositionBehaviour with DamageableBehaviour:
+        override protected def applyDamage(amount: Int): this.type =
+            updateTankData(tankData.updateHealth(_ - 1))
+            tankData.health match
+                case v if v <= 0 =>
+                    destroyed(())
+                    this
+                case _ => this
 
     val p = new GrenadePowerUp with PositionBehaviour
 
+    t.destroyed += { - =>
+        println("t destroyed")
+    }
+
+    t2.destroyed += { - =>
+        println("t2 destroyed")
+    }
 
     def applyP(p: PowerUp[Tank], t: Tank) =
         println(p.asInstanceOf[PositionBehaviour].positionX)
         p(t)
+
+
+    t.asInstanceOf
 
     println(p(t).tankData.health)
     println(p(t2).tankData.health)
