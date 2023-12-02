@@ -4,7 +4,7 @@ import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.entities.tank.view.TankView
-import org.aas.sbtanks.obstacles.view.ObstacleView
+import org.aas.sbtanks.entities.obstacles.view.ObstacleView
 import scalafx.scene.layout.Pane
 import scalafx.stage.Stage
 import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer

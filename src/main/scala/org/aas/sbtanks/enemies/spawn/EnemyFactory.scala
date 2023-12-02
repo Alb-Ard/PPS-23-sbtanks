@@ -14,15 +14,13 @@ object EnemyFactory:
     import org.aas.sbtanks.enemies.spawn.EnemyFactoryUtils.mapping
 
     /**
-     * Creates an enemy tank based on the specified character type.
+     * Creates an enemy tank builder based on the specified character type.
      *
      * @param enemyType The character representing the type of enemy tank.
      * @return An instance of the corresponding enemy tank type.
      */
-     private def createEnemy(enemyType: Char) =
-        mapping(enemyType) match
-            case BasicTankData | FastTankData | PowerTankData | ArmorTankData =>
-                new EnemyTankBuilder().setTankType(mapping(enemyType)).build()
+    private def createEnemyBuilder(enemyTypeChar: Char): Option[EnemyTankBuilder] =
+        mapping.get(enemyTypeChar).map(new EnemyTankBuilder().setTankType(_))
 
     /**
      * Creates a list of enemies based on a string of characters and their positions on a game board.
@@ -32,16 +30,17 @@ object EnemyFactory:
      * @param height The height of the game board.
      * @return A list of enemies with positions corresponding to the valid characters in the input string.
      */
-    def createFromString(input: String, width: Double, height: Double, eachCharged: Int = 4) =
-        input.filter(mapping.contains)
-            .map(createEnemy)
-            .zipWithIndex
-            .map:
-                case (enemyTank, index) =>
-                    enemyTank.setCharged(eachCharged != 0 && (index + 1) % eachCharged == 0)
-            .map(PositionProvider(width, height)(_).findFirstFreePosition())
-            .map(_.asInstanceOf[ControllableTank])
-
+    def createFromString(input: String, width: Double, height: Double) =
+        val positionProvider = PositionProvider(width, height)
+        input.map(createEnemyBuilder)
+            .flatMap(_.flatMap(b => {
+                positionProvider(b.collisionMask.toSeq, b.collisionSizeX, b.collisionSizeY).findFreePosition() match
+                    case Some(x, y) =>
+                        val tank = b.build()
+                        tank.setPosition(x, y)
+                        Option(tank)
+                    case _ => Option.empty
+            }))
 
 /**
  * Object containing utility methods and data for the enemy factory.
@@ -59,5 +58,3 @@ object EnemyFactoryUtils:
     )
 
 
-object x extends App:
-    println("dsad")

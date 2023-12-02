@@ -10,10 +10,10 @@ import scala.reflect.ClassTag
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.view.TankView
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
-import org.aas.sbtanks.obstacles.LevelObstacle
-import org.aas.sbtanks.obstacles.LevelObstacle.SteelWall
-import org.aas.sbtanks.obstacles.view.ObstacleView
-import org.aas.sbtanks.obstacles.view.scalafx.JFXObstacleView
+import org.aas.sbtanks.entities.obstacles.LevelObstacle
+import org.aas.sbtanks.entities.obstacles.LevelObstacle.SteelWall
+import org.aas.sbtanks.entities.obstacles.view.ObstacleView
+import org.aas.sbtanks.entities.obstacles.view.scalafx.JFXObstacleView
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import scalafx.scene.Node
 import scalafx.scene.image.Image
