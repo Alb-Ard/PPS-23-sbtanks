@@ -2,13 +2,11 @@ package org.aas.sbtanks.entities.powerups.contexts
 
 class CounterContext(var counter: Int):
 
-    def +=(i: Int): Unit = {
+    def +=(i: Int): Unit =
         counter +=  i
-    }
 
-    def -=(i: Int): Unit = {
+    def -=(i: Int): Unit =
         counter -= i
-    }
 
     def getCounter: Int = counter
 

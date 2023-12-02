@@ -1,9 +1,10 @@
 package org.aas.sbtanks.entities.powerups.effects
 
-import org.aas.sbtanks.entities.powerups.PowerUp.ContextualFuncPowerUp
+import org.aas.sbtanks.entities.powerups.PowerUp.{ContextualFuncPowerUp, PowerUpConstraint}
 import org.aas.sbtanks.entities.powerups.TimeablePowerUp
 import org.aas.sbtanks.entities.powerups.contexts.CachedContext
 import org.aas.sbtanks.entities.tank.structure.Tank
+import org.aas.sbtanks.player.PlayerTank
 
 
 object Timer:
@@ -12,6 +13,7 @@ object Timer:
     case class TimerPowerUp()
         extends ContextualFuncPowerUp[CachedContext[(Int, Int)], Tank](CachedContext[(Int, Int)]())(f, g)
         with TimeablePowerUp(STOP_TIME_POWER_UP_DURATION)
+        with PowerUpConstraint[Tank](constraint)
 
 
 object TimerPowerUpUtils:
@@ -34,3 +36,6 @@ object TimerPowerUpUtils:
                 .updateSpeed(_ => speed)
                 .updateBulletSpeed(_ => bulletSpeed));
             t
+
+    val constraint: Tank => Boolean =
+        !_.isInstanceOf[PlayerTank]

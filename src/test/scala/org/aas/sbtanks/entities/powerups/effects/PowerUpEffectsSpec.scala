@@ -1,11 +1,13 @@
 package org.aas.sbtanks.entities.powerups.effects
 
-import org.aas.sbtanks.behaviours.DamageableBehaviour
+import org.aas.sbtanks.behaviours.{DamageableBehaviour, DirectionBehaviour, PositionBehaviour}
 import org.aas.sbtanks.entities.powerups.effects.Grenade.GrenadePowerUp
 import org.aas.sbtanks.entities.powerups.effects.Helmet.HelmetPowerUp
+import org.aas.sbtanks.entities.powerups.effects.Star.StarPowerUp
 import org.aas.sbtanks.entities.powerups.effects.Timer.TimerPowerUp
 import org.aas.sbtanks.entities.tank.TankData
-import org.aas.sbtanks.entities.tank.factories.BasicTankData
+import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
+import org.aas.sbtanks.entities.tank.factories.{BasicTankData, PowerTankData}
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 import org.aas.sbtanks.player.PlayerTank
@@ -127,26 +129,39 @@ class PowerUpEffectsSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEa
 
 
 
+    "A Star powerup" should "provide different effects, if applied different times, like bullet speed increase and number of bullet shot" in:
+        val s = new StarPowerUp
+        val ENHANCED_SHOT: Int = 2
 
+        var tank = new BasicTank with TankMultipleShootingBehaviour with PositionBehaviour with DirectionBehaviour
 
+        tank = s(tank)
 
+        tank.tankData.bulletSpeed should be (PowerTankData.supplyData.bulletSpeed)
+        tank.shots should not be(ENHANCED_SHOT)
 
-        /*
-        val p = new HelmetPowerUp with PositionBehaviour
+        tank = s(tank)
 
+        tank.tankData.bulletSpeed should be (PowerTankData.supplyData.bulletSpeed)
+        tank.shots should be (ENHANCED_SHOT)
 
-        tank = p(tank)
+    "A Star powerup" should "be reverted correctly even multiple times" in:
+        val s = new StarPowerUp
+        val ENHANCED_SHOT: Int = 2
 
-        tank = tank.damage(1)
-        println(tank.tankData.health)
+        var tank = new BasicTank with TankMultipleShootingBehaviour with PositionBehaviour with DirectionBehaviour
 
+        tank = s(s(tank))
 
-        tank = p.revert(tank)
+        tank.tankData.bulletSpeed should be(PowerTankData.supplyData.bulletSpeed)
+        tank.shots should be(ENHANCED_SHOT)
 
-        tank = tank.damage(1)
-        println(tank.tankData.health)
-         */
+        tank = s.revert(tank)
 
+        tank.tankData.bulletSpeed should be(PowerTankData.supplyData.bulletSpeed)
+        tank.shots should not be(ENHANCED_SHOT)
 
+        tank = s.revert(tank)
 
-        //HelmetPowerUp.revert(HelmetPowerUp(tank)).tankData.health should be (tank.tankData.health)
+        tank.tankData.bulletSpeed should not be(PowerTankData.supplyData.bulletSpeed)
+        tank.shots should not be (ENHANCED_SHOT)

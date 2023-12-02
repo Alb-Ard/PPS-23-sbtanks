@@ -8,7 +8,9 @@ import org.aas.sbtanks.physics.CollisionLayer
 trait TankMultipleShootingBehaviour:
     self: Tank with PositionBehaviour with DirectionBehaviour =>
 
-    def shoot(nShots: Int, isPlayerBullet: Boolean) =
+    var shots = 1
+
+    def shoot(nShots: Int = shots, isPlayerBullet: Boolean) =
         var shotsFired: Seq[Bullet with PositionBehaviour with MovementBehaviour
             with DirectionBehaviour with CollisionBehaviour with DamageableBehaviour] = Seq.empty
         for(n <- Range(1, nShots + 1))

@@ -14,8 +14,7 @@ object Helmet:
     case class HelmetPowerUp() extends FuncPowerUp[Tank](f, g) with TimeablePowerUp(HELMET_POWER_UP_DURATION)
 
 object HelmetPowerUpUtils:
-    val HELMET_POWER_UP_DURATION = 2000L
-    private val INVINCIBILITY: Int = Int.MaxValue
+    val HELMET_POWER_UP_DURATION = 15.0
 
 
     val f: Tank => Tank =

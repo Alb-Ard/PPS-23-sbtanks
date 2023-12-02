@@ -1,44 +1,85 @@
 package org.aas.sbtanks.entities.powerups.effects
 
+import org.aas.sbtanks.behaviours.PositionBehaviour
+import org.aas.sbtanks.behaviours.DirectionBehaviour
 import org.aas.sbtanks.entities.powerups.PowerUp.ContextualFuncPowerUp
-import org.aas.sbtanks.entities.powerups.contexts.CounterContext
+import org.aas.sbtanks.entities.powerups.contexts.{CachedContext, CounterContext}
 import org.aas.sbtanks.entities.powerups.{SpeedBulletUp, SpeedUp}
+import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
+import org.aas.sbtanks.entities.tank.factories.PowerTankData
 import org.aas.sbtanks.entities.tank.structure.Tank
-import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
+import org.aas.sbtanks.entities.tank.structure.Tank.{BasicTank, PowerTank}
 
 
 object Star:
     import StarPowerUpUtils.*
-    case object StarPowerUp extends ContextualFuncPowerUp[CounterContext, Tank | Int](CounterContext(0))(f, g)
+    case class StarPowerUp() extends ContextualFuncPowerUp[(CounterContext, CachedContext[Int]), Tank]((CounterContext(0), CachedContext[Int]()))(f, g)
 
 
 object StarPowerUpUtils:
 
-    /* TODO
-        1- replace Int with Obstacles
-        2- (blocking) second powerup needs double bullet
-        3- (blocking) adds constraint on the obstacle
-     */
-    val f: (CounterContext, Tank | Int) => Tank | Int = (c, t) => (c, t) match
-        case (CounterContext(0), tt: Tank) => SpeedBulletUp(tt); c += 1; tt
-        case (CounterContext(1), tt: Tank) => SpeedUp(tt); c += 1; tt
-        case (CounterContext(2), i: Int) => c += 1; i * 2
-        case _ => t
+    private val DEFAULT_NUMBER_BULLETS = 1
+    private val INCREASED_NUMBER_BULLETS = 2
 
-    val g: (CounterContext, Tank | Int) => Tank | Int = (c, t) => (c, t) match
-        case (CounterContext(0), tt: Tank) => SpeedBulletUp.revert(tt); c -= 1; tt
-        case (CounterContext(1), tt: Tank) => SpeedUp.revert(tt); c -= 1; tt
-        case (CounterContext(2), i: Int) => i / 2
-        case _ => t
+
+
+
+    val f: ((CounterContext,  CachedContext[Int]), Tank) => Tank =
+        case ((counter@CounterContext(0), cached: CachedContext[Int]), t: Tank) =>
+            cached.provide(t.tankData.bulletSpeed)
+            t.updateTankData(t.tankData.updateBulletSpeed(_ => PowerTankData.supplyData.bulletSpeed))
+            counter += 1
+            t
+        case (_, t: Tank) =>
+            t.asInstanceOf[TankMultipleShootingBehaviour].shots = INCREASED_NUMBER_BULLETS
+            t
+
+    val g: ((CounterContext, CachedContext[Int]), Tank) => Tank =
+        case ((counter@CounterContext(0), cached: CachedContext[Int]), t: Tank) =>
+            t.updateTankData(t.tankData.updateBulletSpeed(_ => cached.getAndClear().get))
+            t
+        case ((counter@CounterContext(1), cached: CachedContext[Int]) , t: Tank) =>
+            t.asInstanceOf[TankMultipleShootingBehaviour].shots = DEFAULT_NUMBER_BULLETS
+            counter -= 1
+            t
 
 
 
 object a extends App:
     import Star.*
+    import StarPowerUpUtils.*
 
-    val sp = StarPowerUp
 
-    var tank = BasicTank()
+
+    val sp = new StarPowerUp
+
+    var tank = new BasicTank with TankMultipleShootingBehaviour with PositionBehaviour with DirectionBehaviour
+
+
+
+    println(tank.tankData.bulletSpeed)
+    println(tank.shots)
+
+    tank = sp(tank)
+
+    println(tank.tankData.bulletSpeed)
+
+    tank = sp(tank)
+
+    println(tank.shots)
+
+    tank = sp.revert(tank)
+
+    println(tank.shots)
+
+    tank = sp.revert(tank)
+
+    println(tank.tankData.bulletSpeed)
+    println(tank.shots)
+
+
+
+    /*
 
     var num = 10
 
@@ -64,6 +105,7 @@ object a extends App:
     num = sp(num)
 
     println(num)
+     */
 
 
 
