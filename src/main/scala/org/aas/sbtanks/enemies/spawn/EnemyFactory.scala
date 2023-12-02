@@ -28,9 +28,10 @@ object EnemyFactory:
      * @param input  The input string containing characters representing enemy tank types.
      * @param width  The width of the game board.
      * @param height The height of the game board.
+     * @param eachCharged  An optional parameter specifying the charging behavior for every Nth enemy. Default is 4              
      * @return A list of enemies with positions corresponding to the valid characters in the input string.
      */
-    def createFromString(input: String, width: Double, height: Double) =
+    def createFromString(input: String, width: Double, height: Double, eachCharged: Int = 4) =
         val positionProvider = PositionProvider(width, height)
         input.map(createEnemyBuilder)
             .flatMap(_.flatMap(b => {
@@ -41,6 +42,12 @@ object EnemyFactory:
                         Option(tank)
                     case _ => Option.empty
             }))
+            .zipWithIndex
+            .map:
+                case (enemyTank, index) =>
+                    enemyTank.setCharged(eachCharged != 0 && (index + 1) % eachCharged == 0)
+
+
 
 /**
  * Object containing utility methods and data for the enemy factory.

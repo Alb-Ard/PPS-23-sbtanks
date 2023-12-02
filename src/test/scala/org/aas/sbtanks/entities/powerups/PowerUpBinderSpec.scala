@@ -7,8 +7,6 @@ import org.aas.sbtanks.entities.tank.TankData
 import org.aas.sbtanks.entities.tank.factories.BasicTankData
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.{ArmorTank, BasicTank}
-import org.aas.sbtanks.obstacles.LevelObstacle
-import org.aas.sbtanks.obstacles.LevelObstacle.SteelWall
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
