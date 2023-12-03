@@ -9,7 +9,7 @@ import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 class JFXEnemySpawnView(private val images: Seq[Image], animationSpeed: Double = 1)
     extends ImageView(images.head)
     with EnemySpawnView
-    with JFXImageViewAnimator(Seq.empty, animationSpeed, false)
+    with JFXImageViewAnimator(images, animationSpeed, false)
     with JFXMoveableView:
 
     override def initSpawnAnimation(): JFXEnemySpawnView.this.type =

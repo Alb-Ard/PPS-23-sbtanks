@@ -13,6 +13,7 @@ import org.aas.sbtanks.enemies.controller.EnemySpawnController.createTankv
 import org.aas.sbtanks.enemies.view.EnemySpawnView
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
+import org.aas.sbtanks.player.PlayerTank
 
 class EnemySpawnController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], private val enemyTank: ControllableTank, private val enemyView: EnemySpawnView, viewScale: Double) extends Steppable:
     private var timeToSpawn: Double = 3.0
@@ -21,7 +22,7 @@ class EnemySpawnController[VSK, VS](using context: EntityRepositoryContext[Stage
     val pixelSize = 1D / tileSize
 
     enemyView.move(enemyTank.positionX * viewScale, enemyTank.positionY * viewScale)
-    //enemyView.initSpawnAnimation()
+    enemyView.initSpawnAnimation()
 
 
     override def step(delta: Double): this.type =

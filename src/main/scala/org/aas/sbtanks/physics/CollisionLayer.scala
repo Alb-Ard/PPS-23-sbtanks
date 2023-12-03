@@ -5,3 +5,4 @@ enum CollisionLayer:
     case BulletsLayer extends CollisionLayer
     case WallsLayer extends CollisionLayer
     case NonWalkableLayer extends CollisionLayer
+    case PowerUpLayer extends CollisionLayer

@@ -166,7 +166,7 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         //levelSequencer.start()
 
-        val enemies = EnemyFactory.createFromString("BBB", 7, 7, 1).map(_.asInstanceOf[ControllableTank])
+        val enemies = EnemyFactory.createFromString("BBB", 11, 11, 1).map(_.asInstanceOf[ControllableTank])
 
         val g = new EnemyTankGenerator(entityRepository, mutable.Queue(enemies: _*))
 

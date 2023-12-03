@@ -15,6 +15,9 @@ import scalafx.scene.Node
 import scalafx.scene.image.Image
 import javafx.scene.image as jfxsi
 import org.aas.sbtanks.Main.jfxImageView2sfx
+import org.aas.sbtanks.entities.obstacles.LevelObstacle
+import org.aas.sbtanks.entities.obstacles.view.ObstacleView
+import org.aas.sbtanks.entities.obstacles.view.scalafx.JFXObstacleView
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 
 
@@ -45,6 +48,7 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
      * Chains the picked-up power-up to the tank power-up binder.
      */
     pickup += { powerUp =>
+        println("PICK")
         tankPowerUpsBinder.chain(powerUp)
     }
 
@@ -74,7 +78,7 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
      */
     private def setNewPickablePowerUp() =
         // placeholder, need random factory
-        val p: PickablePowerUp[Tank] = new GrenadePowerUp with PositionBehaviour(8.0, 2.0) with CollisionBehaviour(1, 1, CollisionLayer.TanksLayer, Seq(CollisionLayer.TanksLayer))
+        val p: PickablePowerUp[Tank] = new GrenadePowerUp with PositionBehaviour(8.0, 2.0) with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
 
         entityRepo.addModelView(
             p,
@@ -90,10 +94,10 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
      */
     def registerEntities(tanks: Seq[Tank]): this.type =
 
-        tanks.map(t => {
+        tanks.map(t =>
                 tankPowerUpsBinder.bind(t)
                 t
-            })
+            )
             .collect:
                 case tank: Tank with DamageableBehaviour =>
                     tank.destroyed += {_ =>
