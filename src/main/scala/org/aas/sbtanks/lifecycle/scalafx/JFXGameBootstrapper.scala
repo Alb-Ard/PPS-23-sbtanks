@@ -29,6 +29,7 @@ import org.aas.sbtanks.lifecycle.PointsManager
   */
 class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)):
     val gameEnded = EventSource[Unit]
+    val restartedGame = EventSource[Unit]
 
     private val entityRepository = JFXEntityMvRepositoryFactory.create()
     private val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
@@ -54,8 +55,9 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
         val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer, ViewSlot.Ui):
             override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) = 
                 currentContext.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
-            override protected def restart(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]): JFXGameBootstrapper =
-                startGame()
+            override protected def restart(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]): this.type =
+                restartedGame(())
+                this
         val pauseController = new JFXPauseController(gameLoop, pauseUiView):
             override def quit() =
                 endGame()

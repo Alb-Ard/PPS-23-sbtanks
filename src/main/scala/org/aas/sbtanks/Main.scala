@@ -56,10 +56,12 @@ object Main extends JFXApp3 with scalafx.Includes:
         mainMenu.optionsRequested += { _ => launchOptionsMenu() }
         mainMenu.quitRequested += { _ => Platform.exit() }
 
-    private def launchGame(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])() =
+    private def launchGame(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(): Unit =
         val bootstrapper = JFXGameBootstrapper(INTERFACE_SCALE, windowSize)
         bootstrapper.gameEnded += { _ => launchMainMenu() }
+        bootstrapper.restartedGame += { _ => launchGame()}
         bootstrapper.startGame()
+
 
     private def launchOptionsMenu(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(): Unit =
         context.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
