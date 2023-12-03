@@ -12,3 +12,5 @@ object DirectionUtils:
     val Left: (Double, Double) = (-1.0, 0.0)
     val Top: (Double, Double) = (0.0, -1.0)
 
+    val NoDirection: (Double, Double) = (0.0, 0.0)
+

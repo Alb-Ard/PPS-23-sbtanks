@@ -5,7 +5,7 @@ import org.aas.sbtanks.event.EventSource
 trait DirectionBehaviour:
     val directionChanged = EventSource[(Double, Double)]
 
-    private var direction: (Double, Double) = (0D, 1D)
+    private var direction: (Double, Double) = (0D, 0D)
 
     def directionX = direction(0)
     def directionY = direction(1)

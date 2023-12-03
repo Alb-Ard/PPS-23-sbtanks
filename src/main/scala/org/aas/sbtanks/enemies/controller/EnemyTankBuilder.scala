@@ -55,4 +55,5 @@ object EnemyTankBuilder:
         CollisionLayer.BulletsLayer,
         CollisionLayer.WallsLayer,
         CollisionLayer.NonWalkableLayer,
+        CollisionLayer.TanksLayer
     )

@@ -60,5 +60,6 @@ object PlayerTankBuilder:
     val DEFAULT_COLLISION_MASK: Set[CollisionLayer] = Set(
         CollisionLayer.BulletsLayer,
         CollisionLayer.WallsLayer,
-        CollisionLayer.NonWalkableLayer
+        CollisionLayer.NonWalkableLayer,
+        CollisionLayer.TanksLayer
     )
