@@ -12,7 +12,7 @@ import scalafx.scene.Node
 import scalafx.stage.Stage
 import scalafx.scene.layout.Pane
 
-class EnemyController(private val enemyTank: ControllableTank, private val enemyView: TankView, viewScale: Double, tileSize: Double)
+class EnemyController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(private val enemyTank: ControllableTank, private val enemyView: TankView, viewScale: Double, tileSize: Double)
     extends TankController(Seq((enemyTank, enemyView)), viewScale, tileSize)
     with AiMovableController(Seq(enemyTank.asInstanceOf[MovementEntity]))
     with Steppable:
@@ -22,8 +22,8 @@ class EnemyController(private val enemyTank: ControllableTank, private val enemy
         this
 
 object EnemyController:
-    def factory(viewScale: Double, tileSize: Double)(context: EntityRepositoryContext[?, ?, ?], tank: ControllableTank, view: TankView) =
-        new EnemyController(tank, view, viewScale, tileSize)
+    def factory(viewScale: Double, tileSize: Double)(context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: TankView) =
+        new EnemyController(using context)(tank, view, viewScale, tileSize)
 
         
 

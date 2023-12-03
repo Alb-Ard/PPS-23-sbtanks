@@ -10,7 +10,7 @@ trait TankMultipleShootingBehaviour:
     this: Tank with PositionBehaviour with DirectionBehaviour =>
 
     private val BULLET_OFFSET = 0.1D
-    private val BULLET_COLLISION_SIZE = 0.75D
+    private val BULLET_COLLISION_SIZE = 0.25D
     private val BULLET_COLLISION_OFFSET = (1D - BULLET_COLLISION_SIZE) / 2D
 
     def shoot(nShots: Int, isPlayerBullet: Boolean) =

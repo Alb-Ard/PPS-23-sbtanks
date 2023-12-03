@@ -32,11 +32,11 @@ object JFXPlayerTankController:
             var shootDelay = 0.0
 
             override def step(delta: Double) =
-                shootDelay += 0.1
+                shootDelay += delta
                 super.step(delta)
 
             override def shoot() =
-                if(shootDelay >= 5.0)
+                if(shootDelay >= 1.0)
                     val bullet = tank.shoot(1, true).head
                     val bulletView = new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
                     bulletConsumer(bullet, bulletView)
