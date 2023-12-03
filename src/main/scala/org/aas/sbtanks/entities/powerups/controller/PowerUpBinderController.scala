@@ -18,6 +18,8 @@ import org.aas.sbtanks.Main.jfxImageView2sfx
 import org.aas.sbtanks.entities.obstacles.LevelObstacle
 import org.aas.sbtanks.entities.obstacles.view.ObstacleView
 import org.aas.sbtanks.entities.obstacles.view.scalafx.JFXObstacleView
+import org.aas.sbtanks.entities.powerups.effects.Helmet.HelmetPowerUp
+import org.aas.sbtanks.player.PlayerTank
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 
 
@@ -85,6 +87,16 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
             Option(new JFXPowerUpView(JFXImageLoader.loadFromResources("entities/powerups/powerup_star.png", 16D, 4D)))
         )
 
+    /**
+     * Sets up a player by binding it to the power-ups binder and adding an initial power-up (HelmetPowerUp).
+     *
+     *
+     * @param player The player tank to be set up with power-ups.
+     */
+    private def setUpPlayer(player: PlayerTank) =
+        tankPowerUpsBinder.bind(player)
+        tankPowerUpsBinder.chain(HelmetPowerUp())
+
 
     /**
      * Registers entities by binding power-ups to tanks and sets up destruction event handling.
@@ -96,12 +108,19 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
 
         tanks.map(t =>
                 tankPowerUpsBinder.bind(t)
+                t match
+                    case tank: PlayerTank => setUpPlayer(tank)
+                    case _ =>
                 t
             )
             .collect:
                 case tank: Tank with DamageableBehaviour =>
                     tank.destroyed += {_ =>
+                        println(tank)
                         tankPowerUpsBinder.unbind(tank)
+                        tank match
+                            case tank1: PlayerTank => setUpPlayer(tank1)
+                            case _ =>
                         if (tank.isCharged) this.setNewPickablePowerUp()
                     }
         this

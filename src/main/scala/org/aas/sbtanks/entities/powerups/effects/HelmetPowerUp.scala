@@ -1,17 +1,18 @@
 package org.aas.sbtanks.entities.powerups.effects
 
 import org.aas.sbtanks.behaviours.{DamageableBehaviour, PositionBehaviour}
-import org.aas.sbtanks.entities.powerups.PowerUp.{ContextualFuncPowerUp, FuncPowerUp}
+import org.aas.sbtanks.entities.powerups.PowerUp.{ContextualFuncPowerUp, FuncPowerUp, PowerUpConstraint}
 import org.aas.sbtanks.entities.powerups.TimeablePowerUp
 import org.aas.sbtanks.entities.powerups.contexts.CachedContext
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
+import org.aas.sbtanks.player.PlayerTank
 
 
 object Helmet:
     import HelmetPowerUpUtils.*
 
-    case class HelmetPowerUp() extends FuncPowerUp[Tank](f, g) with TimeablePowerUp(HELMET_POWER_UP_DURATION)
+    case class HelmetPowerUp() extends FuncPowerUp[Tank](f, g) with TimeablePowerUp(HELMET_POWER_UP_DURATION) with PowerUpConstraint[Tank](constraint)
 
 object HelmetPowerUpUtils:
     val HELMET_POWER_UP_DURATION = 15.0
@@ -24,6 +25,10 @@ object HelmetPowerUpUtils:
 
     val g: Tank => Tank =
         t => t.asInstanceOf[DamageableBehaviour].setDamageable(true).asInstanceOf[Tank]
+    
+    
+    val constraint: Tank => Boolean =
+        _.isInstanceOf[PlayerTank]
 
 
 object test extends App:

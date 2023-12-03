@@ -51,7 +51,7 @@ class EnemyTankGenerator(entityRepository: EntityControllerWithMv[AnyRef, Node],
     def generate(tank: ControllableTank) =
 
         entityRepository.addModelView(
-            tank,
+            tank.setDamageable(false),
             Option(JFXEnemySpawnView(tileSize, viewScale, tileAnimationSpeed))
         )
 

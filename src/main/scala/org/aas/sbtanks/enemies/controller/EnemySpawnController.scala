@@ -29,7 +29,7 @@ class EnemySpawnController[VSK, VS](using context: EntityRepositoryContext[Stage
         timeToSpawn -= delta
         if timeToSpawn <= 0.0 then
             val newView = createTankv(enemyTank.positionX, enemyTank.positionY, "player", Seq("slow", "basic"), 4D, tileSize, pixelSize)
-            entityRepo.replaceView({enemyTank.updateTankData(enemyTank.tankData.updateHealth(_ + 20)); enemyTank}, Option(newView))
+            entityRepo.replaceView(enemyTank.setDamageable(true), Option(newView))
         this
 
 object EnemySpawnController:
