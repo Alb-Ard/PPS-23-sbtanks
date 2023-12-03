@@ -32,8 +32,8 @@ class BulletController(bullet: CompleteBullet, bulletView: BulletView, speedMult
                 true
             else
                 false
-        case obstacle: LevelObstacle => 
-            
+        case obstacle: LevelObstacle with DamageableBehaviour =>
+            obstacle.damage()
             true
         case damageable: DamageableBehaviour =>
             damageable.damage()
