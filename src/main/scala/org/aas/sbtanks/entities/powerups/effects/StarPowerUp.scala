@@ -30,15 +30,16 @@ object StarPowerUpUtils:
             t.updateTankData(t.tankData.updateBulletSpeed(_ => PowerTankData.supplyData.bulletSpeed))
             counter += 1
             t
-        case (_, t: Tank) =>
+        case ((counter@CounterContext(1), cached: CachedContext[Int]), t: Tank) =>
             t.asInstanceOf[TankMultipleShootingBehaviour].shots = INCREASED_NUMBER_BULLETS
+            counter += 1
             t
 
     val g: ((CounterContext, CachedContext[Int]), Tank) => Tank =
-        case ((counter@CounterContext(0), cached: CachedContext[Int]), t: Tank) =>
+        case ((counter@CounterContext(1), cached: CachedContext[Int]), t: Tank) =>
             t.updateTankData(t.tankData.updateBulletSpeed(_ => cached.getAndClear().get))
             t
-        case ((counter@CounterContext(1), cached: CachedContext[Int]) , t: Tank) =>
+        case ((counter@CounterContext(2), cached: CachedContext[Int]) , t: Tank) =>
             t.asInstanceOf[TankMultipleShootingBehaviour].shots = DEFAULT_NUMBER_BULLETS
             counter -= 1
             t

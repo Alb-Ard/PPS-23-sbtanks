@@ -8,7 +8,6 @@ import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer
 import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.event.EventSource
-import org.aas.sbtanks.obstacles.LevelObstacle
 import org.aas.sbtanks.physics.Collider
 import org.aas.sbtanks.player.PlayerTank
 import scalafx.scene.Node
@@ -45,6 +44,7 @@ class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage
         
         checkTankCollision(colliders).headOption match
             case Some(_) =>
+                println("PICKUP EVENT")
                 pickup(powerUp)
                 entityRepo.removeModelView(powerUp)
             case _ =>

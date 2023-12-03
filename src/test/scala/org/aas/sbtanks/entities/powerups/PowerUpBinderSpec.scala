@@ -2,6 +2,8 @@ package org.aas.sbtanks.entities.powerups
 
 import org.aas.sbtanks.entities.powerups.PowerUp.PowerUp
 import org.aas.sbtanks.entities.powerups.PowerUpChain.*
+import org.aas.sbtanks.entities.powerups.effects.Helmet.HelmetPowerUp
+import org.aas.sbtanks.entities.powerups.effects.Star.StarPowerUp
 import org.aas.sbtanks.entities.powerups.effects.Timer.TimerPowerUp
 import org.aas.sbtanks.entities.tank.TankData
 import org.aas.sbtanks.entities.tank.factories.BasicTankData
@@ -62,6 +64,7 @@ class PowerUpBinderSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEac
         binder.unchain(HealthUp)
         binder.unchain(SpeedUp)
 
+
         tank.tankData should be (TankData(defaultHealth, defaultSpeed, defaultBulletSpeed))
 
     "Same timeable powerups" should "be consistent and ignore powerups if applied multiple times" in:
@@ -79,6 +82,25 @@ class PowerUpBinderSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEac
         binder.getPowerUps should have size(1)
 
         binder.getPowerUps.head.asInstanceOf[TimeablePowerUp].duration should be (1000)
+
+    "A powerup with enitities registered" should "be cleared on successive chaining call" in:
+        binder.bind(tank)
+
+        val ss = new StarPowerUp()
+
+        val t = new TimerPowerUp()
+
+        binder.chain(ss)
+
+
+        binder.unbind(tank)
+
+        binder.bind(tank)
+
+        binder.chain(t)
+
+
+        binder.getPowerUps should not contain(ss)
 
 
 

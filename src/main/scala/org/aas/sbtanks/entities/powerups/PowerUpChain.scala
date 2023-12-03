@@ -48,6 +48,7 @@ trait DualBinder[E]:
 class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E]:
 
     private var powerUpBindings: Map[PowerUp[E], Seq[EntityBinding]] = Map.empty
+    
 
     def getPowerUps: Seq[PowerUp[E]] =
         powerUpBindings.keys.toSeq
@@ -55,11 +56,15 @@ class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E
     override def chain(next: PowerUp[E]): this.type =
         val currentBindings = entities.map(_.supplier()).map(EntityBinding(_))
 
+
+
         powerUpBindings += (next -> currentBindings)
 
         entities.foreach(e => e.consumer(
             next(e.supplier()))
         )
+
+
         super.chain(next)
         this
 
@@ -69,7 +74,10 @@ class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E
         validBindings.foreach(e => e.consumer(
             last.revert(e.supplier()))
         )
+
         entities = entities.filterNot(b => validBindings.exists(_.supplier() == b.supplier()))
+
+        powerUpBindings -= last
 
         super.unchain(last)
         this

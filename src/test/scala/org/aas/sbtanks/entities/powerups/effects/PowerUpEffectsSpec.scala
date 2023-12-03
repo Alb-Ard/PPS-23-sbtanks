@@ -10,7 +10,7 @@ import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
 import org.aas.sbtanks.entities.tank.factories.{BasicTankData, PowerTankData}
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
-import org.aas.sbtanks.player.PlayerTank
+import org.aas.sbtanks.player.{PlayerTank, PlayerTankData}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.TimeLimits.failAfter
 import org.scalatest.flatspec.AnyFlatSpec
@@ -105,7 +105,7 @@ class PowerUpEffectsSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEa
     "An Helmet powerup" should "provide a tank with an invincibility status where its not possible for it to be damaged" in:
         var h = new HelmetPowerUp
 
-        val damageableTank = new BasicTank() with DamageableBehaviour:
+        val damageableTank = new PlayerTank() with DamageableBehaviour:
             override protected def applyDamage(amount: Int): this.type =
                 updateTankData(tankData.updateHealth(_ - 1))
                 tankData.health match
@@ -115,17 +115,20 @@ class PowerUpEffectsSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEa
                     case _ => this
 
 
+
         val undamageableTank = h(damageableTank)
             .asInstanceOf[DamageableBehaviour]
             .damage(1)
             .asInstanceOf[Tank with DamageableBehaviour]
 
-        undamageableTank.tankData.health should be (BasicTankData.supplyData.health)
+
+        undamageableTank.tankData.health should be (PlayerTankData.supplyData.health)
+
 
         h.revert(undamageableTank)
             .asInstanceOf[DamageableBehaviour]
             .damage(1)
-            .asInstanceOf[Tank].tankData.health should be(BasicTankData.supplyData.health - 1)
+            .asInstanceOf[Tank].tankData.health should be(PlayerTankData.supplyData.health - 1)
 
 
 
