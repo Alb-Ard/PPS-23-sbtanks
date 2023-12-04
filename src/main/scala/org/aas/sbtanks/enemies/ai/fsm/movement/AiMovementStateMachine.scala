@@ -51,7 +51,7 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
         for
             s0 <- getState
             x <- gets(e => (e.directionX.asInstanceOf[Double], e.directionY.asInstanceOf[Double]))
-            if s0.testMoveRelative(x._1, x._2)
+            if s0.testMoveRelative(x._1 / 100D, x._2 / 100D)
         yield x
 
     private def moveNext(remainingIterations: Int): State[MovementEntity, (Double, Double)] =

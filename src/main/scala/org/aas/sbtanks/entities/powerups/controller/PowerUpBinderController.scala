@@ -21,6 +21,8 @@ import org.aas.sbtanks.entities.obstacles.view.scalafx.JFXObstacleView
 import org.aas.sbtanks.entities.powerups.effects.Helmet.HelmetPowerUp
 import org.aas.sbtanks.player.PlayerTank
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
+import org.aas.sbtanks.entities.powerups.effects.Star.StarPowerUp
+import org.aas.sbtanks.entities.powerups.effects.Timer.TimerPowerUp
 
 
 
@@ -68,6 +70,10 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
               .collect:
                   case element: TimeablePowerUp => element
               .map(_.decreaseDuration(deltaTime))
+              .map(x => 
+                println(x)
+                x  
+              )
               .filter(_.isExpired)
               .foreach:
                   tankPowerUpsBinder.unchain
@@ -80,7 +86,7 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
      */
     private def setNewPickablePowerUp() =
         // placeholder, need random factory
-        val p: PickablePowerUp[Tank] = new GrenadePowerUp with PositionBehaviour(8.0, 2.0) with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
+        val p: PickablePowerUp[Tank] = new TimerPowerUp with PositionBehaviour(8.0, 2.0) with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
 
         entityRepo.addModelView(
             p,
