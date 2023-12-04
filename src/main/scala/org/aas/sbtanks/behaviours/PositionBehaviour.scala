@@ -2,10 +2,10 @@ package org.aas.sbtanks.behaviours
 
 import org.aas.sbtanks.event.EventSource
 
-trait PositionBehaviour(startingX: Double = 0, startingY: Double = 0):
+trait PositionBehaviour(val startingX: Double = 0, val startingY: Double = 0):
     val positionChanged = EventSource[(Double, Double)]
     
-    private var position = (startingX, startingY)
+    private var position: (Double, Double) = (startingX, startingY)
 
     def positionX = position(0)
     def positionY = position(1)

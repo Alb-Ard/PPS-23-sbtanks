@@ -3,8 +3,9 @@ package org.aas.sbtanks.common.view.scalafx
 import scalafx.animation.AnimationTimer
 import scalafx.scene.image.Image
 import scalafx.scene.image.ImageView
+import scalafx.application.Platform
 
-trait JFXImageViewAnimator(images: Seq[Image], speed: Double, private var running: Boolean = false):
+trait JFXImageViewAnimator(private var images: Seq[Image], speed: Double, private var running: Boolean = false):
     this: ImageView =>
 
     private val animationTimer = AnimationTimer { now =>
@@ -13,14 +14,17 @@ trait JFXImageViewAnimator(images: Seq[Image], speed: Double, private var runnin
 
     def isAnimationRunning = running
 
-    def startAnimation() =
+    def startAnimation(): this.type =
         running = true
         animationTimer.start()
         this
 
-    def stopAnimation() =
+    def stopAnimation(): this.type =
         running = false
         animationTimer.stop()
         this
 
-
+    def setImages(images: Seq[Image]): this.type =
+        this.images = images
+        Platform.runLater { image = images(0) }
+        this

@@ -1,90 +1,84 @@
 package org.aas.sbtanks
 
 import scalafx.application.JFXApp3
+import scalafx.stage.Stage
 import scalafx.scene.Scene
-import scalafx.scene.shape.Rectangle
 import scalafx.scene.paint.Color
-import scalafx.scene.input.KeyEvent
-import scalafx.scene.image.Image
-import scalafx.scene.image.ImageView
 import scalafx.animation.AnimationTimer
-
-import org.aas.sbtanks.player.controller.scalafx.JFXPlayerInputController
-import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
+import org.aas.sbtanks.player.controller.scalafx.{JFXPlayerDeathController, JFXPlayerInputController, JFXPlayerTankController}
 import org.aas.sbtanks.entities.tank.view.TankView
-import org.aas.sbtanks.behaviours.DirectionBehaviour
-import org.aas.sbtanks.behaviours.MovementBehaviour
-import org.aas.sbtanks.player.controller.scalafx.JFXPlayerTankController
-import org.aas.sbtanks.behaviours.CollisionBehaviour
-import org.aas.sbtanks.behaviours.PositionBehaviour
-import org.aas.sbtanks.physics.CollisionLayer
-import org.aas.sbtanks.behaviours.ConstrainedMovementBehaviour
-import org.aas.sbtanks.obstacles.LevelObstacle
-import org.aas.sbtanks.player.PlayerTankBuilder
-import org.aas.sbtanks.resources.scalafx.JFXImageLoader
-import org.aas.sbtanks.common.view.scalafx.JFXImageViewAnimator
-import org.aas.sbtanks.obstacles.view.scalafx.JFXObstacleView
+import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehaviour, DamageableBehaviour, DirectionBehaviour, MovementBehaviour, PositionBehaviour}
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
+import scalafx.scene.layout.Pane
+import org.aas.sbtanks.player.controller.PlayerUiViewController
+import org.aas.sbtanks.lifecycle.{GameLoop, LevelSequencer, PointsManager, SavedDataManager}
+import org.aas.sbtanks.entities.repository.context.scalafx.JFXEntityRepositoryContextInitializer
+import org.aas.sbtanks.common.ViewSlot
+import org.aas.sbtanks.level.LevelLoader
+import org.aas.sbtanks.lifecycle.view.scalafx.{JFXGameOverView, JFXMainMenu, JFXOptionsMenu, JFXPauseMenu}
+import org.aas.sbtanks.lifecycle.scalafx.JFXGameBootstrapper
+import scalafx.application.Platform
+import scalafx.beans.property.IntegerProperty
+import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer
+import scalafx.util.Duration
+import scalafx.scene.media.MediaPlayer
 
 object Main extends JFXApp3 with scalafx.Includes:
-    val inputController = JFXPlayerInputController()
-    val viewScale = 4D
-    val tileSize = 16D
-    val tankUnitMoveSpeed = 1D / tileSize
+    val INTERFACE_SCALE = 4D
+    
+    val windowSize = (IntegerProperty(1280), IntegerProperty(720))
 
-    override def start(): Unit = 
-        val testTank = PlayerTankBuilder()
-            .setPosition(0, 0)
-            .setCollisionSize(1D - tankUnitMoveSpeed, 1D - tankUnitMoveSpeed)
-            .build()
-        val testTankImages = JFXImageLoader.loadFromResources(Seq("entities/tank/basic/tank_basic_up_1.png", "entities/tank/basic/tank_basic_up_2.png"), tileSize, viewScale)
-        val testTankView = JFXTankView(testTankImages, tileSize)
-        val testTankController = JFXPlayerTankController(testTank, tankUnitMoveSpeed, testTankView, viewScale * tileSize)
-
-        val testWalls = LevelObstacle.BrickWall(2, 2)
-        val testWallViews = testWalls.map(w =>
-                val view = JFXObstacleView.create(JFXImageLoader.loadFromResources(w.imagesPath(0), tileSize / 4, viewScale))
-                view.x = w.positionX * tileSize * viewScale
-                view.y = w.positionY * tileSize * viewScale
-                view
-            )
-
-        val testTrees = LevelObstacle.Trees(2, 3)(0)
-        val testTreesView = JFXObstacleView.create(JFXImageLoader.loadFromResources(testTrees.imagesPath(0), tileSize, viewScale))
-        testTreesView.x = testTrees.positionX * tileSize * viewScale
-        testTreesView.y = testTrees.positionY * tileSize * viewScale
-        
-        val testWater = LevelObstacle.Water(2, 4)(0)
-        val testWaterView = JFXObstacleView.createAnimated(JFXImageLoader.loadFromResources(testWater.imagesPath, tileSize, viewScale), 2.0)
-            .startAnimation()
-        testWaterView.x = testWater.positionX * tileSize * viewScale
-        testWaterView.y = testWater.positionY * tileSize * viewScale
-
-        stage = new JFXApp3.PrimaryStage {
+    override def start(): Unit =
+        stage = new JFXApp3.PrimaryStage:
             title = "sbTanks"
-            width = 1280
-            height = 720
-            scene = new Scene {
-                content = new Rectangle {
-                    x = 10
-                    y = 10
-                    width = 1260
-                    height = 700
-                    fill = Color.LIGHTGREY
-                }
-                content.add(testTankView)
-                testWallViews.foreach(w => content.add(w))
-                content.add(testTreesView)
-                content.add(testWaterView)
-            }
-        }
+            width = windowSize(0).value
+            height = windowSize(1).value
+            scene = new Scene:
+                fill = Color.Black
+                stylesheets.add(getClass().getResource("/ui/style.css").toExternalForm())
+        windowSize(0) <== stage.scene.value.window.value.width
+        windowSize(1) <== stage.scene.value.window.value.height
+        given EntityRepositoryContext[Stage, ViewSlot, Pane] = EntityRepositoryContext(stage)
+        SavedDataManager.increaseHighScore(500)
+        JFXMediaPlayer.loadSettingsFromDisk().precache()
+        launchMainMenu()
+    
+    private def launchMainMenu(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(): Unit = 
+        def startGame(): Unit = launchGame()
+        def setHideMarker(mediaPlayer: MediaPlayer, name: String): Unit = 
+            mediaPlayer.media.markers.addOne(name -> mediaPlayer.totalDuration.value.divide(2))
 
-        testTankController.registerSceneEventHandlers(stage)
-        
-        var lastTimeNanos = System.nanoTime().doubleValue
-        val updateTimer = AnimationTimer(deltaMillis => {
-            val currentTimeNanos = System.nanoTime().doubleValue
-            val deltaTime = (currentTimeNanos - lastTimeNanos).doubleValue / 1000D / 1000D / 1000D
-            testTankController.step(deltaTime)
-            lastTimeNanos = currentTimeNanos
-        })
-        updateTimer.start()
+        context.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
+        val mainMenu = JFXMainMenu(INTERFACE_SCALE, windowSize)
+        context.viewSlots(ViewSlot.Ui).children.add(mainMenu)
+        mainMenu.startSinglePlayerGameRequested += { _ => 
+            mainMenu.disable = true
+            val mediaPlayer = JFXMediaPlayer.play(JFXMediaPlayer.MEDIA_START_MUSIC)
+            val hideMenuMarkerName = "hide-menu"
+            mediaPlayer.onEndOfMedia = () => startGame()
+            mediaPlayer.onPlaying = () => setHideMarker(mediaPlayer, hideMenuMarkerName)
+            mediaPlayer.onMarker = v => v.getMarker().getKey() match
+                case hideMenuMarkerName => 
+                    mainMenu.visible = false
+                    mediaPlayer.media.markers.remove(hideMenuMarkerName)
+                case null => ()
+        }
+        mainMenu.optionsRequested += { _ => launchOptionsMenu() }
+        mainMenu.quitRequested += { _ => Platform.exit() }
+
+    private def launchGame(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(): Unit =
+        val bootstrapper = JFXGameBootstrapper(INTERFACE_SCALE, windowSize)
+        bootstrapper.gameEnded += { _ => launchMainMenu() }
+        bootstrapper.restartedGame += { _ => launchGame()}
+        bootstrapper.startGame()
+
+
+    private def launchOptionsMenu(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(): Unit =
+        context.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
+        val optionsMenu = JFXOptionsMenu(INTERFACE_SCALE, windowSize)
+        context.viewSlots(ViewSlot.Ui).children.add(optionsMenu)
+        optionsMenu.mainMenuRequested += { _ =>
+            JFXMediaPlayer.saveSettingsToDisk()
+            launchMainMenu() 
+        }
+        optionsMenu.resetHighScoreRequested += { _ => SavedDataManager.resetHighScore() }
