@@ -29,10 +29,12 @@ import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer
   * @param windowSize The window size, in pixels
   */
 class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)):
+    val IS_DEBUG = true
+
     val gameEnded = EventSource[Unit]
     val restartedGame = EventSource[Unit]
 
-    private val entityRepository = JFXEntityMvRepositoryFactory.create()
+    private val entityRepository = JFXEntityMvRepositoryFactory.create(IS_DEBUG)
     private val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
     private val levelFactory = JFXLevelFactory(JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE, 1, 16)
     private val levelLoader = LevelLoader()

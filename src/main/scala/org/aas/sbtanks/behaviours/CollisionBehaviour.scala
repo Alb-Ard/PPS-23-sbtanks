@@ -32,7 +32,7 @@ trait CollisionBehaviour(sizeX: Double, sizeY: Double, override val layer: Colli
       * @param offsetX The x offset
       * @param offsetY The y offset
       */
-    def setOffset(offsetX: Double, offsetY: Double): this.type =
+    def setBoundingBoxOffset(offsetX: Double, offsetY: Double): this.type =
         offset = (offsetX, offsetY)
         this
 
@@ -53,7 +53,11 @@ trait CollisionBehaviour(sizeX: Double, sizeY: Double, override val layer: Colli
     /**
       * @inheritdoc
       */
-    override def boundingBox = AABB(positionX + offset(0), positionY + offset(0), sizeX, sizeY)
+    override def boundingBox = this match
+        case d: DirectionBehaviour if (Math.abs(d.directionX) > Math.abs(d.directionY)) => 
+            AABB(positionX + offset(1), positionY + offset(0), sizeY, sizeX)
+        case _ =>
+            AABB(positionX + offset(0), positionY + offset(1), sizeX, sizeY)
 
     /**
      * @inheritdoc

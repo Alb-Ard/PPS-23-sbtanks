@@ -2,6 +2,8 @@ package org.aas.sbtanks.entities.repository
 
 import org.aas.sbtanks.physics.Collider
 import org.aas.sbtanks.physics.PhysicsWorld
+import org.aas.sbtanks.physics.AABB
+import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 
 trait EntityColliderAutoManager[M, V]:
     this: EntityMvRepositoryContainer[M, V] =>
@@ -20,3 +22,19 @@ trait EntityColliderAutoManager[M, V]:
             case c: Collider => PhysicsWorld.unregisterCollider(c)
             case _ => ()
         this
+
+trait EntityColliderDebugger[M, VSlotKey, VSlot](using context: EntityRepositoryContext[?, VSlotKey, VSlot])(active: Boolean, gameSlot: VSlotKey):
+    this: EntityMvRepositoryContainer[M, ?] =>
+
+    if active then
+        modelViewAdded += { (m, _) => m match
+            case c: Collider => context.viewSlots.get(gameSlot).foreach(addDebugView(c, _))
+            case _ => ()
+        }
+        modelViewRemoved += { (m, _) => m match
+            case c: Collider => context.viewSlots.get(gameSlot).foreach(removeDebugView(c, _)) 
+            case _ => ()
+        }
+
+    protected def addDebugView(collider: Collider, container: VSlot): this.type
+    protected def removeDebugView(collider: Collider, container: VSlot): this.type
