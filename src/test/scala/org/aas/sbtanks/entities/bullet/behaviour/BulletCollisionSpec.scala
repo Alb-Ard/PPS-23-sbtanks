@@ -11,7 +11,6 @@ import org.aas.sbtanks.entities.bullet.view.BulletView
 import org.aas.sbtanks.entities.bullet.view.scalafx.JFXBulletView
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
-import org.aas.sbtanks.entities.tank.behaviours.TankShootingBehaviour
 import org.aas.sbtanks.entities.obstacles.LevelObstacle
 
 

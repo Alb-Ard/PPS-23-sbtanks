@@ -11,7 +11,7 @@ import scalafx.scene.input.KeyEvent
 import scalafx.scene.Node
 import scalafx.scene.layout.Pane
 import scalafx.Includes
-import org.aas.sbtanks.resources.scalafx.JFXImageLoader
+import org.aas.sbtanks.resources.scalafx.{JFXImageLoader, JFXMediaPlayer}
 import org.aas.sbtanks.player.view.ui.PlayerHealthView
 
 abstract class JFXPlayerTankController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(tank: ControllableTank, speedMultiplier: Double, view: TankView, viewScale: Double, tileSize: Double)
@@ -40,5 +40,6 @@ object JFXPlayerTankController:
                     val bullet = tank.shoot(1, true).head
                     val bulletView = new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
                     bulletConsumer(bullet, bulletView)
+                    JFXMediaPlayer.play(JFXMediaPlayer.BULLET_SFX)
                     shootDelay = 0.0
                 this

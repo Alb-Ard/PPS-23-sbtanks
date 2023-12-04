@@ -19,6 +19,7 @@ import org.aas.sbtanks.lifecycle.controller.scalafx.JFXPauseController
 import org.aas.sbtanks.event.EventSource
 import scalafx.beans.property.IntegerProperty
 import org.aas.sbtanks.lifecycle.PointsManager
+import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer
 
 /**
   * A class used to manage all components required for a game
@@ -53,7 +54,8 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
             override protected def addViewToContext(container: Pane) =
                 container.children.add(playerSidebar)
         val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer, ViewSlot.Ui):
-            override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) = 
+            override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) =
+                JFXMediaPlayer.play(JFXMediaPlayer.GAME_OVER_MUSIC)
                 currentContext.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
             override protected def restart(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]): this.type =
                 restartedGame(())
