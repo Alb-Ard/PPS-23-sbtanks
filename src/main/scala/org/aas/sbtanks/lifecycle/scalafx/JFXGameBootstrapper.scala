@@ -19,6 +19,8 @@ import org.aas.sbtanks.lifecycle.controller.scalafx.JFXPauseController
 import org.aas.sbtanks.event.EventSource
 import scalafx.beans.property.IntegerProperty
 import org.aas.sbtanks.lifecycle.PointsManager
+import org.aas.sbtanks.physics.PhysicsContainer
+import org.aas.sbtanks.physics.PhysicsWorld
 
 /**
   * A class used to manage all components required for a game
@@ -31,6 +33,7 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
     val gameEnded = EventSource[Unit]
     val restartedGame = EventSource[Unit]
 
+    given PhysicsContainer = PhysicsWorld
     private val entityRepository = JFXEntityMvRepositoryFactory.create()
     private val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
     private val levelFactory = JFXLevelFactory(JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE, 1, 16)

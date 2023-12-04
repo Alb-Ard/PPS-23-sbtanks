@@ -5,6 +5,7 @@ import org.aas.sbtanks.entities.tank.factories.*
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.enemies.spawn.PositionProvider
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
+import org.aas.sbtanks.physics.PhysicsContainer
 
 /**
  * Object responsible for creating enemy tanks based on a character code.
@@ -30,7 +31,7 @@ object EnemyFactory:
      * @param height The height of the game board.
      * @return A list of enemies with positions corresponding to the valid characters in the input string.
      */
-    def createFromString(input: String, width: Double, height: Double) =
+    def createFromString(using physics: PhysicsContainer)(input: String, width: Double, height: Double) =
         val positionProvider = PositionProvider(width, height)
         input.map(createEnemyBuilder)
             .flatMap(_.flatMap(b => {

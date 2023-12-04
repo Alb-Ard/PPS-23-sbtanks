@@ -23,6 +23,7 @@ import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.bullet.controller.scalafx.JFXBulletController
 import org.aas.sbtanks.entities.repository.EntityControllerRepository
 import org.aas.sbtanks.entities.repository.EntityViewAutoManager
+import org.aas.sbtanks.physics.PhysicsContainer
 
 /**
   * A factory used to create an entity repository with the default extensions
@@ -64,7 +65,7 @@ object JFXEntityMvRepositoryFactory:
       * @param context A given view context used for the extensions
       * @return The created entity repository
       */
-    def create(using context: DefaultContext)(): DefaultEntityRepository =
+    def create(using context: DefaultContext, physics: PhysicsContainer)(): DefaultEntityRepository =
         val entityRepository = new JFXEntityMvRepositoryContainer()
             with JFXEntityControllerRepository
             with JFXEntityViewAutoManager(ViewSlot.Game)

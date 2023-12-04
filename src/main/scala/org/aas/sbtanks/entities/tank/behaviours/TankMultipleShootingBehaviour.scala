@@ -5,6 +5,7 @@ import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.entities.bullet.controller.BulletController.CompleteBullet
+import org.aas.sbtanks.physics.PhysicsContainer
 
 trait TankMultipleShootingBehaviour:
     this: Tank with PositionBehaviour with DirectionBehaviour =>
@@ -14,13 +15,13 @@ trait TankMultipleShootingBehaviour:
     private val BULLET_COLLISION_SIZE = 0.25D
     private val BULLET_COLLISION_OFFSET = (1D - BULLET_COLLISION_SIZE) / 2D
 
-    def shoot(nShots: Int, isPlayerBullet: Boolean) =
+    def shoot(using physics: PhysicsContainer)(nShots: Int, isPlayerBullet: Boolean) =
         var shotsFired: Seq[CompleteBullet] = Seq.empty
         for(n <- Range(1, nShots + 1))
             shotsFired = shotsFired :+ generateBullet(n, isPlayerBullet)
         shotsFired
 
-    private def generateBullet(index: Int, isPlayerBullet: Boolean) =
+    private def generateBullet(using physics: PhysicsContainer)(index: Int, isPlayerBullet: Boolean) =
         val direction = (lastValidDirectionX.getOrElse(0D), lastValidDirectionY.getOrElse(1D))
         val offset = (direction(0) * index * BULLET_OFFSET, direction(1) * index * BULLET_OFFSET)
         new Bullet(tankData.bulletSpeed, isPlayerBullet)

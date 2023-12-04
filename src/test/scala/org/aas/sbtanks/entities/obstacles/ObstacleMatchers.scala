@@ -3,10 +3,9 @@ package org.aas.sbtanks.entities.obstacles
 import org.aas.sbtanks.behaviours.PositionBehaviour
 import org.aas.sbtanks.enemies.ai.DirectionUtils.*
 import org.aas.sbtanks.enemies.ai.shooting.ShootingEntity
-import org.aas.sbtanks.level.MockLevelFactory
 import org.aas.sbtanks.entities.obstacles.LevelObstacle
 import org.aas.sbtanks.entities.obstacles.LevelObstacle.PlayerBase
-import org.aas.sbtanks.physics.PhysicsWorld
+import org.aas.sbtanks.physics.PhysicsContainer
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers

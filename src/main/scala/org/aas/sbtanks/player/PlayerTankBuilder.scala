@@ -10,6 +10,7 @@ import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.behaviours.DamageableBehaviour
 import org.aas.sbtanks.entities.tank.TankExample.updatedTank
 import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
+import org.aas.sbtanks.physics.PhysicsContainer
 
 case class PlayerTank() extends Tank(PlayerTankData)
 
@@ -35,7 +36,7 @@ case class PlayerTankBuilder(private val x: Double = 0,
             case _ => collisionMask.filterNot(layer.equals)
         )
 
-    def build() =
+    def build(using physics: PhysicsContainer)() =
         new PlayerTank()
             with PositionBehaviour(x, y)
             with ConstrainedMovementBehaviour

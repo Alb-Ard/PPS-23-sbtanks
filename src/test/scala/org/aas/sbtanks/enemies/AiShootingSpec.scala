@@ -3,10 +3,9 @@ package org.aas.sbtanks.enemies
 import org.aas.sbtanks.behaviours.PositionBehaviour
 import org.aas.sbtanks.enemies.ai.DirectionUtils.*
 import org.aas.sbtanks.enemies.ai.shooting.ShootingEntity
-import org.aas.sbtanks.level.MockLevelFactory
+import org.aas.sbtanks.levels.MockLevelFactory
 import org.aas.sbtanks.entities.obstacles.LevelObstacle
 import org.aas.sbtanks.entities.obstacles.LevelObstacle.PlayerBase
-import org.aas.sbtanks.physics.PhysicsWorld
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -16,18 +15,19 @@ import org.aas.sbtanks.entities.obstacles.LevelObstacleType
 import org.scalatest.matchers.HavePropertyMatchResult
 import org.aas.sbtanks.physics.Collider
 import org.aas.sbtanks.entities.obstacles.ObstacleMatchers
+import org.aas.sbtanks.physics.PhysicsContainer
 
 class AiShootingSpec extends AnyFlatSpec
     with Matchers 
     with BeforeAndAfterEach
     with ObstacleMatchers:
         
-    def enemyFactory(x: Double, y: Double) = EnemyTankBuilder().setPosition(x, y).build()
+    def enemyFactory(using PhysicsContainer)(x: Double, y: Double) = EnemyTankBuilder().setPosition(x, y).build()
 
     def toObstacles(colliders: Seq[Collider]) = colliders.filter(_.isInstanceOf[LevelObstacle]).map(_.asInstanceOf[Collider with LevelObstacle])
 
     "An enemy tank" should "see through line of sight colliders to spot the player base" in:
-        PhysicsWorld.clearColliders()
+        given PhysicsContainer = new Object() with PhysicsContainer 
 
         val tank = MockLevelFactory(enemyFactory)
             .createFromString("UUUUUUU" +
@@ -47,7 +47,7 @@ class AiShootingSpec extends AnyFlatSpec
 
 
     "An enemy tank" should "be able to spot the enemy base only within a certain range" in:
-        PhysicsWorld.clearColliders()
+        given PhysicsContainer = new Object() with PhysicsContainer 
 
         val tank = MockLevelFactory(enemyFactory)
             .createFromString("UUUUU" +

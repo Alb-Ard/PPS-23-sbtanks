@@ -3,7 +3,7 @@ package org.aas.sbtanks.entities.bullet
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.aas.sbtanks.physics.CollisionLayer
-import org.aas.sbtanks.physics.PhysicsWorld
+import org.aas.sbtanks.physics.PhysicsContainer
 import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehaviour, DamageableBehaviour, DirectionBehaviour, MovementBehaviour, PositionBehaviour}
 import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.bullet.controller.BulletController

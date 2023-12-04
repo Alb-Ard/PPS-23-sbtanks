@@ -3,7 +3,7 @@ package org.aas.sbtanks.entities.bullet.behaviour
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.aas.sbtanks.physics.CollisionLayer
-import org.aas.sbtanks.physics.PhysicsWorld
+import org.aas.sbtanks.physics.PhysicsContainer
 import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehaviour, DamageableBehaviour, DirectionBehaviour, MovementBehaviour, PositionBehaviour}
 import org.aas.sbtanks.entities.bullet.Bullet
 import org.aas.sbtanks.entities.bullet.controller.BulletController
@@ -15,10 +15,8 @@ import org.aas.sbtanks.entities.tank.behaviours.TankShootingBehaviour
 import org.aas.sbtanks.entities.obstacles.LevelObstacle
 import org.aas.sbtanks.entities.bullet.MockBulletView
 
-
-
 class BulletCollisionSpec extends AnyFlatSpec with Matchers {
-    class MockBullet(override val speed: Double, override val isPlayerBullet: Boolean) extends Bullet(speed, isPlayerBullet)
+    class MockBullet(using PhysicsContainer)(override val speed: Double, override val isPlayerBullet: Boolean) extends Bullet(speed, isPlayerBullet)
         with PositionBehaviour
         with MovementBehaviour
         with DirectionBehaviour
@@ -30,7 +28,7 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers {
             destroyed(())
             this
         
-    abstract class MockTank(startingX: Double, startingY: Double) extends BasicTank()
+    abstract class MockTank(using PhysicsContainer)(startingX: Double, startingY: Double) extends BasicTank()
         with PositionBehaviour(startingX, startingY)
         with DirectionBehaviour
         with MovementBehaviour
@@ -38,11 +36,12 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers {
         with DamageableBehaviour
 
     "A bullet" should "be destroyed when it collides with something" in {
-        PhysicsWorld.clearColliders()
+        val physics = new Object() with PhysicsContainer
+        given PhysicsContainer = physics
         val obstacles = LevelObstacle.BrickWall(0, 2)
-        obstacles.foreach(PhysicsWorld.registerCollider)
+        obstacles.foreach(physics.registerCollider)
         val bullet = new MockBullet(1, true)
-        PhysicsWorld.registerCollider(bullet)
+        physics.registerCollider(bullet)
         bullet.setDirection(0, 1)
         val bulletController = new BulletController(bullet, new MockBulletView(), 1, 1, 1)
         var wasDestroyed = false
@@ -52,7 +51,8 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers {
     }
 
     it should "damage a tank when it collides with it" in {
-        PhysicsWorld.clearColliders()
+        val physics = new Object() with PhysicsContainer
+        given PhysicsContainer = physics
         var wasTankDamaged = false
         val tank = new MockTank(0, 2):
             override def applyDamage(amount: Int) = {
@@ -62,9 +62,9 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers {
                     destroyed(())
                 this
             }
-        PhysicsWorld.registerCollider(tank)
+        physics.registerCollider(tank)
         val bullet = new MockBullet(1, true)
-        PhysicsWorld.registerCollider(bullet)
+        physics.registerCollider(bullet)
         bullet.setDirection(0, 1)
         val bulletController = new BulletController(bullet, new MockBulletView(), 1, 1, 1)
         for _ <- 0 until 10 do bulletController.step(1.0)
