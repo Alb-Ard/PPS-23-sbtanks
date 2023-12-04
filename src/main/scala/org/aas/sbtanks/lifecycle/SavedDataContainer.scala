@@ -5,7 +5,6 @@ import org.aas.sbtanks.resources.scalafx.JFXSavedDataLoader
 
 trait SavedDataContainer:
     val highScoreChanged = EventSource[(Int)]
-    //val usernameChanged = EventSource[(String)]
 
     private var highScoreValue = JFXSavedDataLoader().loadSavedDiskData()(1)
     private var usernameText = JFXSavedDataLoader().loadSavedDiskData()(0)

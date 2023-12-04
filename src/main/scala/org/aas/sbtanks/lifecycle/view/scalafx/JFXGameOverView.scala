@@ -19,8 +19,6 @@ import scalafx.scene.{Node, Scene}
 
 class JFXGameOverView(level: LevelSequencer[?,?], interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)) extends VBox:
 
-    //val stylesheet = getClass.getResource("/ui/press_start_2p.ttf").toExternalForm
-
     val retryRequested = EventSource[Unit]
     val exitRequested = EventSource[Unit]
 

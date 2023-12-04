@@ -61,8 +61,8 @@ abstract class JFXPlayerDeathController[VSlotKey](using context: EntityRepositor
         setupGameoverContext(context).viewSlots.get(uiSlotKey).foreach(c => c.children.add(gameOverView))
 
     /**
-     *
-     * @param m
+     * this def searches for any entity that is either a player tank or a player base and calls for gameover method.
+     * @param m entity that can reach game over.
      */
     private def onModelCreated(m: AnyRef) = m match
         case p: PlayerTank with DamageableBehaviour =>
