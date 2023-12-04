@@ -54,7 +54,7 @@ trait CollisionBehaviour(using physics: PhysicsContainer)(sizeX: Double, sizeY: 
       * @inheritdoc
       */
     override def boundingBox = this match
-        case d: DirectionBehaviour if (Math.abs(d.directionX) > Math.abs(d.directionY)) => 
+        case d: DirectionBehaviour if (Math.abs(d.lastValidDirectionX.getOrElse(0D)) > Math.abs(d.lastValidDirectionY.getOrElse(1D))) =>
             AABB(positionX + offset(1), positionY + offset(0), sizeY, sizeX)
         case _ =>
             AABB(positionX + offset(0), positionY + offset(1), sizeX, sizeY)

@@ -100,6 +100,8 @@ object JFXEntityMvRepositoryFactory:
                             val bb = b.boundingBox
                             rect.x = bb.x * VIEW_SCALE * TILE_SIZE
                             rect.y = bb.y * VIEW_SCALE * TILE_SIZE
+                            rect.width = bb.width * VIEW_SCALE * TILE_SIZE
+                            rect.height = bb.height * VIEW_SCALE * TILE_SIZE
                         }
                         case _ => ()
                     this
