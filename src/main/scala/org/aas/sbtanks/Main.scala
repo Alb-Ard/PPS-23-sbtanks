@@ -105,9 +105,11 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         val pickup = EventSource[PowerUp[Tank]]
 
+        val tankSpawn = EventSource[Tank]
+
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView)), tileSize))
             .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(viewScale * tileSize))
-            .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && !m.asInstanceOf[DamageableBehaviour].isDamageable, EnemySpawnController.factory(viewScale * tileSize, tileSize, entityRepository))
+            .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && !m.asInstanceOf[DamageableBehaviour].isDamageable, EnemySpawnController.factory(viewScale * tileSize, tileSize, entityRepository, tankSpawn))
             .registerControllerReplacer(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && m.asInstanceOf[DamageableBehaviour].isDamageable, EnemyController.factory(viewScale * tileSize))
             .registerControllerFactory(m => m.isInstanceOf[Bullet], JFXBulletController.factory())
             .registerControllerFactory(m => m.isInstanceOf[PickablePowerUp[?]], PowerUpController.factory[Tank](viewScale * tileSize, entityRepository, pickup))
@@ -174,13 +176,8 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         val binder = new PowerUpChainBinder[Tank]
 
-        val p = new PowerUpBinderController(entityRepository, binder, pickup)
+        val p = new PowerUpBinderController(entityRepository, binder, pickup, tankSpawn)
 
-        /*
-            TODO: how to pass entities for registration? (e.g. event)
-         */
-
-        //p.registerEntities(enemies)
 
         entityRepository.addController(p)
 

@@ -35,7 +35,7 @@ object PickablePowerUpFactory:
         new TimerPowerUp() with PositionBehaviour with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
 
 
-    def createPowerUp(powerUpType: PowerUpType): PickablePowerUp[?] =
+    def providePowerUp(powerUpType: PowerUpType) =
         powerUpType match
             case PowerUpType.Grenade => grenadeInstance
             case PowerUpType.Helmet => helmetInstance
@@ -43,14 +43,12 @@ object PickablePowerUpFactory:
             case PowerUpType.Timer => timerPowerUp
 
 
-    def randomPowerUp(): PickablePowerUp[?] =
+    def getRandomPowerUp =
         val powerUpTypes = PowerUpType.values
         val randomIndex = Random.nextInt(powerUpTypes.length)
-        createPowerUp(powerUpTypes(0))
+        providePowerUp(powerUpTypes(0))
 
 
-object a extends App:
-    val x: PickablePowerUp[?] = PickablePowerUpFactory.randomPowerUp()
 
 
 
