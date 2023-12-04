@@ -12,11 +12,11 @@ import org.aas.sbtanks.entities.repository.EntityColliderAutoManager
 import org.aas.sbtanks.entities.repository.EntityRepositoryTagger
 import org.aas.sbtanks.entities.repository.DestroyableEntityAutoManager
 import org.aas.sbtanks.entities.repository.EntityControllerReplacer
+import org.aas.sbtanks.entities.obstacles.LevelObstacle
+import org.aas.sbtanks.entities.obstacles.LevelObstacleController
 import org.aas.sbtanks.common.ViewSlot
 import org.aas.sbtanks.player.PlayerTank
 import org.aas.sbtanks.player.controller.scalafx.JFXPlayerTankController
-import org.aas.sbtanks.obstacles.LevelObstacle
-import org.aas.sbtanks.obstacles.LevelObstacleController
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.enemies.controller.EnemyController
 import org.aas.sbtanks.entities.bullet.Bullet

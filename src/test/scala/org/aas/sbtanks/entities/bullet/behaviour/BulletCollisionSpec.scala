@@ -12,18 +12,13 @@ import org.aas.sbtanks.entities.bullet.view.scalafx.JFXBulletView
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 import org.aas.sbtanks.entities.tank.behaviours.TankShootingBehaviour
+import org.aas.sbtanks.entities.obstacles.LevelObstacle
 
 
 class BulletCollisionSpec extends AnyFlatSpec with Matchers {
-
-    val speedMultiplier: Double = 1.0
-    val viewScale: Double = 2.0
-    val tileSize: Double = 2.0
-
     class MockView() extends BulletView:
-        override def look(rotation: Double): Unit = 1+1 //mock implementation
-
-        override def move(x: Double, y: Double): Unit = 1+1 //mock implementation
+        override def look(rotation: Double) = ()
+        override def move(x: Double, y: Double) = ()
 
     class MockBullet(override val speed: Double, override val isPlayerBullet: Boolean) extends Bullet(speed, isPlayerBullet)
         with PositionBehaviour
@@ -46,13 +41,12 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers {
 
     "A bullet" should "be destroyed when it collides with something" in {
         PhysicsWorld.clearColliders()
-        val tank = new MockTank(0, 2):
-            override def applyDamage(amount: Int) = this
-        PhysicsWorld.registerCollider(tank)
+        val obstacles = LevelObstacle.BrickWall(0, 2)
+        obstacles.foreach(PhysicsWorld.registerCollider)
         val bullet = new MockBullet(1, true)
         PhysicsWorld.registerCollider(bullet)
         bullet.setDirection(0, 1)
-        val bulletController = new BulletController(bullet, new MockView(), speedMultiplier, viewScale, tileSize)
+        val bulletController = new BulletController(bullet, new MockView(), 1, 1, 1)
         var wasDestroyed = false
         bullet.destroyed += { _ => wasDestroyed = true }
         for _ <- 0 until 10 do bulletController.step(1.0)
@@ -74,7 +68,7 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers {
         val bullet = new MockBullet(1, true)
         PhysicsWorld.registerCollider(bullet)
         bullet.setDirection(0, 1)
-        val bulletController = new BulletController(bullet, new MockView(), speedMultiplier, viewScale, tileSize)
+        val bulletController = new BulletController(bullet, new MockView(), 1, 1, 1)
         for _ <- 0 until 10 do bulletController.step(1.0)
         wasTankDamaged should be (true)
     }

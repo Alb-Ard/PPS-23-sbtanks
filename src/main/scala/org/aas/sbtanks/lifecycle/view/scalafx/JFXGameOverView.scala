@@ -1,12 +1,10 @@
 package org.aas.sbtanks.lifecycle.view.scalafx
 
 import javafx.event.EventHandler
-import javafx.scene.input
 import org.aas.sbtanks.common.view.scalafx.JFXViewComponentFactory
 import org.aas.sbtanks.event.EventSource
 import org.aas.sbtanks.lifecycle.{LevelSequencer, PointsManager, SavedDataManager}
 import scalafx.Includes.*
-import scalafx.application.JFXApp3
 import scalafx.beans.property.IntegerProperty
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.control.{Button, ButtonBar}
@@ -15,6 +13,7 @@ import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.{Background, VBox}
 import scalafx.scene.paint.*
 import scalafx.scene.paint.Color.*
+import scalafx.scene.text.TextAlignment.Center
 import scalafx.scene.text.{Font, Text, TextAlignment, TextFlow}
 import scalafx.scene.{Node, Scene}
 
@@ -34,35 +33,38 @@ class JFXGameOverView(level: LevelSequencer[?,?], interfaceScale: Double, window
     prefWidth <== windowSize(0)
     alignment = Pos.Center
 
-    private val gameOverText = createText("Game Over")
+    private val gameOverText = createText("GAME OVER")
     gameOverText.alignmentInParent = Pos.Center
     gameOverText.margin = Insets(50, 0, 20, 0)
     gameOverText.fill = new LinearGradient(0, stops = Stops(Red, DarkRed))
     children.add(gameOverText)
 
-    private val levelDeathText = createText("You died at Level: " + (level.completedLevelCount + 1))
+    private val levelDeathText = createText("YOU DIED AT LEVEL: " + (level.completedLevelCount + 1))
     levelDeathText.alignmentInParent = Pos.Center
     levelDeathText.margin = Insets(50, 0, 20, 0)
     levelDeathText.fill = new LinearGradient(0, stops = Stops(Red, DarkRed))
     children.add(levelDeathText)
 
-    private val gameScore = createText("Score: " + PointsManager.amount)
+    private val gameScore = createText("Score: " + PointsManager.amount + "  ")
     gameScore.alignmentInParent = Pos.Center
     gameScore.fill = new LinearGradient(0, stops = Stops(Green, DarkGreen))
 
     private val bestScore = createText("High Score: " + SavedDataManager.highScore)
-    gameScore.alignmentInParent = Pos.Center
-    gameScore.fill = new LinearGradient(0, stops = Stops(Green, DarkGreen))
+    bestScore.alignmentInParent = Pos.Center
+    bestScore.fill = new LinearGradient(0, stops = Stops(Green, DarkGreen))
 
     private val scoreFlow = new TextFlow()
     scoreFlow.children = Seq(gameScore, bestScore)
+    scoreFlow.margin = Insets(50, 50, 0, 50)
+    scoreFlow.alignmentInParent = Pos.Center
+    scoreFlow.textAlignment = Center
     children.add(scoreFlow)
 
     private val restartButton = createButton("RETRY")
     restartButton.onMouseClicked = _ => retryRequested(())
     restartButton.alignmentInParent = Pos.Center
 
-    private val exitButton = createButton("RETURN TO MAIN MENU")
+    private val exitButton = createButton("QUIT")
     exitButton.onMouseClicked = _ => exitRequested(())
     exitButton.alignmentInParent = Pos.Center
 

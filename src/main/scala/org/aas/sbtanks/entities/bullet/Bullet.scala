@@ -1,3 +1,3 @@
 package org.aas.sbtanks.entities.bullet
 
-case class Bullet(speed: Double, isPlayerBullet: Boolean)
+class Bullet(val speed: Double, val isPlayerBullet: Boolean)
