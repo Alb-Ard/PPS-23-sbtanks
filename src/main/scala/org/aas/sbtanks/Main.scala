@@ -166,9 +166,9 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         //levelSequencer.start()
 
-        val enemies = EnemyFactory.createFromString("BBB", 11, 11, 1).map(_.asInstanceOf[ControllableTank])
+        //val enemies = EnemyFactory.createFromString("BBB", 11, 11, 1).map(_.asInstanceOf[ControllableTank])
 
-        val g = new EnemyTankGenerator(entityRepository, mutable.Queue(enemies: _*), tileSize, viewScale)
+        val g = new EnemyTankGenerator(entityRepository, "B||BB", 11, 11, tileSize, viewScale)
 
         entityRepository.addController(g)
 
@@ -176,7 +176,11 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         val p = new PowerUpBinderController(entityRepository, binder, pickup)
 
-        p.registerEntities(enemies)
+        /*
+            TODO: how to pass entities for registration? (e.g. event)
+         */
+
+        //p.registerEntities(enemies)
 
         entityRepository.addController(p)
 
