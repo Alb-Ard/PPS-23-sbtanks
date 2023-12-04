@@ -6,7 +6,7 @@ import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.entities.bullet.controller.BulletController.CompleteBullet
 import org.aas.sbtanks.entities.bullet.BulletFactory
-import org.aas.sbtanks.entities.powerups.effects.a.tank
+import org.aas.sbtanks.physics.PhysicsContainer
 
 /**
  * Trait used as behaviour for enemy and player tanks to shoot various amounts of bullets at a time.
@@ -26,7 +26,7 @@ trait TankMultipleShootingBehaviour:
      * @param isPlayerBullet a flag to determine whether the player or an enemy tank will shot these bullets.
      * @return a sequence of shot bullets.
      */
-    def shoot(nShots: Int, isPlayerBullet: Boolean) =
+    def shoot(using physics: PhysicsContainer)(nShots: Int, isPlayerBullet: Boolean) =
         var shotsFired: Seq[CompleteBullet] = Seq.empty
         for(n <- Range(1, nShots + 1))
             shotsFired = shotsFired :+ generateBullet(n, isPlayerBullet)
@@ -39,7 +39,7 @@ trait TankMultipleShootingBehaviour:
      * @param isPlayerBullet a flag to determine whether the player or an enemy tank will shot these bullets.
      * @return The crated bullet.
      */
-    private def generateBullet(index: Int, isPlayerBullet: Boolean) =
+    private def generateBullet(using physics: PhysicsContainer)(index: Int, isPlayerBullet: Boolean) =
         val direction = (lastValidDirectionX.getOrElse(0D), lastValidDirectionY.getOrElse(1D))
         val offset = (direction(0) * index * BULLET_OFFSET, direction(1) * index * BULLET_OFFSET)
         bulletFactory.create((positionX + offset(0), positionY + offset(1)), direction, tankData.bulletSpeed, isPlayerBullet)

@@ -5,21 +5,22 @@ import org.aas.sbtanks.enemies.ai.DirectionUtils.*
 import org.aas.sbtanks.enemies.ai.fsm.movement.AiMovementStateMachineUtils
 import org.aas.sbtanks.enemies.ai.{DirectionUtils, MovementEntity}
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
-import org.aas.sbtanks.level.MockLevelFactory
-import org.aas.sbtanks.physics.PhysicsWorld
+import org.aas.sbtanks.levels.MockLevelFactory
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 import scala.language.postfixOps
 import org.aas.sbtanks.enemies.controller.EnemyTankBuilder
+import org.aas.sbtanks.physics.PhysicsContainer
 
 class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
 
-    def enemyFactory(x: Double, y: Double) = EnemyTankBuilder().setPosition(x, y).build()
+    def enemyFactory(using p: PhysicsContainer)(x: Double, y: Double) = EnemyTankBuilder().setPosition(x, y).build()
 
     "tank " should "go right or left but not down or up" in:
-        PhysicsWorld.clearColliders()
+        val physics = new Object() with PhysicsContainer
+        given PhysicsContainer = physics
 
         val tank = MockLevelFactory(enemyFactory)
             .createFromString("UUUUUUU" +
@@ -43,7 +44,8 @@ class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
 
 
     "Tank ai movement" should "prioritize bottom directed movement when possible" in:
-        PhysicsWorld.clearColliders()
+        val physics = new Object() with PhysicsContainer
+        given PhysicsContainer = physics
 
         val tank: MovementEntity = MockLevelFactory(enemyFactory)
             .createFromString(
@@ -65,7 +67,8 @@ class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
 
 
     "Tank ai movement" should "run across top directions only if no other options is available while right and left directions choices are random" in:
-        PhysicsWorld.clearColliders()
+        val physics = new Object() with PhysicsContainer
+        given PhysicsContainer = physics
 
         val tank: MovementEntity = MockLevelFactory(enemyFactory)
             .createFromString(

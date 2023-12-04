@@ -17,6 +17,7 @@ import org.aas.sbtanks.player.controller.scalafx.JFXPlayerInputController
 import org.aas.sbtanks.player.controller.scalafx.JFXPlayerTankController
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
+import org.aas.sbtanks.physics.PhysicsContainer
 
 class PlayerMovementControlSpec extends AnyFeatureSpec with GivenWhenThen with Matchers with Includes:
     info("As a player")
@@ -25,7 +26,11 @@ class PlayerMovementControlSpec extends AnyFeatureSpec with GivenWhenThen with M
 
     Feature("Player controller") {
         Scenario("The player presses a directional movement input") {
-            Given("A tank with a movement behaviour starting at position (0, 0) with a step speed of 1")
+            Given("An empty physics world")
+            val physics = new Object() with PhysicsContainer 
+            given PhysicsContainer = physics
+
+            And("A tank with a movement behaviour starting at position (0, 0) with a step speed of 1")
             val startingPosition = (0, 0)
             val stepSpeed = 1
             val playerTank = PlayerTankBuilder()

@@ -26,11 +26,10 @@ import org.aas.sbtanks.entities.repository.EntityViewAutoManager
 import org.aas.sbtanks.entities.repository.EntityColliderDebugger
 import org.aas.sbtanks.physics.AABB
 import scalafx.scene.shape.Rectangle
-import org.aas.sbtanks.entities.bullet.view.scalafx.testJFXBulletView.viewScale
-import org.aas.sbtanks.entities.bullet.view.scalafx.testJFXBulletView.tileSize
 import scalafx.scene.paint.Color
 import org.aas.sbtanks.physics.Collider
 import org.aas.sbtanks.behaviours.PositionBehaviour
+import org.aas.sbtanks.physics.PhysicsContainer
 
 /**
   * A factory used to create an entity repository with the default extensions
@@ -72,7 +71,7 @@ object JFXEntityMvRepositoryFactory:
       * @param context A given view context used for the extensions
       * @return The created entity repository
       */
-    def create(using context: DefaultContext)(enableDebug: Boolean = false): DefaultEntityRepository =
+    def create(using context: DefaultContext, physics: PhysicsContainer)(enableDebug: Boolean = false): DefaultEntityRepository =
         val entityRepository = new JFXEntityMvRepositoryContainer()
             with JFXEntityControllerRepository
             with JFXEntityViewAutoManager(ViewSlot.Game)
@@ -88,10 +87,10 @@ object JFXEntityMvRepositoryFactory:
                 protected override def addDebugView(collider: Collider, container: Pane): this.type =
                     val bb = collider.boundingBox
                     val rect = new Rectangle:
-                        x = bb.x * viewScale * tileSize
-                        y = bb.y * viewScale * tileSize
-                        width = bb.width * viewScale * tileSize
-                        height = bb.height * viewScale * tileSize
+                        x = bb.x * VIEW_SCALE * TILE_SIZE
+                        y = bb.y * VIEW_SCALE * TILE_SIZE
+                        width = bb.width * VIEW_SCALE * TILE_SIZE
+                        height = bb.height * VIEW_SCALE * TILE_SIZE
                         fill = Color.Green
                         opacity = 0.5
                     container.children.add(rect)
@@ -99,8 +98,8 @@ object JFXEntityMvRepositoryFactory:
                     collider match
                         case b: PositionBehaviour => b.positionChanged += { _ =>
                             val bb = b.boundingBox
-                            rect.x = bb.x * viewScale * tileSize
-                            rect.y = bb.y * viewScale * tileSize
+                            rect.x = bb.x * VIEW_SCALE * TILE_SIZE
+                            rect.y = bb.y * VIEW_SCALE * TILE_SIZE
                         }
                         case _ => ()
                     this

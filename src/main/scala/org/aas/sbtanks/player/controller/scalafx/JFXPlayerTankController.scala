@@ -13,6 +13,7 @@ import scalafx.scene.layout.Pane
 import scalafx.Includes
 import org.aas.sbtanks.resources.scalafx.{JFXImageLoader, JFXMediaPlayer}
 import org.aas.sbtanks.player.view.ui.PlayerHealthView
+import org.aas.sbtanks.physics.PhysicsContainer
 
 abstract class JFXPlayerTankController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(tank: ControllableTank, speedMultiplier: Double, view: TankView, viewScale: Double, tileSize: Double)
     extends TankInputController(tank, view, speedMultiplier, viewScale, tileSize, JFXPlayerInputController())
@@ -26,7 +27,7 @@ abstract class JFXPlayerTankController[VSK, VS](using context: EntityRepositoryC
         stage.addEventHandler(KeyEvent.KeyReleased, inputEvents.handleKeyReleasedEvent)
 
 object JFXPlayerTankController:
-    def factory(speedMultiplier: Double, viewScale: Double, tileSize: Double, bulletConsumer: (AnyRef, Node) => Any)(context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: TankView) =
+    def factory(using physics: PhysicsContainer)(speedMultiplier: Double, viewScale: Double, tileSize: Double, bulletConsumer: (AnyRef, Node) => Any)(context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: TankView) =
         new JFXPlayerTankController(using context)(tank, speedMultiplier, view, viewScale, tileSize):
 
             var shootDelay = 0.0

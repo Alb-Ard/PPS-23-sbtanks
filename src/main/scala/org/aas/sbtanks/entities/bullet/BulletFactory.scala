@@ -6,6 +6,7 @@ import org.aas.sbtanks.behaviours.DirectionBehaviour
 import org.aas.sbtanks.behaviours.CollisionBehaviour
 import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.behaviours.DamageableBehaviour
+import org.aas.sbtanks.physics.PhysicsContainer
 
 /**
   * A factory that creates tank bullets.
@@ -27,7 +28,7 @@ class BulletFactory:
      * @param isPlayerBullet A flag to determine whether the player or an enemy tank will shot these bullets.
      * @return The created bullet.
      */
-    def create(position: Position, direction: Direction, speed: Double, isPlayerBullet: Boolean) =
+    def create(using physics: PhysicsContainer)(position: Position, direction: Direction, speed: Double, isPlayerBullet: Boolean) =
         new Bullet(speed, isPlayerBullet)
             with PositionBehaviour(position(0), position(1))
             with MovementBehaviour
