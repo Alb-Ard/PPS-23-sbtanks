@@ -40,6 +40,7 @@ object JFXPlayerTankController:
                 if(shootDelay >= 1.0)
                     val bullet = tank.shoot(1, true).head
                     val bulletView = new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
+                    bulletView.move(bullet.positionX * tileSize * viewScale, bullet.positionY * tileSize * viewScale)
                     bulletConsumer(bullet, bulletView)
                     JFXMediaPlayer.play(JFXMediaPlayer.BULLET_SFX)
                     shootDelay = 0.0

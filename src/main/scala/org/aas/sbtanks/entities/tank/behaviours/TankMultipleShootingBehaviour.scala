@@ -14,7 +14,7 @@ import org.aas.sbtanks.physics.PhysicsContainer
 trait TankMultipleShootingBehaviour:
     this: Tank with PositionBehaviour with DirectionBehaviour =>
 
-    private val BULLET_OFFSET = 0.1D
+    val BULLET_OFFSET = 0.1D
 
     private val bulletFactory = BulletFactory()
 
