@@ -12,6 +12,11 @@ import org.aas.sbtanks.entities.tank.structure.Tank.{ArmorTank, BasicTank}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import org.aas.sbtanks.entities.tank.factories.PowerTankData
+import org.aas.sbtanks.player.PlayerTank
+import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
+import org.aas.sbtanks.behaviours.PositionBehaviour
+import org.aas.sbtanks.behaviours.DirectionBehaviour
 
 class PowerUpBinderSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
 
@@ -83,7 +88,7 @@ class PowerUpBinderSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEac
 
         binder.getPowerUps.head.asInstanceOf[TimeablePowerUp].duration should be (1000)
 
-    "A powerup with enitities registered" should "be cleared on successive chaining call" in:
+    "A powerup with no more enitities registered" should "be cleared on successive chaining call" in:
         binder.bind(tank)
 
         val ss = new StarPowerUp()
@@ -101,6 +106,28 @@ class PowerUpBinderSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEac
 
 
         binder.getPowerUps should not contain(ss)
+
+    "Special powerups, like StarPowerUp" should "be chained multiple times" in:
+        val INCREASED_NUMBER_BULLETS = 2
+        
+        val playerTank = new PlayerTank() with TankMultipleShootingBehaviour with PositionBehaviour with DirectionBehaviour
+
+        binder.bind(playerTank)
+
+        val ss =  new StarPowerUp()
+
+        binder.chain(ss)
+
+        playerTank.tankData.bulletSpeed should be (PowerTankData.supplyData.bulletSpeed)
+
+
+        binder.chain(ss)
+
+        playerTank.shots should be (INCREASED_NUMBER_BULLETS)
+
+        
+
+
 
 
 

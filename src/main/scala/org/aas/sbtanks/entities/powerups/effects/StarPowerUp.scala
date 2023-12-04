@@ -9,11 +9,15 @@ import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
 import org.aas.sbtanks.entities.tank.factories.PowerTankData
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.{BasicTank, PowerTank}
+import org.aas.sbtanks.entities.powerups.PowerUp.PowerUpConstraint
+import org.aas.sbtanks.player.PlayerTank
 
 
 object Star:
     import StarPowerUpUtils.*
-    case class StarPowerUp() extends ContextualFuncPowerUp[(CounterContext, CachedContext[Int]), Tank]((CounterContext(0), CachedContext[Int]()))(f, g)
+    case class StarPowerUp() 
+        extends ContextualFuncPowerUp[(CounterContext, CachedContext[Int]), Tank]((CounterContext(0), CachedContext[Int]()))(f, g)
+        with PowerUpConstraint[Tank](constraint)
 
 
 object StarPowerUpUtils:
@@ -44,72 +48,8 @@ object StarPowerUpUtils:
             counter -= 1
             t
 
-
-
-object a extends App:
-    import Star.*
-    import StarPowerUpUtils.*
-
-
-
-    val sp = new StarPowerUp
-
-    var tank = new BasicTank with TankMultipleShootingBehaviour with PositionBehaviour with DirectionBehaviour
-
-
-
-    println(tank.tankData.bulletSpeed)
-    println(tank.shots)
-
-    tank = sp(tank)
-
-    println(tank.tankData.bulletSpeed)
-
-    tank = sp(tank)
-
-    println(tank.shots)
-
-    tank = sp.revert(tank)
-
-    println(tank.shots)
-
-    tank = sp.revert(tank)
-
-    println(tank.tankData.bulletSpeed)
-    println(tank.shots)
-
-
-
-    /*
-
-    var num = 10
-
-
-    num = sp(num)
-
-    println(num)
-
-    println(tank.tankData)
-
-    tank = sp(tank)
-
-    println(tank.tankData)
-
-    num = sp(num)
-
-    println(num)
-
-    tank = sp(tank)
-
-    println(tank.tankData)
-
-    num = sp(num)
-
-    println(num)
-     */
-
-
-
+    val constraint: (Tank => Boolean) =
+        _.isInstanceOf[PlayerTank]
 
 
 
