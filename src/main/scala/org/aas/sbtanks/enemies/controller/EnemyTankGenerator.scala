@@ -27,7 +27,7 @@ import scala.collection.mutable
 
 type EntityControllerWithMv[M, V] =  EntityMvRepositoryContainer[M, V] with EntityControllerRepository[M, V, ?]
 
-class EnemyTankGenerator(entityRepository: EntityControllerWithMv[AnyRef, Node], var tanks: mutable.Queue[ControllableTank], val tileSize: Double = 16D, val viewScale: Double = 4D, val tileAnimationSpeed: Double = 1) extends Steppable:
+class EnemyTankGenerator(entityRepository: EntityControllerWithMv[AnyRef, Node], var tanks: mutable.Queue[ControllableTank], val tileSize: Double, val viewScale: Double, val tileAnimationSpeed: Double = 1) extends Steppable:
 
 
     private var timeToSpawn: Double = 3.0

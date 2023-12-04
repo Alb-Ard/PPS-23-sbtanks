@@ -107,10 +107,10 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(tankUnitMoveSpeed, viewScale * tileSize, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView)), tileSize))
             .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(viewScale * tileSize))
-            .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && !m.asInstanceOf[DamageableBehaviour].isDamageable, EnemySpawnController.factory(viewScale * tileSize, entityRepository))
+            .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && !m.asInstanceOf[DamageableBehaviour].isDamageable, EnemySpawnController.factory(viewScale * tileSize, tileSize, entityRepository))
             .registerControllerReplacer(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && m.asInstanceOf[DamageableBehaviour].isDamageable, EnemyController.factory(viewScale * tileSize))
             .registerControllerFactory(m => m.isInstanceOf[Bullet], JFXBulletController.factory())
-            .registerControllerFactory(m => m.isInstanceOf[PickablePowerUp[Tank]], PowerUpController.factory[Tank](viewScale * tileSize, entityRepository, pickup))
+            .registerControllerFactory(m => m.isInstanceOf[PickablePowerUp[?]], PowerUpController.factory[Tank](viewScale * tileSize, entityRepository, pickup))
 
 
         val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
@@ -168,7 +168,7 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         val enemies = EnemyFactory.createFromString("BBB", 11, 11, 1).map(_.asInstanceOf[ControllableTank])
 
-        val g = new EnemyTankGenerator(entityRepository, mutable.Queue(enemies: _*))
+        val g = new EnemyTankGenerator(entityRepository, mutable.Queue(enemies: _*), tileSize, viewScale)
 
         entityRepository.addController(g)
 

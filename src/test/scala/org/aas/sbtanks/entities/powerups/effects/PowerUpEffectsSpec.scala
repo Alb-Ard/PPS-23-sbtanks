@@ -136,7 +136,7 @@ class PowerUpEffectsSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEa
         val s = new StarPowerUp
         val ENHANCED_SHOT: Int = 2
 
-        var tank = new BasicTank with TankMultipleShootingBehaviour with PositionBehaviour with DirectionBehaviour
+        var tank = new PlayerTank() with TankMultipleShootingBehaviour with PositionBehaviour with DirectionBehaviour
 
         tank = s(tank)
 
@@ -152,7 +152,7 @@ class PowerUpEffectsSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEa
         val s = new StarPowerUp
         val ENHANCED_SHOT: Int = 2
 
-        var tank = new BasicTank with TankMultipleShootingBehaviour with PositionBehaviour with DirectionBehaviour
+        var tank = new PlayerTank() with TankMultipleShootingBehaviour with PositionBehaviour with DirectionBehaviour
 
         tank = s(s(tank))
 
