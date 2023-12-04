@@ -56,7 +56,8 @@ class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E
     override def chain(next: PowerUp[E]): this.type =
         val currentBindings = entities.map(_.supplier()).map(EntityBinding(_))
 
-
+        powerUpBindings = powerUpBindings.filter:
+            case (_, storedEntities) => entities.contains(currentBindings) 
 
         powerUpBindings += (next -> currentBindings)
 
