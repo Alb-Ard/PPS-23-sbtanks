@@ -2,41 +2,42 @@ package org.aas.sbtanks.enemies.ai.fsm.movement
 
 import org.aas.sbtanks.enemies.ai.DirectionUtils.*
 import org.aas.sbtanks.enemies.ai.State.State
-import DirectionMove.{CanMoveTo, CannotMoveTo}
+import DirectionMovePolicy.{Try, Reset}
 import org.aas.sbtanks.enemies.ai.MovementEntity
 import org.aas.sbtanks.enemies.ai.fsm.{AbstractStateMachine, StateMachine, StateModifier}
 
 import scala.util.Random
 
-object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, DirectionMove]:
+object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, DirectionMovePolicy]:
+    import AiMovementStateMachineUtils.*
 
-    override def transition(value: DirectionMove): State[MovementEntity, Unit] =
+    override def transition(value: DirectionMovePolicy): State[MovementEntity, Unit] =
         for
             dir <- gets(x => (x.directionX.asInstanceOf[Double], x.directionY.asInstanceOf[Double]))
             newDir <- (dir, value) match
-                case ((_, y), CanMoveTo) if y > 0.0 => pure(Bottom)
-                case ((_, y), CannotMoveTo) if y > 0.0 => Random.nextInt(2) match {
+                case (Bottom, Reset) => pure(Bottom)
+                case (Bottom, Try) => Random.nextInt(2) match 
                     case 0 => pure(Right)
                     case 1 => pure(Left)
-                }
+                
 
-                case ((x, _), CanMoveTo) if x > 0.0 => pure(Bottom)
-                case ((x, _), CannotMoveTo) if x > 0.0 => Random.nextInt(2) match {
+                case (Right, Reset) => pure(Bottom)
+                case (Right, Try) => Random.nextInt(2) match 
                     case 0 => pure(Left)
                     case _ => pure(Top)
-                }
+                
 
-                case ((x, _), CanMoveTo) if x < 0.0 => pure(Bottom)
-                case ((x, _), CannotMoveTo) if x < 0.0 => Random.nextInt(2) match {
+                case (Left, Reset) => pure(Bottom)
+                case (Left, Try) => Random.nextInt(2) match 
                     case 0 => pure(Right)
                     case _ => pure(Top)
-                }
+                
 
-                case ((_, y), CanMoveTo) if y < 0.0 => Random.nextInt(2) match {
+                case (Top, Reset) => Random.nextInt(2) match 
                     case 0 => pure(Right)
                     case _ => pure(Left)
-                }
-                case ((_, y), CannotMoveTo) if y < 0.0 => pure(Bottom)
+                
+                case (Top, Try) => pure(Bottom)
 
                 case _ => pure(Bottom)
 
@@ -49,7 +50,7 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
     def checkMove(): State[MovementEntity, Option[(Double, Double)]] =
         for
             s0 <- getState
-            x <- gets(x => (x.directionX.asInstanceOf[Double], x.directionY.asInstanceOf[Double]))
+            x <- gets(e => (e.directionX.asInstanceOf[Double], e.directionY.asInstanceOf[Double]))
             if s0.testMoveRelative(x._1, x._2)
         yield x
 
@@ -59,31 +60,28 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
             d <- c match
                 case Some(d) => pure(d)
                 case None if remainingIterations > 0 =>
-                    transition(CannotMoveTo).flatMap(_ => moveNext(remainingIterations-1))
+                    transition(Try).flatMap(_ => moveNext(remainingIterations-1))
                 case _ => pure(NoDirection)
         yield d
 
     private def getNewCoord: State[MovementEntity, (Double, Double)] =
         for
-            d <- moveNext(5)
+            d <- moveNext(MAX_ITERATION_BEFORE_DEFAULT)
             c <- gets(x => (x.positionX, x.positionY))
-            newPos <- d match
-                case Bottom => pure((c._1, c._2 + 1))
-                case Right => pure((c._1 + 1, c._2))
-                case Left => pure((c._1 - 1, c._2))
-                case Top => pure((c._1, c._2 - 1))
-                case _ => pure((c._1, c._2))
+            newPos <- pure((c._1 + d._1, c._2 + d._2))
         yield newPos
 
 
     def computeState(): State[MovementEntity,(Double, Double)] =
         for
-            _ <- transition(CanMoveTo)
+            _ <- transition(Reset)
             newCoord <- getNewCoord
         yield newCoord
 
 
 object AiMovementStateMachineUtils:
+    val MAX_ITERATION_BEFORE_DEFAULT = 5
+    
     def computeAiState(entity: MovementEntity): ((Double, Double), MovementEntity) =
         AiMovementStateMachine.computeState().runAndTranslate(entity)
 
