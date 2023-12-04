@@ -84,7 +84,6 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
      * TODO: This method is a placeholder and requires a factory for power-up type and position generation.
      */
     private def setNewPickablePowerUp() =
-        // placeholder, need random factory
         val p = PickablePowerUpFactory.getRandomPowerUp
 
         println(p)
@@ -101,6 +100,7 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
      * @param player The player tank to be set up with power-ups.
      */
     private def setUpPlayer(player: PlayerTank) =
+        tankPowerUpsBinder.bind(player)
         tankPowerUpsBinder.chain(HelmetPowerUp())
 
 

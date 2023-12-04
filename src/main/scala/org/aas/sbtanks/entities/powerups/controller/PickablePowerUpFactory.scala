@@ -21,18 +21,21 @@ enum PowerUpType:
     case Star
     case Timer
 
+/*
+    TODO: SETUP POSITIONS
+ */
 object PickablePowerUpFactory:
     private lazy val grenadeInstance: PickablePowerUp[Tank] =
-        new GrenadePowerUp() with PositionBehaviour with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
+        new GrenadePowerUp() with PositionBehaviour(8.0,2.0) with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
 
     private lazy val helmetInstance: PickablePowerUp[Tank] =
-        new HelmetPowerUp() with PositionBehaviour with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
+        new HelmetPowerUp() with PositionBehaviour(8.0,2.0)  with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
 
     private lazy val starInstance: PickablePowerUp[Tank] =
-        new StarPowerUp() with PositionBehaviour with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
+        new StarPowerUp() with PositionBehaviour(8.0,2.0)  with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
 
     private lazy val timerPowerUp: PickablePowerUp[Tank] =
-        new TimerPowerUp() with PositionBehaviour with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
+        new TimerPowerUp() with PositionBehaviour(8.0,2.0)  with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
 
 
     def providePowerUp(powerUpType: PowerUpType) =
@@ -46,7 +49,7 @@ object PickablePowerUpFactory:
     def getRandomPowerUp =
         val powerUpTypes = PowerUpType.values
         val randomIndex = Random.nextInt(powerUpTypes.length)
-        providePowerUp(powerUpTypes(0))
+        providePowerUp(powerUpTypes(randomIndex))
 
 
 
