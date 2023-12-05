@@ -194,3 +194,84 @@ interface ViewAutoManager <Ctx extends MvContext> <<mixin>> {
 MvRepository <|.. ViewAutoManager
 @enduml
 ```
+
+# 4.5 Gestione powerUp sulle entità 
+Il sistema di gestione ed applicazione dei powerup di gioco è stata reso generico in termini del tipo di entità sul quale vengono applicati.
+- `PowerUp`: Permette  di applicare ed invertire l'effetto di un powerUp su di una entità, una volta fatto ciò è ritornata la nuova entità modificata
+- `PowerUpChain`: Fornisce le funzionalità necessarie a concatenare un numero variabile di `PowerUp` , si mantiene identico nell'uso in quanto rimane anch'esso un `PowerUp`
+c Dual-Binding delle entità
+Per fornire un sistema che potesse mantenere traccia e aggiornare in maniera reattiva le entità affette da powerUp si è scelto di realizzare un doppio binding tra le queste e il sistema in questione
+- `DualBinder`: Permette di legare e slegare un doppio riferimento ad un'entità
+- `EntityBinding`: Case class mantenuta all'interno del  `DualBinder`.  Rappresenta il doppio riferimento ad un'entità, è costituita da 2 componenti:
+	- `supplier`: Permette di ottenere lo stato corrente dell'entità. Ciò permette di lavorare direttamente con lo stato attuale delle entità a prescindere da cambiamenti successivi alla fase di binding
+	- `consumer`: Permette di aggiornare lo stato di un'entità mantenendo consistente il suo uso dall'esterno
+```plantuml
+scale 300 width
+
+@startuml
+Entity -> DualBinder: supply
+Entity <- DualBinder: consume
+@enduml
+
+```
+
+Questo approccio fornisce diversi vantaggi:
+ - è possibile lavorare sulle entità semplificando il tracciamento dei suoi cambiamenti di stato da parte di altri sistemi
+ - Ogni modifica sull'entità è riflessa immediatamente, se alcun bisogno di lavorare su sue  copie o stati 
+## 4.5.2 Descrizione generale del sistema
+Entrambe le componenti precedentemente descritte:
+ - `PowerUpChain`
+ - `DualBinder`
+
+Sono state integrate in una nuova componente `PowerUpChainBinder`, che ne integra le funzionalità, permettendo di:
+ - registrare le entità sulle quali verranno applicati i powerup
+ - concatenare powerup al sistema facendo in modo che questi vengano eseguiti
+
+Alcune note:
+ - il `PowerUpChainBinder` applica i powerup solo su entità attualmente registrate, facendo in modo che il sistema si mantenga dinamico e flessibile anche a seguito di multiple chiamate di `bind` e `unbind`
+ - la logica di applicazione rimane vincolata al solo powerup, nessun altro componente possiede informazioni sul loro risultato effettivo
+
+```plantuml
+
+@startuml
+
+abstract class PowerUp < E > {
+	+ apply[A <: E](entity: A): A
+	+ revert [A <: E](entity: A): A
+}
+
+class PowerUpChain < E > {
+  - powerUps: Seq[PowerUp[E]]
+  + apply(powerUps: PowerUp[E]*): PowerUpChain[E]
+  + chain(next: PowerUp[E]): PowerUpChain[E]
+  + unchain(last: PowerUp[E]): PowerUpChain[E]
+}
+
+interface DualBinder < E > {
+  # entities: Seq[EntityBinding]
+  + bind(entity: E): Unit
+  + unbind(entity: E): Unit
+}
+
+class EntityBinding < E > {
+  - {field} supplier: () => E
+  - {field} consumer: E => Unit
+}
+
+class PowerUpChainBinder < E > {
+  - powerUpBindings: Map[PowerUp[E], Seq[EntityBinding]]
+  + getPowerUps(): Seq[PowerUp[E]]
+  + chain(next: PowerUp[E]): this.type
+  + unchain(last: PowerUp[E]): this.type
+}
+
+PowerUp <-- PowerUpChainBinder: use
+PowerUp <|-- PowerUpChain
+PowerUpChainBinder <|-- PowerUpChain
+PowerUpChainBinder <|.. DualBinder
+DualBinder o-- EntityBinding
+
+@enduml
+
+
+```
