@@ -52,12 +52,10 @@ type EntityControllerWithMv[M, V] =  EntityMvRepositoryContainer[M, V] with Enti
  */
 class EnemyTankGenerator(using PhysicsContainer)(entityRepository: EntityControllerWithMv[AnyRef, Node], var tankString:String , val width: Double, val height: Double, val tileSize: Double, val viewScale: Double, val tileAnimationSpeed: Double = 1) extends Steppable:
 
-
     private var timeToSpawn: Double = 3.0
-
-
     private var tanksQueue = mutable.Queue.from(EnemyFactory.createFromString(tankString))
 
+    def remainingEnemyCount = tanksQueue.length
 
     override def step(delta: Double): this.type =
         timeToSpawn -= delta
@@ -68,10 +66,6 @@ class EnemyTankGenerator(using PhysicsContainer)(entityRepository: EntityControl
             else
                 generateFromBuilder(tanksQueue.dequeue())
         this
-
-
-
-
 
     private def generateFromBuilder(tankBuilder: EnemyTankBuilder) =
         tankBuilder

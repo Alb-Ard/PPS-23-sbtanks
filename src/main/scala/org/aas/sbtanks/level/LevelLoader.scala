@@ -10,6 +10,7 @@ import scala.io.Source.*
  * in such a way that the program's other classes can use them to show the correct layout and sequence of enemies for each level
  */
 class LevelLoader: //da qui leggerò i file txt (guarda le librerie che si occupano di caricare tali file
+    val LEVEL_SIZE = 11
 
     /**
      * Reads an amount of files from levels resource package.
@@ -19,14 +20,12 @@ class LevelLoader: //da qui leggerò i file txt (guarda le librerie che si occup
      * @param amount The amount of files it must read
      * @return A tuple, where the first element is a Seq of all the level layouts, while the second element is a Seq of all enemies for each level
      */
-    def getLevelSeq(amount: Int): (Seq[(String, Int, Int)], Seq[String]) =
-        val levels = new ListBuffer[(String, Int, Int)]
-        val enemySequencePerLevel = new ListBuffer[String]
+    def getLevelSeq(amount: Int) =
+        var levels = Seq.empty[(String, Int, String)]
         for(n <- Range.inclusive(1, amount))
             val level = getLevel(n)
-            levels.addOne(level._1, 11, level._2.size)
-            enemySequencePerLevel += level._2
-        (levels.toSeq, enemySequencePerLevel.toSeq)
+            levels = levels :+ (level(0), LEVEL_SIZE, level(1))
+        levels
 
     /**
      * Reads one level file from levels resource package.

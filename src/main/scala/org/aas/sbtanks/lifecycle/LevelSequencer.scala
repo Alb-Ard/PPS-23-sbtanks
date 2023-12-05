@@ -7,11 +7,10 @@ import org.aas.sbtanks.player.PlayerTank
 import scala.reflect.ClassTag
 import org.aas.sbtanks.event.EventSource
 
-class LevelSequencer[M >: PlayerTank, V](using modelClassTag: ClassTag[M], viewClassTag: ClassTag[V])(levels: Seq[(String, Int, Int)], levelFactory: LevelFactory[M, V], entityRepository: LevelFactory[M, V]#LevelEntityRepository):
-    val levelChanged = EventSource[(LevelContainer[M, V], Int)]
+class LevelSequencer[M >: PlayerTank, V](using modelClassTag: ClassTag[M], viewClassTag: ClassTag[V])(levels: Seq[(String, Int, String)], levelFactory: LevelFactory[M, V], entityRepository: LevelFactory[M, V]#LevelEntityRepository):
+    val levelChanged = EventSource[(LevelContainer[M, V], String)]
 
     private var remainingLevelsQueue = Queue.from(levels)
-
     private var currentLevel = Option.empty[LevelContainer[M, V]]
 
     def completedLevelCount = levels.size - remainingLevelsQueue.size - 1
@@ -36,11 +35,11 @@ class LevelSequencer[M >: PlayerTank, V](using modelClassTag: ClassTag[M], viewC
             case None => 
                 remainingLevelsQueue = Queue.empty
                 currentLevel = Option.empty
-            case Some(((levelString, levelSize, enemyCount), newQueue)) =>
+            case Some((level, newQueue)) =>
                 remainingLevelsQueue = newQueue
-                currentLevel = Option(levelFactory.createFromString(levelString, levelSize, entityRepository))
+                currentLevel = Option(levelFactory.createFromString(level(0), level(1), entityRepository))
                 copyPlayerHealth(player)
-                levelChanged(currentLevel.get, enemyCount)
+                levelChanged(currentLevel.get, level(2))
         this
     
     private def endCurrentLevel() =

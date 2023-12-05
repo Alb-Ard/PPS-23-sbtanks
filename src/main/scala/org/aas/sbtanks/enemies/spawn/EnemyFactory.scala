@@ -69,10 +69,10 @@ object EnemyFactoryUtils:
      * A mapping from character codes to tank types.
      */
     val mapping: Map[Char, TankTypeData] = Map(
-        'B' -> BasicTankData,
-        'F' -> FastTankData,
-        'P' -> PowerTankData,
-        'A' -> ArmorTankData
+        'b' -> BasicTankData,
+        'f' -> FastTankData,
+        'p' -> PowerTankData,
+        'a' -> ArmorTankData
     )
 
 

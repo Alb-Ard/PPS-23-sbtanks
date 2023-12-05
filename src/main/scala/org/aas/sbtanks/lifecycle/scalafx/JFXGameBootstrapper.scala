@@ -38,6 +38,8 @@ import org.aas.sbtanks.entities.repository.scalafx.JFXEntityMvRepositoryFactory.
   * @param windowSize The window size, in pixels
   */
 class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)):
+    private val TANK_ANIMATION_SPEED = 16D
+
     val gameEnded = EventSource[Unit]
     val restartedGame = EventSource[Unit]
 
@@ -47,12 +49,12 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
     given PhysicsContainer = PhysicsWorld
     given PointsContainer = PointsManager
 
-    private val entityRepository = JFXEntityMvRepositoryFactory.create().addDefaultControllerFactories(powerupPickupped, enemyTankSpawned)
+    private val entityRepository = JFXEntityMvRepositoryFactory.create().addDefaultControllerFactories(powerupPickupped, enemyTankSpawned, TANK_ANIMATION_SPEED)
     private val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
-    private val levelFactory = JFXLevelFactory(JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE, 1, 16)
+    private val levelFactory = JFXLevelFactory(JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE, 1, TANK_ANIMATION_SPEED)
     private val levelLoader = LevelLoader()
     private val levels = levelLoader.getLevelSeq(5)
-    private val levelSequencer = LevelSequencer[AnyRef, Node](levels(0), levelFactory, entityRepository)
+    private val levelSequencer = LevelSequencer[AnyRef, Node](levels, levelFactory, entityRepository)
     private val gameLoop = GameLoop(entityRepository, Seq(entityRepository))
     private val pauseUiView = JFXPauseMenu(interfaceScale, windowSize)
     private val binder = new PowerUpChainBinder[Tank]
@@ -81,13 +83,13 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
                 endGame()
         var enemyGenerator = Option.empty[EnemyTankGenerator]
         var binderController = Option.empty[PowerUpBinderController]
-        levelSequencer.levelChanged += { (level, enemyCount) => 
+        levelSequencer.levelChanged += { (level, enemyString) => 
             enemyGenerator.foreach(entityRepository.removeController)
             binderController.foreach(entityRepository.removeController)
-            enemyGenerator = Option(new EnemyTankGenerator(entityRepository, "B||BB", level.size, level.size, JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE))
+            enemyGenerator = Option(new EnemyTankGenerator(entityRepository, enemyString, level.size, level.size, JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE))
             binderController = Option(new PowerUpBinderController(entityRepository, level.size, level.size, binder, powerupPickupped, enemyTankSpawned))
             entityRepository.addController(enemyGenerator.get)
-            playerUiViewController.setEnemyCount(enemyCount) 
+            playerUiViewController.setEnemyCount(enemyGenerator.get.remainingEnemyCount) 
             playerUiViewController.setCompletedLevelCount(levelSequencer.completedLevelCount)
         }
         entityRepository.addController(playerDeathController)

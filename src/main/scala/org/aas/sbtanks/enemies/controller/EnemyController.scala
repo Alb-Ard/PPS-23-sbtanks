@@ -17,18 +17,12 @@ class EnemyController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK
     with AiMovableController(Seq(enemyTank.asInstanceOf[MovementEntity]))
     with Steppable:
 
-    private var test: Double = 3.0
-
     override def step(delta: Double) =
-        test -= delta
-        if test <= 0.0 then
-            this.enemyTank.destroyed(())
-            test = 50
-        this.computeStates()
+        computeStates()
         this
 
 object EnemyController:
-    def factory(viewScale: Double, tileSize: Double)(context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: TankView) =
+    def factory(viewScale: Double, tileSize: Double)(oldController: Any, context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: TankView) =
         new EnemyController(using context)(tank, view, viewScale, tileSize)
 
         

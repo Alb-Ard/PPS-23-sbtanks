@@ -8,7 +8,7 @@ class LevelLoaderTest extends AnyFlatSpec with Matchers:
     val loader = LevelLoader()
 
     "A loader" should "be able to read a file and give the level layout" in {
-        loader.getLevelSeq(1)._1 should be (Seq(("UUUUUUUUUUU" +
+        loader.getLevelSeq(1)(0) should be (Seq(("UUUUUUUUUUU" +
                                                         "U--WWWWW--U" +
                                                         "U-W-W-W-W-U" +
                                                         "U-W-W-W-W-U" +
@@ -22,12 +22,12 @@ class LevelLoaderTest extends AnyFlatSpec with Matchers:
     }
 
     it should "be able to return a list of enemies" in {
-        loader.getLevelSeq(1)._2 should be (Seq("bbbbbbbbbbbbfffbbfba"))
+        loader.getLevelSeq(1)(2) should be (Seq("bbbbbbbbbbbbfffbbfba"))
     }
 
     it should "be abe to read multiple files" in {
-        loader.getLevelSeq(6)._1.size should be (6)
-        loader.getLevelSeq(6)._2.size should be (6)
+        loader.getLevelSeq(6)(1) should be (6)
+        loader.getLevelSeq(6)(1) should be (6)
 
     }
 
