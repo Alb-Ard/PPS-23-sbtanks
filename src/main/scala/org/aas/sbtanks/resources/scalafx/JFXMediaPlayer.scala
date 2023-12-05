@@ -11,7 +11,7 @@ import java.io.BufferedReader
 object JFXMediaPlayer extends JFXPersistentVolumeMixer:
     val MEDIA_START_MUSIC = (getMedia("1 - Track 1.mp3"), SoundMixerLane.Music)
 
-    val GAME_OVER_MUSIC = (getMedia("3 - Track 3.mp3"), SoundMixerLane.Music)
+    val GAME_OVER_SFX = (getMedia("SFX 1.mp3"), SoundMixerLane.Sound)
 
     val BULLET_SFX = (getMedia("SFX 13.mp3"), SoundMixerLane.Sound)
 

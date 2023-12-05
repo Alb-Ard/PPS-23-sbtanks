@@ -17,9 +17,22 @@ import scalafx.scene.text.TextAlignment.Center
 import scalafx.scene.text.{Font, Text, TextAlignment, TextFlow}
 import scalafx.scene.{Node, Scene}
 
+/**
+ * View shown to the player when it reaches a game over status, either by losing all his lives or by the destruction of the player's base.
+ *
+ * @param level The levelsequencer in order to retrieve the number of levels completed.
+ * @param interfaceScale The scale of the interface.
+ * @param windowSize The size of the window.
+ */
 class JFXGameOverView(level: LevelSequencer[?,?], interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)) extends VBox:
 
+    /**
+     * event that is called when the player wants to restart the game.
+     */
     val retryRequested = EventSource[Unit]
+    /**
+     * event that is called when the player wants to quit the game.
+     */
     val exitRequested = EventSource[Unit]
 
     private val BUTTON_SIZE = (150, 10)
