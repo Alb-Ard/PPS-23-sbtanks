@@ -4,6 +4,36 @@ L'applicazione sviluppata dovrà avere le seguenti caratteristiche:
 - Opzionalmente, potranno essere rese disponibili altre modalità di gioco alternative;
 - L'applicativo dovrà replicare, nel modo più fedele possibile, le meccaniche di gioco base.
 # 2.2 Modello del dominio
+Il dominio è definito dalle caratteristiche del gioco Battle City (con le caratteristiche e restrizioni descritte nel paragrafo precedente). 
+Ciò comporta il controllo di un carro armato attraverso un labirinto, la distruzione dei carri nemici e la protezione della propria base supportati da eventuali potenziamenti
+Le seguenti entità sono state estrapolate nel definire un modello per tale dominio:
+ 1. Livello: rappresenta un singolo stage all'interno del gioco
+ 2. Carro armato: entità attiva principale del gioco, rappresenta da una parte l'agente con cui interagisce l'utente (giocatore) e dall'altra un'entità manipolata da AI (nemico)
+ 3. Ostacolo: costituiscono la struttura dei livelli, possono avere diverse caratteristiche a seconda della loro categoria. La base del player rappresenta l'ostacolo piu' importante: la sua distruzione da parte dei nemici comporta la sconfitta istantanea 
+ 4. Potenziamento: possono essere raccolti sul suolo del livello durante il gioco: permettono l'acquisizione di potenziamenti per il carro armato del giocatore, depotenziamenti per i nemici o alterazioni del livello di gioco
+ 5. Proiettile: permette di danneggiare nemici o il giocatore. 
+```plantuml
+@startuml
+entity Tank {
+	tankType
+}
+entity Player
+entity Enemy
+entity Obstacle {
+	+obstacleType
+}
+entity Bullet
+entity Level
+entity Powerup
+
+Level o-- Powerup
+Level *-- Obstacle
+Level *-- Tank
+Tank <|-- Player
+Tank <|-- Enemy
+Tank --> Bullet: generate
+@enduml
+```
 
 # 2.3 Funzionali
 ## 2.3.1 Utente
