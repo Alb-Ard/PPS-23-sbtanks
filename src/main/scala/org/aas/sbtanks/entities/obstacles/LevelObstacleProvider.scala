@@ -4,6 +4,7 @@ import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.behaviours.PositionBehaviour
 import org.aas.sbtanks.behaviours.CollisionBehaviour
 import org.aas.sbtanks.behaviours.DamageableBehaviour
+import org.aas.sbtanks.physics.PhysicsContainer
 
 /**
   * Instance of an obstacle entity
@@ -29,19 +30,19 @@ trait LevelObstacleType:
   */
 object LevelObstacle:
     sealed trait LevelObstacleProvider(val obstacleType: LevelObstacleType, val imagesPath: String*):
-        def apply(x: Double, y: Double) = 
+        def apply(using physics: PhysicsContainer)(x: Double, y: Double) = 
             Seq(new LevelObstacle(obstacleType, imagesPath) with PositionBehaviour(x, y))
 
     sealed trait CollidableLevelObstacle(val sizeX: Double, val sizeY: Double, val layer: CollisionLayer):
         this: LevelObstacleProvider =>
 
-        override def apply(x: Double, y: Double) =
+        override def apply(using physics: PhysicsContainer)(x: Double, y: Double) =
             Seq(new LevelObstacle(obstacleType, imagesPath) with PositionBehaviour(x, y) with CollisionBehaviour(sizeX, sizeY, layer, Seq.empty))
 
     sealed trait DestroyableLevelObstacle(val edgeSubsections: Int, val imagesAsAnimation: Boolean):
         this: CollidableLevelObstacle with LevelObstacleProvider =>
 
-        override def apply(x: Double, y: Double) =
+        override def apply(using physics: PhysicsContainer)(x: Double, y: Double) =
             (0 until edgeSubsections)
                 .flatMap(subsectionY => (0 until edgeSubsections)
                     .map(subsectionX => (subsectionX.asInstanceOf[Double], subsectionY.asInstanceOf[Double])))

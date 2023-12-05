@@ -20,6 +20,9 @@ import org.aas.sbtanks.event.EventSource
 import scalafx.beans.property.IntegerProperty
 import org.aas.sbtanks.lifecycle.PointsManager
 import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer
+import org.aas.sbtanks.physics.PhysicsContainer
+import org.aas.sbtanks.physics.PhysicsWorld
+import scalafx.scene.media.MediaPlayer
 
 /**
   * A class used to manage all components required for a game
@@ -29,18 +32,28 @@ import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer
   * @param windowSize The window size, in pixels
   */
 class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)):
+    val IS_DEBUG = true
+
+    /**
+     * An event that is invoked when the game has ended.
+     */
     val gameEnded = EventSource[Unit]
+    /**
+     * An event that is invoked when the game has restarted
+     */
     val restartedGame = EventSource[Unit]
 
-    private val entityRepository = JFXEntityMvRepositoryFactory.create()
+    given PhysicsContainer = PhysicsWorld
+    private val entityRepository = JFXEntityMvRepositoryFactory.create(IS_DEBUG)
     private val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
     private val levelFactory = JFXLevelFactory(JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE, 1, 16)
     private val levelLoader = LevelLoader()
     private val levels = levelLoader.getLevelSeq(5)
     private val levelSequencer = LevelSequencer[AnyRef, Node](levels(0), levelFactory, entityRepository)
     private val gameLoop = GameLoop(entityRepository, Seq(entityRepository))
-    private val pauseUiView = JFXPauseMenu(interfaceScale)
+    private val pauseUiView = JFXPauseMenu(interfaceScale, windowSize)
 
+    private var gameoverSound = MediaPlayer(JFXMediaPlayer.BULLET_SFX._1)
     private var cleanup: Option[() => Any] = Option.empty
 
     /**
@@ -55,14 +68,10 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
                 container.children.add(playerSidebar)
         val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer, ViewSlot.Ui):
             override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) =
-                //JFXMediaPlayer.play(JFXMediaPlayer.GAME_OVER_MUSIC)
+                gameoverSound = JFXMediaPlayer.play(JFXMediaPlayer.GAME_OVER_SFX)
                 currentContext.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
             override protected def restart(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]): this.type =
-//                JFXMediaPlayer.mediaEnded once { m =>
-//                    m match
-//                        case m if m == JFXMediaPlayer.GAME_OVER_MUSIC(0) => restart(currentContext)
-//                        case _ => ()
-//                }
+                gameoverSound.stop()
                 restartedGame(())
                 this
         val pauseController = new JFXPauseController(gameLoop, pauseUiView):

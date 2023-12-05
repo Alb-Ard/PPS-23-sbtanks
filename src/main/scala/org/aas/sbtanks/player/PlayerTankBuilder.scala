@@ -10,6 +10,7 @@ import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.behaviours.DamageableBehaviour
 import org.aas.sbtanks.entities.tank.TankExample.updatedTank
 import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
+import org.aas.sbtanks.physics.PhysicsContainer
 
 case class PlayerTank() extends Tank(PlayerTankData)
 
@@ -17,6 +18,8 @@ case class PlayerTankBuilder(private val x: Double = 0,
     private val y: Double = 0,
     private val collisionSizeX: Double = 1,
     private val collisionSizeY: Double = 1,
+    private val collisionOffsetX: Double = 0,
+    private val collisionOffsetY: Double = 0,
     private val collisionLayer: CollisionLayer = CollisionLayer.TanksLayer,
     private val collisionMask: Set[CollisionLayer] = PlayerTankBuilder.DEFAULT_COLLISION_MASK):
 
@@ -25,6 +28,9 @@ case class PlayerTankBuilder(private val x: Double = 0,
 
     def setCollisionSize(x: Double = x, y: Double = y) =
         copy(collisionSizeX = x, collisionSizeY = y)
+
+    def setCollisionOffset(x: Double = x, y: Double = y) =
+        copy(collisionOffsetX = x, collisionOffsetY = y)
 
     def setCollisionLayer(layer: CollisionLayer) =
         copy(collisionLayer = layer)
@@ -35,7 +41,7 @@ case class PlayerTankBuilder(private val x: Double = 0,
             case _ => collisionMask.filterNot(layer.equals)
         )
 
-    def build() =
+    def build(using physics: PhysicsContainer)() =
         new PlayerTank()
             with PositionBehaviour(x, y)
             with ConstrainedMovementBehaviour
@@ -54,7 +60,7 @@ case class PlayerTankBuilder(private val x: Double = 0,
                             this
                 def respawn() =
                     this.setPosition(startingX, startingY)
-
+        .setBoundingBoxOffset(collisionOffsetX, collisionOffsetY)
 
 object PlayerTankBuilder:
     val DEFAULT_COLLISION_MASK: Set[CollisionLayer] = Set(

@@ -6,9 +6,9 @@ import org.aas.sbtanks.enemies.ai.shooting.LineOfSight.getCollisionLines
 import org.aas.sbtanks.entities.obstacles.LevelObstacle
 import org.aas.sbtanks.entities.obstacles.LevelObstacle.PlayerBase
 import org.aas.sbtanks.physics.Raycast.*
-import org.aas.sbtanks.physics.{Collider, CollisionLayer, PhysicsContainer, PhysicsWorld}
+import org.aas.sbtanks.physics.{Collider, CollisionLayer, PhysicsContainer}
 
-trait LineOfSight(private val lineCollisions: Seq[CollisionLayer], private val exclusion: Seq[Collider], private val seeThrough: Int = 5):
+trait LineOfSight(using physics: PhysicsContainer)(private val lineCollisions: Seq[CollisionLayer], private val exclusion: Seq[Collider], private val seeThrough: Int = 5):
     this: PositionBehaviour with DirectionBehaviour =>
 
 
@@ -28,11 +28,11 @@ trait LineOfSight(private val lineCollisions: Seq[CollisionLayer], private val e
 
 
     private def getVerticalLine(backwards: Boolean = false): Seq[Collider] =
-        PhysicsWorld.verticalRayCast(this.positionX, this.positionY, if backwards then Some(-Double.MaxValue) else Option.empty, lineCollisions, exclusion)
+        physics.verticalRayCast(this.positionX, this.positionY, if backwards then Some(-Double.MaxValue) else Option.empty, lineCollisions, exclusion)
 
 
     private def getHorizontalLine(backwards: Boolean = false): Seq[Collider] =
-        PhysicsWorld.horizontalRayCast(this.positionX, this.positionY, if backwards then Some(-Double.MaxValue) else Option.empty, lineCollisions, exclusion)
+        physics.horizontalRayCast(this.positionX, this.positionY, if backwards then Some(-Double.MaxValue) else Option.empty, lineCollisions, exclusion)
 
 
 object LineOfSight {

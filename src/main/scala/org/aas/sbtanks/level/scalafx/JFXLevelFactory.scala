@@ -18,8 +18,11 @@ import org.aas.sbtanks.level.LevelFactory.StringEntity.StringPlayer
 import org.aas.sbtanks.level.LevelFactory.StringEntity.StringEmpty
 import org.aas.sbtanks.player.PlayerTankBuilder
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
+import org.aas.sbtanks.physics.PhysicsContainer
 
-final case class JFXLevelFactory(tileSize: Double, viewScale: Double, tileAnimationSpeed: Double, tankAnimationSpeed: Double) extends LevelFactory[AnyRef, Node]:
+final case class JFXLevelFactory(tileSize: Double, viewScale: Double, tileAnimationSpeed: Double, tankAnimationSpeed: Double)(using physics: PhysicsContainer) extends LevelFactory[AnyRef, Node]:
+    val TANK_SPRITE_SIZE = (13, 14)
+
     val pixelSize = 1D / tileSize
 
     override protected def createEntityMv(entity: StringEntity, x: Double, y: Double): Seq[(AnyRef, Node)] = 
@@ -47,7 +50,8 @@ final case class JFXLevelFactory(tileSize: Double, viewScale: Double, tileAnimat
     private def createTankMv(x: Double, y: Double, tankType: String, tankAttributes: Seq[String]) =
         val tank = PlayerTankBuilder()
                 .setPosition(x, y)
-                .setCollisionSize(x = 1D - pixelSize, y = 1D - pixelSize)
+                .setCollisionSize(x = TANK_SPRITE_SIZE(0) * pixelSize, y = TANK_SPRITE_SIZE(1) * pixelSize)
+                .setCollisionOffset(pixelSize, pixelSize)
                 .build()
         val attributeString = tankAttributes.fold("")((c, n) => c + n + "_")
         val images = Seq("up", "right", "down", "left").map(d => JFXImageLoader.loadFromResources(Seq(

@@ -24,27 +24,32 @@ object JFXEntityRepositoryContextInitializer extends scalafx.Includes:
     /**
       * Creates an initializer for a game level context
       *
-      * @param levelKey
-      * @param uiKey
+      * @param levelKey The slot key that will identify the game view container
+      * @param uiKey The slot key that will identify the game ui container
+      * @param overlayKey The slot key that will identify the overlay over the game container
       * @return
       */
     def ofLevel[VSlotKey](levelKey: VSlotKey, uiKey: VSlotKey, overlayKey: VSlotKey): JFXInitializer[VSlotKey] =
         new JFXInitializer[VSlotKey]:
             override def create(controller: Stage, currentSlots: ViewSlotsMap) =
                 val levelContainer = new Pane():
-                    background = Background.EMPTY
+                    background = Background.Empty
+                    alignmentInParent = Pos.Center
                 val uiContainer = new Pane():
-                    background = Background.EMPTY
+                    background = Background.Empty
+                    alignmentInParent = Pos.Center
                 val scenePane = new BorderPane(null, null, null, null, null):
-                    background = Background.EMPTY
-                val overlayPane = new Pane:
-                    background = Background.EMPTY
+                    background = Background.Empty
+                    alignmentInParent = Pos.Center
+                val overlayPane = new StackPane:
+                    background = Background.Empty
+                    alignmentInParent = Pos.Center
+                    alignment = Pos.Center
                 val mainPane = new StackPane:
-                    background = Background.EMPTY
+                    background = Background.Empty
+                    alignment = Pos.Center
                 scenePane.center.set(levelContainer)
                 scenePane.right.set(uiContainer)
-                BorderPane.setAlignment(levelContainer, Pos.CENTER)
-                BorderPane.setAlignment(uiContainer, Pos.CENTER)
                 mainPane.children.addAll(scenePane, overlayPane)
                 controller.scene.value.root = mainPane
                 Map((levelKey, levelContainer), (uiKey, uiContainer), (overlayKey, overlayPane))
@@ -52,12 +57,12 @@ object JFXEntityRepositoryContextInitializer extends scalafx.Includes:
     /**
       * Creates an initializer for a ui-only context
       *
-      * @param uiKey
+      * @param uiKey The slot key that will identify the ui container
       */
     def ofView[VSlotKey](uiKey: VSlotKey): JFXInitializer[VSlotKey] =
         new JFXInitializer[VSlotKey]:
             override def create(controller: Stage, currentSlots: ViewSlotsMap) =
                 val uiContainer = new Pane():
-                    background = Background.EMPTY
+                    background = Background.Empty
                 controller.scene.value.root = uiContainer
                 Map((uiKey, uiContainer))

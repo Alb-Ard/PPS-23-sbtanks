@@ -1,15 +1,16 @@
-package org.aas.sbtanks.level
+package org.aas.sbtanks.levels
 
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.level.LevelFactory.StringEntity.{StringBase, StringBrickWall, StringEmpty, StringIce, StringIndestructibleWall, StringPlayer, StringSteelWall, StringTrees, StringWater}
 import org.aas.sbtanks.level.LevelFactory.stringEntityFromChar
 import org.aas.sbtanks.entities.obstacles.LevelObstacle
-import org.aas.sbtanks.physics.{Collider, PhysicsWorld}
+import org.aas.sbtanks.physics.{Collider, PhysicsContainer}
+import org.aas.sbtanks.level.LevelFactory
 
 import scala.compiletime.uninitialized
 
-final case class MockLevelFactory(tankFactory: (x: Double, y: Double) => Tank) extends LevelFactory[AnyRef, Unit]:
+final case class MockLevelFactory(tankFactory: (x: Double, y: Double) => Tank)(using physics: PhysicsContainer) extends LevelFactory[AnyRef, Unit]:
     private var entity: AnyRef = uninitialized
 
     def createFromString(levelString: String, levelEdgeSize: Int) =
@@ -23,7 +24,7 @@ final case class MockLevelFactory(tankFactory: (x: Double, y: Double) => Tank) e
                 .map(createEntityMv(_, x, y))
                 .getOrElse(Seq.empty)
                 .foreach((m, _) => m match
-                    case c: Collider => PhysicsWorld.registerCollider(c)
+                    case c: Collider => physics.registerCollider(c)
                     case _ => ()
                 )
 

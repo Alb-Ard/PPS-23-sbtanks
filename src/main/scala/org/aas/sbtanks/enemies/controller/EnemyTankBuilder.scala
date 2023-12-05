@@ -6,14 +6,15 @@ import org.aas.sbtanks.entities.tank.factories.{BasicTankData, TankTypeData}
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.player.{PlayerTank, PlayerTankBuilder}
+import org.aas.sbtanks.physics.PhysicsContainer
 
-case class EnemyTankBuilder(private val x: Double = 0,
-                             private val y: Double = 0,
-                             private val tankType: TankTypeData = BasicTankData,
-                             private val collisionSizeX: Double = 1,
-                             private val collisionSizeY: Double = 1,
-                             private val collisionLayer: CollisionLayer = CollisionLayer.TanksLayer,
-                             private val collisionMask: Set[CollisionLayer] = PlayerTankBuilder.DEFAULT_COLLISION_MASK):
+case class EnemyTankBuilder(x: Double = 0,
+                            y: Double = 0,
+                            tankType: TankTypeData = BasicTankData,
+                            collisionSizeX: Double = 1,
+                            collisionSizeY: Double = 1,
+                            collisionLayer: CollisionLayer = CollisionLayer.TanksLayer,
+                            collisionMask: Set[CollisionLayer] = PlayerTankBuilder.DEFAULT_COLLISION_MASK):
 
     def setPosition(x: Double = x, y: Double = y) =
         copy(x = x, y = y)
@@ -33,7 +34,7 @@ case class EnemyTankBuilder(private val x: Double = 0,
     def setTankType(tankTypeData: TankTypeData) =
         copy(tankType = tankTypeData)
 
-    def build() =
+    def build(using physics: PhysicsContainer)() =
         new Tank(tankType)
             with PositionBehaviour(x, y)
             with ConstrainedMovementBehaviour

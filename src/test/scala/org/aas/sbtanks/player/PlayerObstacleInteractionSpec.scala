@@ -4,7 +4,7 @@ import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
 import org.aas.sbtanks.entities.obstacles.LevelObstacle
-import org.aas.sbtanks.physics.PhysicsWorld
+import org.aas.sbtanks.physics.PhysicsContainer
 import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer
 import org.aas.sbtanks.entities.repository.EntityColliderAutoManager
 
@@ -15,12 +15,13 @@ class PlayerObstacleInteractionSpec extends AnyFeatureSpec with GivenWhenThen wi
 
     Feature("Player obstacle collisions") {
         Scenario("A player colliding with a solid obstacle must not overlap with it") {
-            Given("An empty starting entity repository with physics management")
+            Given("An empty physics world")
+            val physics = new Object() with PhysicsContainer
+            given PhysicsContainer = physics
+
+            And("An empty starting entity repository with physics management")
             val repository = new EntityMvRepositoryContainer[AnyRef, AnyRef]
                 with EntityColliderAutoManager[AnyRef, AnyRef]
-
-            And("An empty physics world")
-            PhysicsWorld.clearColliders()
 
             And("A player tank at position (0, 0)")
             val playerTank = PlayerTankBuilder().build()
@@ -51,12 +52,13 @@ class PlayerObstacleInteractionSpec extends AnyFeatureSpec with GivenWhenThen wi
         }
 
         Scenario("A player colliding with a non-solid obstacle should overlap it") {
-            Given("An empty starting entity repository with physics management")
+            Given("An empty physics world")
+            val physics = new Object() with PhysicsContainer
+            given PhysicsContainer = physics
+
+            And("An empty starting entity repository with physics management")
             val repository = new EntityMvRepositoryContainer[AnyRef, AnyRef]
                 with EntityColliderAutoManager[AnyRef, AnyRef]
-
-            And("An empty physics world")
-            PhysicsWorld.clearColliders()
 
             And("A player tank at position (0, 0)")
             val playerTank = PlayerTankBuilder().build()

@@ -1,7 +1,7 @@
 package org.aas.sbtanks.behaviours
 
 import org.aas.sbtanks.physics.AABB
-import org.aas.sbtanks.physics.PhysicsWorld
+import org.aas.sbtanks.physics.PhysicsContainer
 import org.aas.sbtanks.physics.Collider
 import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.event.EventSource
@@ -14,7 +14,7 @@ import org.aas.sbtanks.event.EventSource
   * @param layer The layer this collider is in
   * @param layerMasks The layers this collider will collide with
   */
-trait CollisionBehaviour(sizeX: Double, sizeY: Double, override val layer: CollisionLayer, override val layerMasks: Seq[CollisionLayer]) extends Collider:
+trait CollisionBehaviour(using physics: PhysicsContainer)(sizeX: Double, sizeY: Double, override val layer: CollisionLayer, override val layerMasks: Seq[CollisionLayer]) extends Collider:
     this: PositionBehaviour =>
     
     /**
@@ -24,7 +24,7 @@ trait CollisionBehaviour(sizeX: Double, sizeY: Double, override val layer: Colli
 
     private var offset = (0D, 0D)
 
-    positionChanged += { _ => PhysicsWorld.refresh() }
+    positionChanged += { _ => physics.refresh() }
 
     /**
       * Sets an offset from the model's position for the collider bounding box
@@ -32,7 +32,7 @@ trait CollisionBehaviour(sizeX: Double, sizeY: Double, override val layer: Colli
       * @param offsetX The x offset
       * @param offsetY The y offset
       */
-    def setOffset(offsetX: Double, offsetY: Double): this.type =
+    def setBoundingBoxOffset(offsetX: Double, offsetY: Double): this.type =
         offset = (offsetX, offsetY)
         this
 
@@ -48,12 +48,16 @@ trait CollisionBehaviour(sizeX: Double, sizeY: Double, override val layer: Colli
       *
       * @return A sequence of the colliders overlapping this collider
       */
-    def overlappedColliders = PhysicsWorld.getOverlaps(this)
+    def overlappedColliders = physics.getOverlaps(this)
 
     /**
       * @inheritdoc
       */
-    override def boundingBox = AABB(positionX + offset(0), positionY + offset(0), sizeX, sizeY)
+    override def boundingBox = this match
+        case d: DirectionBehaviour if (Math.abs(d.lastValidDirectionX.getOrElse(0D)) > Math.abs(d.lastValidDirectionY.getOrElse(1D))) =>
+            AABB(positionX + offset(1), positionY + offset(0), sizeY, sizeX)
+        case _ =>
+            AABB(positionX + offset(0), positionY + offset(1), sizeX, sizeY)
 
     /**
      * @inheritdoc
