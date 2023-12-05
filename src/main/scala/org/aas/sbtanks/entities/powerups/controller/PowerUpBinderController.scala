@@ -14,7 +14,6 @@ import org.aas.sbtanks.physics.CollisionLayer
 import scalafx.scene.Node
 import scalafx.scene.image.Image
 import javafx.scene.image as jfxsi
-import org.aas.sbtanks.Main.jfxImageView2sfx
 import org.aas.sbtanks.entities.obstacles.LevelObstacle
 import org.aas.sbtanks.entities.obstacles.view.ObstacleView
 import org.aas.sbtanks.entities.obstacles.view.scalafx.JFXObstacleView
@@ -36,17 +35,11 @@ import org.aas.sbtanks.physics.PhysicsContainer
  *
  * @param entityRepo The repository container for managing entities MVCs.
  * @param tankPowerUpsBinder The power-up binder specifically only for tank-related power-ups.
- * @param pickup            An event source to be notified on when a tank-related power-up is picked up.
+ * @param pickup An event source to be notified on when a tank-related power-up is picked up.
+ * @param tankSpawn An event source to be notified on when a tank spawn in the level
  */
-class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], tankPowerUpsBinder: PowerUpChainBinder[Tank], pickup: EventSource[PowerUp[Tank]]) extends Steppable:
-
-    /*
-        TODO: need to get:
-            - level clear (unbind player entity) X
-            - entity destruction (unbind enemies entities) X
-            - charged entity destruction (invoke new PowerUp) X
-            - powerup pickup (chain new effect) V
-     */
+class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], width: Double, height: Double, tankPowerUpsBinder: PowerUpChainBinder[Tank], pickup: EventSource[PowerUp[Tank]], tankSpawn: EventSource[Tank]) extends Steppable:
+    private val powerupFactory = new Object() with PickablePowerUpFactory()
 
     /**
      * Handles the pickup event of tank-related power-ups.
@@ -55,6 +48,12 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
     pickup += { powerUp =>
         println("PICK")
         tankPowerUpsBinder.chain(powerUp)
+    }
+
+
+
+    tankSpawn += { tank =>
+        registerEntity(tank)
     }
 
     override def step(delta: Double): this.type =
@@ -71,13 +70,10 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
               .collect:
                   case element: TimeablePowerUp => element
               .map(_.decreaseDuration(deltaTime))
-              .map(x => 
-                println(x)
-                x  
-              )
               .filter(_.isExpired)
               .foreach:
-                  tankPowerUpsBinder.unchain
+                  case expiredPowerUps:TimeablePowerUp =>
+                      tankPowerUpsBinder.unchain(expiredPowerUps.resetDuration())
 
 
 
@@ -85,17 +81,19 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
      * Sets a new pickable power-up in the game world.
      * TODO: This method is a placeholder and requires a factory for power-up type and position generation.
      */
-    private def setNewPickablePowerUp(using PhysicsContainer)() =
-        // placeholder, need random factory
-        val p: PickablePowerUp[Tank] = new TimerPowerUp with PositionBehaviour(8.0, 2.0) with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
-
+    private def setNewPickablePowerUp() =
+        val (p, imagePath) = powerupFactory.getRandomPowerUp(width, height)
+       
+        /*
+            TODO: refactor
+         */
         entityRepo.addModelView(
             p,
-            Option(new JFXPowerUpView(JFXImageLoader.loadFromResources("entities/powerups/powerup_star.png", 16D, 4D)))
+            Option(new JFXPowerUpView(JFXImageLoader.loadFromResources(imagePath, 16D, 4D)))
         )
 
     /**
-     * Sets up a player by binding it to the power-ups binder and adding an initial power-up (HelmetPowerUp).
+     * Sets up a player by adding to it an initial power-up (HelmetPowerUp).
      *
      *
      * @param player The player tank to be set up with power-ups.
@@ -106,31 +104,28 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
 
 
     /**
-     * Registers entities by binding power-ups to tanks and sets up destruction event handling.
+     * Register an entity by binding power-ups and sets up destruction event handling.
      *
-     * @param tanks The sequence of tanks to bind power-ups to.
+     * @param tank the tank to bind power-ups to.
      * @return The updated controller instance.
      */
-    def registerEntities(using PhysicsContainer)(tanks: Seq[Tank]): this.type =
+    private def registerEntity(tank: Tank): this.type =
+        tankPowerUpsBinder.bind(tank)
+        tank match
+            case tank1: PlayerTank => setUpPlayer(tank1)
+            case _ =>
 
-        tanks.map(t =>
-                tankPowerUpsBinder.bind(t)
-                t match
-                    case tank: PlayerTank => setUpPlayer(tank)
-                    case _ =>
-                t
-            )
-            .collect:
-                case tank: Tank with DamageableBehaviour =>
-                    tank.destroyed += {_ =>
-                        println(tank)
-                        tankPowerUpsBinder.unbind(tank)
-                        tank match
-                            case tank1: PlayerTank => setUpPlayer(tank1)
-                            case _ =>
-                        if (tank.isCharged) this.setNewPickablePowerUp()
-                    }
+        tank match
+            case tank: Tank with DamageableBehaviour =>
+                tank.destroyed += { _ =>
+                    tankPowerUpsBinder.unbind(tank)
+                    tank match
+                        case t: PlayerTank => setUpPlayer(t)
+                        case _ =>
+                    if (tank.isCharged) this.setNewPickablePowerUp()
+                }
         this
+
 
 
 
