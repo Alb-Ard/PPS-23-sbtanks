@@ -1,9 +1,9 @@
 package org.aas.sbtanks.enemies.ai.fsm
 
 /**
- * Trait representing a state modifier, allowing manipulation of a state of type `S` with elements of type `E`.
+ * Monadic Trait representing a state modifier, allowing manipulation of a state of type `S` with elements of type `E`.
  *
- * @tparam S The type of the state container.
+ * @tparam S The type of the state container, it should be a monadic type.
  * @tparam E The type of elements in the state.
  */
 trait StateModifier[S[_], E]:
