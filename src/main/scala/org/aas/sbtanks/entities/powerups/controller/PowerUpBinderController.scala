@@ -81,13 +81,15 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
      * TODO: This method is a placeholder and requires a factory for power-up type and position generation.
      */
     private def setNewPickablePowerUp() =
-        val p = PickablePowerUpFactory.getRandomPowerUp(7, 7)
+        val (p, imagePath) = PickablePowerUpFactory.getRandomPowerUp(width, height)
+        
 
-        println("NEW CHARGED POWERUP")
-
+        /*
+            TODO: refactor
+         */
         entityRepo.addModelView(
             p,
-            Option(new JFXPowerUpView(JFXImageLoader.loadFromResources("entities/powerups/powerup_star.png", 16D, 4D)))
+            Option(new JFXPowerUpView(JFXImageLoader.loadFromResources(imagePath, 16D, 4D)))
         )
 
     /**

@@ -27,7 +27,7 @@ enum PowerUpType:
  */
 object PickablePowerUpFactory:
 
-    val POWERUP_COLLISION_SIZE = 1
+    private val POWERUP_COLLISION_SIZE = 1
 
     private lazy val grenadeInstance: PickablePowerUp[Tank] =
         new GrenadePowerUp() with PositionBehaviour with CollisionBehaviour(POWERUP_COLLISION_SIZE, POWERUP_COLLISION_SIZE, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
@@ -42,28 +42,43 @@ object PickablePowerUpFactory:
         new TimerPowerUp() with PositionBehaviour  with CollisionBehaviour(POWERUP_COLLISION_SIZE, POWERUP_COLLISION_SIZE, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
 
 
-    private def providePowerUp(powerUpType: PowerUpType) =
-        powerUpType match
+    private def providePowerUpInstance(powerUpType: PowerUpType, width: Double, height: Double) =
+        val p = powerUpType match
             case PowerUpType.Grenade => grenadeInstance
             case PowerUpType.Helmet => helmetInstance
             case PowerUpType.Star => starInstance
             case PowerUpType.Timer => timerPowerUp
 
-
-    def getRandomPowerUp(width: Double, height: Double): PickablePowerUp[?] =
         val positionProvider = (w, h) => PositionProvider(w, h)
 
-        val powerUpTypes = PowerUpType.values
-        val randomIndex = Random.nextInt(powerUpTypes.length)
-        val p = providePowerUp(powerUpTypes(3))
-
-        val r = positionProvider(width, height)(Seq(CollisionLayer.TanksLayer, CollisionLayer.WallsLayer, CollisionLayer.NonWalkableLayer), POWERUP_COLLISION_SIZE, POWERUP_COLLISION_SIZE).findFreePosition() match
+        positionProvider(width, height)(Seq(CollisionLayer.TanksLayer, CollisionLayer.WallsLayer, CollisionLayer.NonWalkableLayer), POWERUP_COLLISION_SIZE, POWERUP_COLLISION_SIZE).findFreePosition() match
             case Some(x, y) =>
                 p.setPosition(x, y)
             case _ =>
                 p.setPosition(0, 0)
 
-        r.asInstanceOf[PickablePowerUp[?]]
+
+    private def getImagePathBy(powerUpType: PowerUpType) =
+        "entities/powerups/powerup_"
+            .concat(
+                powerUpType match
+                    case PowerUpType.Grenade => "grenade.png"
+                    case PowerUpType.Helmet => "helmet.png"
+                    case PowerUpType.Star => "star.png"
+                    case PowerUpType.Timer => "timer.png"
+            )
+
+
+    def getRandomPowerUp(width: Double, height: Double): (PickablePowerUp[?], String) =
+        val positionProvider = (w, h) => PositionProvider(w, h)
+
+        val powerUpTypes = PowerUpType.values
+
+        val powerUpType = powerUpTypes(Random.nextInt(powerUpTypes.length))
+
+        (providePowerUpInstance(powerUpType, width, height).asInstanceOf[PickablePowerUp[?]], getImagePathBy(powerUpType))
+
+
 
 
 
