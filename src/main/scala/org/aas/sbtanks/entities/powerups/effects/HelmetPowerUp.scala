@@ -48,13 +48,13 @@ object test extends App:
 
     tank = p(tank)
 
-    tank = tank.damage(1)
+    tank = tank.damage(test, 1)
     println(tank.tankData.health)
 
 
     tank = p.revert(tank)
 
-    tank = tank.damage(1)
+    tank = tank.damage(test, 1)
     println(tank.tankData.health)
 
 

@@ -24,6 +24,10 @@ import org.aas.sbtanks.entities.bullet.controller.scalafx.JFXBulletController
 import org.aas.sbtanks.entities.repository.EntityControllerRepository
 import org.aas.sbtanks.entities.repository.EntityViewAutoManager
 import org.aas.sbtanks.physics.PhysicsContainer
+import org.aas.sbtanks.entities.powerups.controller.PickablePowerUp
+import org.aas.sbtanks.entities.powerups.controller.PowerUpController
+import org.aas.sbtanks.event.EventSource
+import org.aas.sbtanks.entities.powerups.PowerUp.PowerUp
 
 /**
   * A factory used to create an entity repository with the default extensions
@@ -66,7 +70,7 @@ object JFXEntityMvRepositoryFactory:
       * @return The created entity repository
       */
     def create(using context: DefaultContext, physics: PhysicsContainer)(): DefaultEntityRepository =
-        val entityRepository = new JFXEntityMvRepositoryContainer()
+        new JFXEntityMvRepositoryContainer()
             with JFXEntityControllerRepository
             with JFXEntityViewAutoManager(ViewSlot.Game)
             with EntityControllerReplacer[AnyRef, Node, DefaultContext]
@@ -75,7 +79,11 @@ object JFXEntityMvRepositoryFactory:
             with EntityColliderAutoManager[AnyRef, Node]
             with EntityRepositoryPausableAdapter[AnyRef, Node, DefaultContext]
             with EntityRepositoryContextAware
-        entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(TANK_UNIT_MOVE_SPEED, VIEW_SCALE, TILE_SIZE, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView))))
-                .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(VIEW_SCALE * TILE_SIZE))
-                .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank], EnemyController.factory(VIEW_SCALE, TILE_SIZE))
-                .registerControllerFactory(m => m.isInstanceOf[Bullet], JFXBulletController.factory(BULLET_UNIT_MOVE_SPEED, VIEW_SCALE, TILE_SIZE))
+    
+    extension (entityRepository: EntityMvRepositoryContainer[AnyRef, Node] with EntityControllerRepository[AnyRef, Node, DefaultContext] with EntityControllerReplacer[AnyRef, Node, DefaultContext])
+        def addDefaultControllerFactories(using context: DefaultContext, physics: PhysicsContainer)(pickupEvent: EventSource[PowerUp[Tank]]): entityRepository.type =
+            entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(TANK_UNIT_MOVE_SPEED, VIEW_SCALE, TILE_SIZE, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView))))
+                    .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(VIEW_SCALE * TILE_SIZE))
+                    //.registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank], EnemyController.factory(VIEW_SCALE, TILE_SIZE))
+                    .registerControllerFactory(m => m.isInstanceOf[Bullet], JFXBulletController.factory(BULLET_UNIT_MOVE_SPEED, VIEW_SCALE, TILE_SIZE))
+                    .registerControllerFactory(m => m.isInstanceOf[PickablePowerUp[?]], PowerUpController.factory[Tank](VIEW_SCALE * TILE_SIZE, entityRepository, pickupEvent))

@@ -23,6 +23,7 @@ import org.aas.sbtanks.player.PlayerTank
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import org.aas.sbtanks.entities.powerups.effects.Star.StarPowerUp
 import org.aas.sbtanks.entities.powerups.effects.Timer.TimerPowerUp
+import org.aas.sbtanks.physics.PhysicsContainer
 
 
 
@@ -84,7 +85,7 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
      * Sets a new pickable power-up in the game world.
      * TODO: This method is a placeholder and requires a factory for power-up type and position generation.
      */
-    private def setNewPickablePowerUp() =
+    private def setNewPickablePowerUp(using PhysicsContainer)() =
         // placeholder, need random factory
         val p: PickablePowerUp[Tank] = new TimerPowerUp with PositionBehaviour(8.0, 2.0) with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
 
@@ -110,7 +111,7 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
      * @param tanks The sequence of tanks to bind power-ups to.
      * @return The updated controller instance.
      */
-    def registerEntities(tanks: Seq[Tank]): this.type =
+    def registerEntities(using PhysicsContainer)(tanks: Seq[Tank]): this.type =
 
         tanks.map(t =>
                 tankPowerUpsBinder.bind(t)

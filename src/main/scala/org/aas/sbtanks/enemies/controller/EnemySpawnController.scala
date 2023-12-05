@@ -14,7 +14,6 @@ import org.aas.sbtanks.enemies.view.EnemySpawnView
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 import org.aas.sbtanks.player.PlayerTank
-import org.aas.sbtanks.Main.tileSize
 
 class EnemySpawnController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], private val enemyTank: ControllableTank, private val enemyView: EnemySpawnView, viewScale: Double, tileSize: Double) extends Steppable:
     private var timeToSpawn: Double = 4.0

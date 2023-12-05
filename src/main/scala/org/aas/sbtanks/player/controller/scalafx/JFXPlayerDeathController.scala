@@ -15,8 +15,9 @@ import org.aas.sbtanks.player.PlayerTank
 import scalafx.scene.Node
 import scalafx.scene.layout.Pane
 import scalafx.stage.Stage
+import org.aas.sbtanks.lifecycle.PointsContainer
 
-abstract class JFXPlayerDeathController[VSlotKey](using context: EntityRepositoryContext[Stage, VSlotKey, Pane])(repository: EntityMvRepositoryContainer[AnyRef, Node], levelSequencer: LevelSequencer[AnyRef, Node], uiSlotKey: VSlotKey)
+abstract class JFXPlayerDeathController[VSlotKey](using context: EntityRepositoryContext[Stage, VSlotKey, Pane], points: PointsContainer)(repository: EntityMvRepositoryContainer[AnyRef, Node], levelSequencer: LevelSequencer[AnyRef, Node], uiSlotKey: VSlotKey)
     extends EntityRepositoryContextAware with Steppable:
 
     private var playerTank = Option.empty[PlayerTank with DamageableBehaviour]

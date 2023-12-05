@@ -12,6 +12,8 @@ import org.aas.sbtanks.physics.CollisionLayer
 
 import scala.reflect.ClassTag
 import scala.util.Random
+import org.aas.sbtanks.physics.PhysicsContainer
+import org.aas.sbtanks.physics.PhysicsWorld
 
 
 
@@ -21,7 +23,7 @@ enum PowerUpType:
     case Star
     case Timer
 
-object PickablePowerUpFactory:
+class PickablePowerUpFactory(using PhysicsContainer):
     private lazy val grenadeInstance: PickablePowerUp[Tank] =
         new GrenadePowerUp() with PositionBehaviour with CollisionBehaviour(1, 1, CollisionLayer.PowerUpLayer, Seq(CollisionLayer.TanksLayer))
 
@@ -50,7 +52,8 @@ object PickablePowerUpFactory:
 
 
 object a extends App:
-    val x: PickablePowerUp[?] = PickablePowerUpFactory.randomPowerUp()
+    given PhysicsContainer = PhysicsWorld
+    val x: PickablePowerUp[?] = PickablePowerUpFactory().randomPowerUp()
 
 
 

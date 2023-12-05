@@ -14,6 +14,7 @@ import org.scalatest.matchers.MatchResult
 import org.scalatest.matchers.Matcher
 
 import org.aas.sbtanks.enemies.spawn.EnemyFactory.withPosition
+import org.aas.sbtanks.physics.PhysicsWorld
 
 trait CollectionMatchers:
     class UniqueElementsMatcher[A](collection: Seq[A]) extends Matcher[A]:
@@ -74,7 +75,7 @@ class EnemyFactorySpec extends AnyFlatSpec with Matchers with PositionMatchers w
 
 
     "Every n tanks it" should "be spawned a special charged tanks" in :
-
+        given PhysicsContainer = new Object() with PhysicsContainer()
         val sequence: String = "BBBBBBBB"
         val enemies = EnemyFactory.createFromString(sequence,EACH_CHARGED)
             .map(_.build())

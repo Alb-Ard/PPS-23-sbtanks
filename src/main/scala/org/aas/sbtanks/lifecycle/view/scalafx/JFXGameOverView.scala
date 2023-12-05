@@ -16,8 +16,9 @@ import scalafx.scene.paint.Color.*
 import scalafx.scene.text.TextAlignment.Center
 import scalafx.scene.text.{Font, Text, TextAlignment, TextFlow}
 import scalafx.scene.{Node, Scene}
+import org.aas.sbtanks.lifecycle.PointsContainer
 
-class JFXGameOverView(level: LevelSequencer[?,?], interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)) extends VBox:
+class JFXGameOverView(using points: PointsContainer)(level: LevelSequencer[?,?], interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)) extends VBox:
 
     //val stylesheet = getClass.getResource("/ui/press_start_2p.ttf").toExternalForm
 
@@ -45,7 +46,7 @@ class JFXGameOverView(level: LevelSequencer[?,?], interfaceScale: Double, window
     levelDeathText.fill = new LinearGradient(0, stops = Stops(Red, DarkRed))
     children.add(levelDeathText)
 
-    private val gameScore = createText("Score: " + PointsManager.amount + "  ")
+    private val gameScore = createText("Score: " + points.amount + "  ")
     gameScore.alignmentInParent = Pos.Center
     gameScore.fill = new LinearGradient(0, stops = Stops(Green, DarkGreen))
 

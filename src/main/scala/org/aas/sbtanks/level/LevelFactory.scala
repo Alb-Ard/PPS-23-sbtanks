@@ -29,7 +29,7 @@ abstract class LevelFactory[M, V]:
                 .map(createEntityMv(_, x, y))
                 .getOrElse(Seq.empty)
                  .foreach((m, v) => entityRepository.addModelView(m, Option(v)).addTag(m, entityIndex))
-        LevelContainer(using modelClassTag, viewClassTag)(entityRepository)
+        LevelContainer(using modelClassTag, viewClassTag)(levelEdgeSize, entityRepository)
 
     protected def createEntityMv(entity: LevelFactory.StringEntity, x: Double, y: Double): Seq[(M, V)]
 

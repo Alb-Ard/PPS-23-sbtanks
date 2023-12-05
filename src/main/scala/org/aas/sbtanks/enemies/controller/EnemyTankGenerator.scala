@@ -24,6 +24,7 @@ import scalafx.stage.Stage
 
 import scala.collection.mutable
 import org.aas.sbtanks.enemies.spawn.EnemyFactory.withPosition
+import org.aas.sbtanks.physics.PhysicsContainer
 
 
 
@@ -49,7 +50,7 @@ type EntityControllerWithMv[M, V] =  EntityMvRepositoryContainer[M, V] with Enti
  * @param viewScale         The scale factor for rendering.
  * @param tileAnimationSpeed The speed of the tile animation. Default is 1.
  */
-class EnemyTankGenerator(entityRepository: EntityControllerWithMv[AnyRef, Node], var tankString:String , val width: Double, val height: Double, val tileSize: Double, val viewScale: Double, val tileAnimationSpeed: Double = 1) extends Steppable:
+class EnemyTankGenerator(using PhysicsContainer)(entityRepository: EntityControllerWithMv[AnyRef, Node], var tankString:String , val width: Double, val height: Double, val tileSize: Double, val viewScale: Double, val tileAnimationSpeed: Double = 1) extends Steppable:
 
 
     private var timeToSpawn: Double = 3.0

@@ -3,6 +3,8 @@ package org.aas.sbtanks.behaviours
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
+import org.aas.sbtanks.behaviours.DamageableBehaviour._
+
 class DamageableSpec extends AnyFlatSpec with Matchers:
     "A damageable behaviour" should "apply damage by default" in {
         var wasDamaged = false
@@ -10,7 +12,7 @@ class DamageableSpec extends AnyFlatSpec with Matchers:
             override protected def applyDamage(amount: Int) =
                 wasDamaged = true
                 this
-        damageable.damage()
+        damageable.damage(())
         wasDamaged should be (true)
     }
 
@@ -20,7 +22,7 @@ class DamageableSpec extends AnyFlatSpec with Matchers:
             override protected def applyDamage(amount: Int) =
                 this
         damageable.damaged += { _ => wasDamaged = true }
-        damageable.damage()
+        damageable.damage(())
         wasDamaged should be (true)
     }
     
@@ -30,7 +32,7 @@ class DamageableSpec extends AnyFlatSpec with Matchers:
             override protected def applyDamage(amount: Int) =
                 wasDamaged = true
                 this
-        damageable.setDamageable(true).damage()
+        damageable.setDamageable(true).damage(())
         wasDamaged should be (true)
     }
     
@@ -40,7 +42,7 @@ class DamageableSpec extends AnyFlatSpec with Matchers:
             override protected def applyDamage(amount: Int) =
                 wasDamaged = true
                 this
-        damageable.setDamageable(false).damage()
+        damageable.setDamageable(false).damage(())
         wasDamaged should be (false)
     }
 
