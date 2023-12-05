@@ -1,7 +1,7 @@
 # 4.1 Eventi
-Un aspetto molto pervasivo nell'applicazione è la gestione della reattività ad azioni e modifiche di dati.
+Un aspetto pervasivo nell'applicazione è la gestione della reattività ad azioni e modifiche di dati.
 Per fornire un sistema facile da utilizzare e flessibile è stato implementato un tipo `EventSource[A]`, ispirato al sistema di eventi di C#.
-Esso modella un evento con un certo tipo di parametro sul quale è possibile registrarsi o deregistrarsi tramite gli operatori `+=` e `-=` come ascoltatori, e che può essere invocato (generalmente fatto dall'oggetto che li espone).
+Esso modella un evento con un certo tipo di parametro sul quale è possibile registrarsi o deregistrarsi tramite gli operatori `+=` e `-=` come ascoltatori, e che può essere invocato (operazione generalmente fatta dall'oggetto che li espone).
 # 4.2 Contesto di visualizzazione
 ## 4.2.1 Funzionamento
 Per permettere la generalizzazione della struttura dell'interfaccia utente e un eventuale cambio di layout a *runtime* il più semplice possibile, è stato creato un sistema di contesti di visualizzazione per i *Model-View*. Questo sistema:
@@ -142,8 +142,9 @@ PositionBehaviour <|-- CompleteBullet
 ## 4.4.2 Repository delle entità
 Tutte le coppie *Model-View* delle entità sono mantenute in una repository detta `EntityMvRepositoryContainer` dove ogni *Model* è considerata l'istanza in gioco dell'entità.
 Per ogni *Model* può esistere una *View* associata corrispondente che, durante la vita dell'entità, può essere rimpiazzata se necessario senza modificare il *Model*.
+Inoltre, per reagire alla modifica della repository con alcuni comportamenti specifici e per integrarla con i sistemi di gioco, sono state create alcune estensioni come `trait` *mixin*, che verranno illustrati qui a seguire.
 ### 4.4.2.1 Gestione dei Presenter
-Ogni volta che un *Model* o una coppia *Model-View* viene aggiunta alla repository, la creazione del loro *Controller*/*Presenter* è affidata ad una estensione della repository, la `EntityControllerRepository`.
+Ogni volta che un *Model* o una coppia *Model-View* viene aggiunta alla repository, la creazione del loro *Controller*/*Presenter* è affidata all'estensione della repository `EntityControllerRepository`.
 Questa permette di:
 - Registrare dei metodi *factory* di *Presenter*, assieme ad un dati predicato che indicherà per quali *Model* eseguirlo;
 - Rimuovere il *Presenter* associato ad un dato *Model* quando quest'ultimo viene eliminato dalla *repository*.
@@ -169,7 +170,7 @@ __
 +replaceModelView(model: M, view: Option[V]): this.type
 +removeModelView(model: M): this.type
 }
-note top of MvRepository : Type names have been\nreduced for clarity
+note top of MvRepository : Names have been\nreduced for clarity
 }
 
 together {
@@ -195,16 +196,18 @@ MvRepository <|.. ViewAutoManager
 @enduml
 ```
 
-# 4.5 Gestione powerUp sulle entità 
-Il sistema di gestione ed applicazione dei powerup di gioco è stata reso generico in termini del tipo di entità sul quale vengono applicati.
-- `PowerUp`: Permette  di applicare ed invertire l'effetto di un powerUp su di una entità, una volta fatto ciò è ritornata la nuova entità modificata
-- `PowerUpChain`: Fornisce le funzionalità necessarie a concatenare un numero variabile di `PowerUp` , si mantiene identico nell'uso in quanto rimane anch'esso un `PowerUp`
-c Dual-Binding delle entità
-Per fornire un sistema che potesse mantenere traccia e aggiornare in maniera reattiva le entità affette da powerUp si è scelto di realizzare un doppio binding tra le queste e il sistema in questione
-- `DualBinder`: Permette di legare e slegare un doppio riferimento ad un'entità
-- `EntityBinding`: Case class mantenuta all'interno del  `DualBinder`.  Rappresenta il doppio riferimento ad un'entità, è costituita da 2 componenti:
-	- `supplier`: Permette di ottenere lo stato corrente dell'entità. Ciò permette di lavorare direttamente con lo stato attuale delle entità a prescindere da cambiamenti successivi alla fase di binding
-	- `consumer`: Permette di aggiornare lo stato di un'entità mantenendo consistente il suo uso dall'esterno
+# 4.5 Gestione power-up sulle entità 
+Considerando la natura molto eterogenea dei *power-up*, Il sistema per la loro gestione ed applicazione è stato costruito in modo generico rispetto all'effetto da applicare e/o rimuovere e al tipo di entità sul quale possono essere applicati.
+Questo tramite due tipi di oggetti principali:
+- `PowerUp`: Permette di applicare ed invertire l'effetto di un *power-up* su di una entità, una volta fatto ciò è ritornata la nuova entità modificata;
+- `PowerUpChain`: Fornisce le funzionalità necessarie a concatenare un numero variabile di `PowerUp` , si mantiene identico nell'uso in quanto rimane anch'esso un `PowerUp`.
+## 4.5.1 *Dual-Binding* delle entità
+Per fornire un sistema che potesse mantenere traccia e aggiornare in maniera reattiva le entità affette da *power-up* si è scelto di realizzare un doppio binding tra le queste e il sistema in questione.
+Ciò è fatto tramite le seguenti componenti:
+- `DualBinder`: Permette di legare e slegare un doppio riferimento ad un'entità;
+- `EntityBinding`: *case class* mantenuta all'interno del  `DualBinder`.  Rappresenta il doppio riferimento ad un'entità, è costituita da:
+	- `supplier`: Permette di ottenere lo stato corrente dell'entità. Ciò permette di lavorare direttamente con lo stato attuale delle entità a prescindere da cambiamenti successivi alla fase di binding;
+	- `consumer`: Permette di aggiornare lo stato di un'entità mantenendo consistente il suo uso dall'esterno.
 ```plantuml
 scale 300 width
 
@@ -214,23 +217,16 @@ Entity <- DualBinder: consume
 @enduml
 
 ```
-
 Questo approccio fornisce diversi vantaggi:
- - è possibile lavorare sulle entità semplificando il tracciamento dei suoi cambiamenti di stato da parte di altri sistemi
- - Ogni modifica sull'entità è riflessa immediatamente, se alcun bisogno di lavorare su sue  copie o stati 
+ - è possibile lavorare sulle entità semplificando il tracciamento dei suoi cambiamenti di stato da parte di altri sistemi;
+ - Ogni modifica sull'entità è riflessa immediatamente, se alcun bisogno di lavorare su sue  copie o stati.
 ## 4.5.2 Descrizione generale del sistema
-Entrambe le componenti precedentemente descritte:
- - `PowerUpChain`
- - `DualBinder`
-
-Sono state integrate in una nuova componente `PowerUpChainBinder`, che ne integra le funzionalità, permettendo di:
- - registrare le entità sulle quali verranno applicati i powerup
- - concatenare powerup al sistema facendo in modo che questi vengano eseguiti
-
+Per l'utilizzo finale in gioco le componenti precedentemente descritte (`PowerUpChain` e `DualBinder`) sono state integrate in una unica componente `PowerUpChainBinder`, che ne integra le funzionalità, permettendo di:
+ - Registrare le entità sulle quali verranno applicati i *power-up*;
+ - Concatenare *power-up* al sistema facendo in modo che questi vengano eseguiti.
 Alcune note:
- - il `PowerUpChainBinder` applica i powerup solo su entità attualmente registrate, facendo in modo che il sistema si mantenga dinamico e flessibile anche a seguito di multiple chiamate di `bind` e `unbind`
- - la logica di applicazione rimane vincolata al solo powerup, nessun altro componente possiede informazioni sul loro risultato effettivo
-
+ - Il `PowerUpChainBinder` applica i *power-up* solo su entità attualmente registrate, facendo in modo che il sistema si mantenga dinamico e flessibile anche a seguito di multiple chiamate di `bind` e `unbind`;
+ - La logica di applicazione rimane vincolata al solo *power-up*, nessun altro componente possiede informazioni sul loro risultato effettivo.
 ```plantuml
 
 @startuml
