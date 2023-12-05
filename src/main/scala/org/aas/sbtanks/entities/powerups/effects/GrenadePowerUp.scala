@@ -4,6 +4,7 @@ import org.aas.sbtanks.entities.powerups.PowerUp.{PowerUp, PowerUpConstraint}
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 import org.aas.sbtanks.behaviours.{DamageableBehaviour, PositionBehaviour}
+import org.aas.sbtanks.entities.powerups.TimeablePowerUp
 import org.aas.sbtanks.entities.powerups.effects.Grenade.GrenadePowerUp
 import org.aas.sbtanks.player.PlayerTank
 
@@ -18,9 +19,10 @@ object Grenade:
 
     /**
      * A case object representing the Grenade power-up, which is a functional power-up for tanks with a specific constraint on its use.
+     * Being an instantaneous powerup its duration effect is 0
      * It combines functions 'f' and 'g' with a specified constraint.
      */
-    case class GrenadePowerUp() extends FuncPowerUp[Tank](f, g) with PowerUpConstraint[Tank](constraint)
+    case class GrenadePowerUp() extends FuncPowerUp[Tank](f, g) with PowerUpConstraint[Tank](constraint) with TimeablePowerUp(0)
 
 /**
  * Utility functions related to the Grenade power-up.

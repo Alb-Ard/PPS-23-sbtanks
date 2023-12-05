@@ -37,7 +37,7 @@ import org.aas.sbtanks.entities.powerups.effects.Timer.TimerPowerUp
  * @param pickup An event source to be notified on when a tank-related power-up is picked up.
  * @param tankSpawn An event source to be notified on when a tank spawn in the level
  */
-class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], tankPowerUpsBinder: PowerUpChainBinder[Tank], pickup: EventSource[PowerUp[Tank]], tankSpawn: EventSource[Tank]) extends Steppable:
+class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], width: Double, height: Double, tankPowerUpsBinder: PowerUpChainBinder[Tank], pickup: EventSource[PowerUp[Tank]], tankSpawn: EventSource[Tank]) extends Steppable:
 
 
     /**
@@ -69,13 +69,10 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
               .collect:
                   case element: TimeablePowerUp => element
               .map(_.decreaseDuration(deltaTime))
-              .map(x => 
-                println(x)
-                x  
-              )
               .filter(_.isExpired)
               .foreach:
-                  tankPowerUpsBinder.unchain
+                  case expiredPowerUps:TimeablePowerUp =>
+                      tankPowerUpsBinder.unchain(expiredPowerUps.resetDuration())
 
 
 
@@ -84,9 +81,9 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
      * TODO: This method is a placeholder and requires a factory for power-up type and position generation.
      */
     private def setNewPickablePowerUp() =
-        val p = PickablePowerUpFactory.getRandomPowerUp
+        val p = PickablePowerUpFactory.getRandomPowerUp(7, 7)
 
-        println(p)
+        println("NEW CHARGED POWERUP")
 
         entityRepo.addModelView(
             p,
