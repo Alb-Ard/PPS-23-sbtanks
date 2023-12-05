@@ -14,11 +14,11 @@ import scalafx.scene.layout.Pane
 
 class EnemyController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(private val enemyTank: ControllableTank, private val enemyView: TankView, viewScale: Double, tileSize: Double)
     extends TankController(Seq((enemyTank, enemyView)), viewScale, tileSize)
-    with AiMovableController(Seq(enemyTank.asInstanceOf[MovementEntity]))
+    with AiMovableController(enemyTank.asInstanceOf[MovementEntity], tileSize)
     with Steppable:
 
     override def step(delta: Double) =
-        computeStates()
+        computeNewMovementState()
         this
 
 object EnemyController:

@@ -39,7 +39,6 @@ object Main extends JFXApp3 with scalafx.Includes:
         windowSize(0) <== stage.scene.value.window.value.width
         windowSize(1) <== stage.scene.value.window.value.height
         given EntityRepositoryContext[Stage, ViewSlot, Pane] = EntityRepositoryContext(stage)
-        SavedDataManager.increaseHighScore(500)
         JFXMediaPlayer.loadSettingsFromDisk().precache()
         launchMainMenu()
     

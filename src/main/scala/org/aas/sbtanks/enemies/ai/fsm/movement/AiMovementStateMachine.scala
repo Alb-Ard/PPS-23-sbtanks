@@ -41,47 +41,41 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
 
                 case _ => pure(Bottom)
 
-            _ <- modify(e => e.setDirection(newDir._1, newDir._2).asInstanceOf[MovementEntity])
+            _ <- modify(_.setDirection(newDir(0), newDir(1)).asInstanceOf[MovementEntity])
         yield
             ()
 
 
 
-    def checkMove(): State[MovementEntity, Option[(Double, Double)]] =
+    private def checkMove(scaleFactor: Double): State[MovementEntity, Option[(Double, Double)]] =
         for
             s0 <- getState
             x <- gets(e => (e.directionX.asInstanceOf[Double], e.directionY.asInstanceOf[Double]))
-            if s0.testMoveRelative(x._1 / 100D, x._2 / 100D)
+            if s0.testMoveRelative(x(0) / scaleFactor, x(1) / scaleFactor)
         yield x
 
-    private def moveNext(remainingIterations: Int): State[MovementEntity, (Double, Double)] =
+    private def moveNext(remainingIterations: Int, scaleFactor: Double): State[MovementEntity, (Double, Double)] =
         for
-            c <- checkMove()
+            c <- checkMove(scaleFactor)
             d <- c match
                 case Some(d) => pure(d)
                 case None if remainingIterations > 0 =>
-                    transition(Try).flatMap(_ => moveNext(remainingIterations-1))
+                    transition(Try).flatMap(_ => moveNext(remainingIterations-1, scaleFactor))
                 case _ => pure(NoDirection)
         yield d
 
-    private def getNewCoord: State[MovementEntity, (Double, Double)] =
-        for
-            d <- moveNext(MAX_ITERATION_BEFORE_DEFAULT)
-            c <- gets(x => (x.positionX, x.positionY))
-            newPos <- pure((c._1 + d._1, c._2 + d._2))
-        yield newPos
-
-
-    def computeState(): State[MovementEntity,(Double, Double)] =
+    
+    def computeState(maxIteration: Int, scaleFactor: Double): State[MovementEntity,(Double, Double)] =
         for
             _ <- transition(Reset)
-            newCoord <- getNewCoord
-        yield newCoord
+            d <- moveNext(maxIteration, scaleFactor)
+        yield d
 
 
 object AiMovementStateMachineUtils:
     val MAX_ITERATION_BEFORE_DEFAULT = 5
+    val SCALE_FACTOR_MOVEMENT = 100D
     
-    def computeAiState(entity: MovementEntity): ((Double, Double), MovementEntity) =
-        AiMovementStateMachine.computeState().runAndTranslate(entity)
+    def computeAiState(entity: MovementEntity, maxIteration: Int = MAX_ITERATION_BEFORE_DEFAULT, movementBias: Double = SCALE_FACTOR_MOVEMENT): ((Double, Double), MovementEntity) =
+        AiMovementStateMachine.computeState(maxIteration, movementBias).runAndTranslate(entity)
 
