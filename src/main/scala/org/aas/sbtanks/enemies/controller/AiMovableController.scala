@@ -9,7 +9,7 @@ trait AiMovableController(val entities: Seq[MovementEntity]):
 
     def computeStates() =
         this.entities.map(computeAiState)
-            .map((p, e) => e.setPosition(p._1, p._2))
+            .map((p, e) => e.moveRelative(e.directionX / 16.0, e.directionY / 16.0))
 
 
 

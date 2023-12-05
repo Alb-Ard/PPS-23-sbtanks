@@ -17,7 +17,6 @@ class PowerUpChain[E](powerUps: Seq[PowerUp[E]]) extends PowerUp[E]:
     override def revert[A <: E](entity: A): A =
         powerUps.foldRight(entity)((powerUp, acc) => powerUp.revert(acc))
 
-    def getPowerUps: Seq[PowerUp[E]] = powerUps
 
     def chain(next: PowerUp[E]): PowerUpChain[E] = PowerUpChain(next combineWith powerUps )
 
@@ -49,25 +48,37 @@ trait DualBinder[E]:
 class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E]:
 
     private var powerUpBindings: Map[PowerUp[E], Seq[EntityBinding]] = Map.empty
+    
 
-    override def chain(next: PowerUp[E]): PowerUpChain[E] =
+    def getPowerUps: Seq[PowerUp[E]] =
+        powerUpBindings.keys.toSeq
+
+    override def chain(next: PowerUp[E]): this.type =
         val currentBindings = entities.map(_.supplier()).map(EntityBinding(_))
+
+        powerUpBindings = powerUpBindings.filter:
+            case (_, storedEntities) => entities.contains(currentBindings) 
 
         powerUpBindings += (next -> currentBindings)
 
         entities.foreach(e => e.consumer(
             next(e.supplier()))
         )
+
+
         super.chain(next)
         this
 
-    override def unchain(last: PowerUp[E]): PowerUpChain[E] =
+    override def unchain(last: PowerUp[E]): this.type =
         val validBindings = powerUpBindings.getOrElse(last, Seq.empty)
 
         validBindings.foreach(e => e.consumer(
             last.revert(e.supplier()))
         )
+
         entities = entities.filterNot(b => validBindings.exists(_.supplier() == b.supplier()))
+
+        powerUpBindings -= last
 
         super.unchain(last)
         this

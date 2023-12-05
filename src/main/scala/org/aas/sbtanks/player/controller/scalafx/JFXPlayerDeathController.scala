@@ -37,7 +37,7 @@ abstract class JFXPlayerDeathController[VSlotKey](using context: EntityRepositor
     protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, VSlotKey, Pane]): EntityRepositoryContext[Stage, VSlotKey, Pane]
 
     protected def restart(currentContext: EntityRepositoryContext[Stage, VSlotKey, Pane]): this.type
-    private def gameover(u: Unit): Unit =
+    private def gameover(source: Any): Unit =
         val gameOverView = new JFXGameOverView(levelSequencer, INTERFACE_SCALE, windowSize)
         gameOverView.retryRequested += {_ => restart(context)}
         gameOverView.exitRequested += {_ => System.exit(0)}

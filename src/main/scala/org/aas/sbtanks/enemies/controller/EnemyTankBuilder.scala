@@ -14,7 +14,9 @@ case class EnemyTankBuilder(x: Double = 0,
                             collisionSizeX: Double = 1,
                             collisionSizeY: Double = 1,
                             collisionLayer: CollisionLayer = CollisionLayer.TanksLayer,
-                            collisionMask: Set[CollisionLayer] = PlayerTankBuilder.DEFAULT_COLLISION_MASK):
+                            collisionMask: Set[CollisionLayer] = PlayerTankBuilder.DEFAULT_COLLISION_MASK,
+                            isCharged: Boolean = false
+                           ):
 
     def setPosition(x: Double = x, y: Double = y) =
         copy(x = x, y = y)
@@ -34,6 +36,9 @@ case class EnemyTankBuilder(x: Double = 0,
     def setTankType(tankTypeData: TankTypeData) =
         copy(tankType = tankTypeData)
 
+    def setCharged(value: Boolean) =
+        copy(isCharged = value)
+
     def build(using physics: PhysicsContainer)() =
         new Tank(tankType)
             with PositionBehaviour(x, y)
@@ -49,10 +54,13 @@ case class EnemyTankBuilder(x: Double = 0,
                         destroyed(())
                         this
                     case _ => this
+        .setCharged(isCharged)
+
 
 
 object EnemyTankBuilder:
     val DEFAULT_COLLISION_MASK: Set[CollisionLayer] = Set(
         CollisionLayer.WallsLayer,
         CollisionLayer.NonWalkableLayer,
+        CollisionLayer.TanksLayer
     )

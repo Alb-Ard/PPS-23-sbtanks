@@ -13,27 +13,26 @@ import org.aas.sbtanks.enemies.controller.EnemySpawnController.createTankv
 import org.aas.sbtanks.enemies.view.EnemySpawnView
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
+import org.aas.sbtanks.player.PlayerTank
+import org.aas.sbtanks.Main.tileSize
 
-class EnemySpawnController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], private val enemyTank: ControllableTank, private val enemyView: EnemySpawnView, viewScale: Double) extends Steppable:
-    private var timeToSpawn: Double = 3.0
-
-    val tileSize = 16D
-    val pixelSize = 1D / tileSize
+class EnemySpawnController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], private val enemyTank: ControllableTank, private val enemyView: EnemySpawnView, viewScale: Double, tileSize: Double) extends Steppable:
+    private var timeToSpawn: Double = 4.0
 
     enemyView.move(enemyTank.positionX * viewScale, enemyTank.positionY * viewScale)
-    //enemyView.initSpawnAnimation()
+    enemyView.initSpawnAnimation()
 
 
     override def step(delta: Double): this.type =
         timeToSpawn -= delta
         if timeToSpawn <= 0.0 then
-            val newView = createTankv(enemyTank.positionX, enemyTank.positionY, "player", Seq("slow", "basic"), 4D, tileSize, pixelSize)
-            entityRepo.replaceView({enemyTank.updateTankData(enemyTank.tankData.updateHealth(_ + 20)); enemyTank}, Option(newView))
+            val newView = createTankv(enemyTank.positionX, enemyTank.positionY, "player", Seq("slow", "basic"), 4D, tileSize, 1D / tileSize)
+            entityRepo.replaceView(enemyTank.setDamageable(true), Option(newView))
         this
 
 object EnemySpawnController:
-    def factory(viewScale: Double, entityRepo: EntityMvRepositoryContainer[AnyRef, Node])(context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: EnemySpawnView) =
-        new EnemySpawnController(using context)(entityRepo, tank, view, viewScale)
+    def factory(viewScale: Double, tileSize: Double, entityRepo: EntityMvRepositoryContainer[AnyRef, Node])(context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: EnemySpawnView) =
+        new EnemySpawnController(using context)(entityRepo, tank, view, viewScale, tileSize)
 
     def createTankv(x: Double, y: Double, tankType: String, tankAttributes: Seq[String], viewScale: Double, tileSize: Double, pixelSize: Double) =
         val attributeString = tankAttributes.fold("")((c, n) => c + n + "_")

@@ -1,7 +1,6 @@
 package org.aas.sbtanks.enemies
 
 import org.aas.sbtanks.enemies.spawn.EnemyFactory
-import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.entities.tank.factories
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -10,8 +9,11 @@ import org.aas.sbtanks.levels.MockLevelFactory
 import org.aas.sbtanks.physics.PhysicsContainer
 import org.aas.sbtanks.enemies.controller.EnemyTankBuilder
 import org.aas.sbtanks.behaviours.PositionMatchers
+import org.aas.sbtanks.entities.tank.structure.Tank
 import org.scalatest.matchers.MatchResult
 import org.scalatest.matchers.Matcher
+
+import org.aas.sbtanks.enemies.spawn.EnemyFactory.withPosition
 
 trait CollectionMatchers:
     class UniqueElementsMatcher[A](collection: Seq[A]) extends Matcher[A]:
@@ -28,11 +30,13 @@ class EnemyFactorySpec extends AnyFlatSpec with Matchers with PositionMatchers w
 
     val WIDTH: Int = 5
     val HEIGHT: Int = 5
+    val EACH_CHARGED = 2
 
     "An EnemyFactory" should "be able to generate a sequence of specific types of enemies from a string of characters" in:
         given PhysicsContainer = new Object() with PhysicsContainer
         val sequence: String = "B F A A"
-        val enemies = EnemyFactory.createFromString(sequence, WIDTH, HEIGHT)
+        val enemies = EnemyFactory.createFromString(sequence)
+            .map(_.build())
 
         enemies should have size 4
         enemies(0).tankData should be(BasicTankData.supplyData)
@@ -43,20 +47,61 @@ class EnemyFactorySpec extends AnyFlatSpec with Matchers with PositionMatchers w
     it should "assign positions accordingly to the Physic state of the level, in random but not in others collision positions" in:
         given PhysicsContainer = new Object() with PhysicsContainer
         val sequence: String = "B B"
-        val freePositions: Seq[(Double, Double)] = Seq((1, 2), (3, 2))
+        val freePositions: Seq[(Double, Double)] = Seq((1, 1), (3, 1))
         MockLevelFactory((x, y) => EnemyTankBuilder().setPosition(x, y).build())
             .createFromString(
                     "UUUUU" +
-                    "UUUUU" +
                     "U-U-U" +
+                    "UUUUU" +
                     "UUUUU" +
                     "UUUUU", WIDTH
             )
-        val enemies = EnemyFactory.createFromString(sequence, WIDTH, HEIGHT)
-        val finalPositions = enemies.map(e => (e.positionX, e.positionY))
 
-        all(enemies) should (have (position (freePositions(0))) or have (position(freePositions(1))))
+        var enemies = EnemyFactory.createFromString(sequence)
+            .map(_.withPosition(WIDTH, HEIGHT))
+
+        enemies.foreach:
+            _ should not be (Option.empty)
+
+        val filteredEnemies = enemies.map(x => x.get)
+
+        val finalPositions = filteredEnemies.map(e => (e.positionX, e.positionY))
+
+        all(filteredEnemies) should (have (position (freePositions(0))) or have (position(freePositions(1))))
         all(finalPositions) should beUniqueIn (finalPositions)
+
+
+
+
+    "Every n tanks it" should "be spawned a special charged tanks" in :
+
+        val sequence: String = "BBBBBBBB"
+        val enemies = EnemyFactory.createFromString(sequence,EACH_CHARGED)
+            .map(_.build())
+
+
+        val chargedTanks = enemies.zipWithIndex
+            .filter:
+                case (_, index) => EACH_CHARGED != 0 && (index + 1) % EACH_CHARGED == 0
+
+        chargedTanks should have size (if (EACH_CHARGED > 0) enemies.size / EACH_CHARGED else 0)
+
+
+        chargedTanks.foreach:
+            case (tank: Tank, _) =>
+                tank.isCharged should be(true)
+
+
+
+        val normalTanks = enemies.filterNot(chargedTanks.map(_(0)).contains)
+
+        normalTanks.foreach:
+            case tank: Tank =>
+                tank.isCharged should be(false)
+
+        normalTanks should have size (enemies.size - chargedTanks.size)
+
+
 
 
 

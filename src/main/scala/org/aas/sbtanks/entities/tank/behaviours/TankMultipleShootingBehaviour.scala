@@ -15,7 +15,9 @@ trait TankMultipleShootingBehaviour:
     private val BULLET_COLLISION_SIZE = 0.25D
     private val BULLET_COLLISION_OFFSET = (1D - BULLET_COLLISION_SIZE) / 2D
 
-    def shoot(using physics: PhysicsContainer)(nShots: Int, isPlayerBullet: Boolean) =
+    var shots = 1
+
+    def shoot(using physics: PhysicsContainer)(nShots: Int = shots, isPlayerBullet: Boolean) =
         var shotsFired: Seq[CompleteBullet] = Seq.empty
         for(n <- Range(1, nShots + 1))
             shotsFired = shotsFired :+ generateBullet(n, isPlayerBullet)

@@ -3,8 +3,8 @@ package org.aas.sbtanks.behaviours
 import org.aas.sbtanks.event.EventSource
 
 trait DamageableBehaviour:
-    val destroyed = EventSource[Unit]()
-    val damaged = EventSource[Int]()
+    val destroyed = EventSource[Any]()
+    val damaged = EventSource[(Any, Int)]()
 
     private var damageable = true
 
@@ -14,11 +14,11 @@ trait DamageableBehaviour:
         this.damageable = damageable
         this
 
-    def damage(amount: Int): this.type =
+    def damage(source: Any, amount: Int): this.type =
         isDamageable match
             case true => 
                 val result: this.type = applyDamage(amount)
-                damaged(amount)
+                damaged(source, amount)
                 result
             case _ => this
 
@@ -26,5 +26,5 @@ trait DamageableBehaviour:
 
 object DamageableBehaviour:
     extension (damageable: DamageableBehaviour)
-        def damage() =
-            damageable.damage(1)
+        def damage(source: Any) =
+            damageable.damage(source, 1)

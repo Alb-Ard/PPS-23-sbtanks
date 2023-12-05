@@ -21,6 +21,11 @@ import scalafx.beans.property.IntegerProperty
 import org.aas.sbtanks.lifecycle.PointsManager
 import org.aas.sbtanks.physics.PhysicsContainer
 import org.aas.sbtanks.physics.PhysicsWorld
+import org.aas.sbtanks.enemies.controller.EnemyTankGenerator
+import org.aas.sbtanks.entities.powerups.PowerUpChainBinder
+import org.aas.sbtanks.entities.powerups.controller.PowerUpBinderController
+import org.aas.sbtanks.entities.tank.structure.Tank
+import org.aas.sbtanks.entities.powerups.PowerUp.PowerUp
 
 /**
   * A class used to manage all components required for a game
@@ -33,6 +38,8 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
     val gameEnded = EventSource[Unit]
     val restartedGame = EventSource[Unit]
 
+    private val powerupPickupped = EventSource[PowerUp[Tank]]
+
     given PhysicsContainer = PhysicsWorld
     private val entityRepository = JFXEntityMvRepositoryFactory.create()
     private val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
@@ -42,6 +49,7 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
     private val levelSequencer = LevelSequencer[AnyRef, Node](levels(0), levelFactory, entityRepository)
     private val gameLoop = GameLoop(entityRepository, Seq(entityRepository))
     private val pauseUiView = JFXPauseMenu(interfaceScale, windowSize)
+    private val binder = new PowerUpChainBinder[Tank]
 
     private var cleanup: Option[() => Any] = Option.empty
 
@@ -64,17 +72,24 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
         val pauseController = new JFXPauseController(gameLoop, pauseUiView):
             override def quit() =
                 endGame()
+        val binderController = new PowerUpBinderController(entityRepository, binder, powerupPickupped)
+        var enemyGenerator = Option.empty[EnemyTankGenerator]
         levelSequencer.levelChanged += { (_, enemyCount) => 
+            enemyGenerator.foreach(entityRepository.removeController(_))
+            enemyGenerator = Option(new EnemyTankGenerator(entityRepository, "B||BB", 11, 11, JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE))
             playerUiViewController.setEnemyCount(enemyCount) 
             playerUiViewController.setCompletedLevelCount(levelSequencer.completedLevelCount)
         }
         entityRepository.addController(playerDeathController)
             .addController(playerUiViewController)
             .addController(pauseController)
+            .addController(binderController)
         cleanup = Option(() => {
             entityRepository.removeController(playerDeathController)
                 .removeController(playerUiViewController)
                 .removeController(pauseController)
+                .removeController(binderController)
+            enemyGenerator.foreach(entityRepository.removeController)
         })
         PointsManager.addAmount(500)
         levelSequencer.start()

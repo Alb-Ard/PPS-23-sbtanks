@@ -23,20 +23,20 @@ class BulletController(bullet: CompleteBullet, bulletView: BulletView, speedMult
 
     private def checkCollisions(colliders: Seq[Collider]): Unit =
         if (colliders.map(handleCollision).contains(true))
-            bullet.damage()
+            bullet.damage(bullet)
 
     private def handleCollision(collider: Collider) = collider match
         case tank: Tank with DamageableBehaviour =>
             if(checkBulletPlayer(tank))
-                tank.damage()
+                tank.damage(bullet)
                 true
             else
                 false
         case obstacle: LevelObstacle with DamageableBehaviour =>
-            obstacle.damage()
+            obstacle.damage(bullet)
             true
         case damageable: DamageableBehaviour =>
-            damageable.damage()
+            damageable.damage(bullet)
             true
         case c => true
 

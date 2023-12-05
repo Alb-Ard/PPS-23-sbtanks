@@ -26,22 +26,39 @@ object EnemyFactory:
     /**
      * Creates a list of enemies based on a string of characters and their positions on a game board.
      *
-     * @param input  The input string containing characters representing enemy tank types.
-     * @param width  The width of the game board.
-     * @param height The height of the game board.
-     * @return A list of enemies with positions corresponding to the valid characters in the input string.
+     * @param input The input string containing characters representing enemy tank types.
+     * @param eachCharged An optional parameter specifying the charging behavior for every Nth enemy. Default is 4.
+     * @return A sequence of enemy tank builders only corresponding to the valid characters in the input string.
      */
-    def createFromString(using physics: PhysicsContainer)(input: String, width: Double, height: Double) =
-        val positionProvider = PositionProvider(width, height)
+    def createFromString(using physics: PhysicsContainer)(input: String, eachCharged: Int = 4) =
         input.map(createEnemyBuilder)
-            .flatMap(_.flatMap(b => {
-                positionProvider(b.collisionMask.toSeq, b.collisionSizeX, b.collisionSizeY).findFreePosition() match
-                    case Some(x, y) =>
-                        val tank = b.build()
-                        tank.setPosition(x, y)
-                        Option(tank)
-                    case _ => Option.empty
-            }))
+            .zipWithIndex
+            .map:
+                case (Some(enemyTank), index: Int) =>
+                    Option(enemyTank.setCharged(eachCharged != 0 && (index + 1) % eachCharged == 0))
+                case _ => Option.empty
+            .collect:
+                case Some(b) => b
+
+    /**
+     * Extension method for the EnemyTankBuilder class to set its position on the game board.
+     *
+     * @param builder The enemy tank builder to set the position for.
+     * @return A new Tank whenever its possible to locate one or else an empty Option .
+     */
+
+
+    extension (builder: EnemyTankBuilder)
+        def withPosition(using physics: PhysicsContainer)(width: Double, height: Double) =
+            val positionProvider = (w: Double, h: Double) => PositionProvider(w, h)
+
+            positionProvider(width, height)(builder.collisionMask.toSeq, builder.collisionSizeX, builder.collisionSizeY).findFreePosition() match
+                case Some(x, y) =>
+                    val tank = builder.build()
+                    tank.setPosition(x, y)
+                    Option(tank)
+                case _ => Option.empty
+
 
 /**
  * Object containing utility methods and data for the enemy factory.

@@ -26,5 +26,5 @@ trait JFXImageViewAnimator(private var images: Seq[Image], speed: Double, privat
 
     def setImages(images: Seq[Image]): this.type =
         this.images = images
-        Platform.runLater { image = images(0) }
+        //Platform.runLater { image = images(0) }
         this

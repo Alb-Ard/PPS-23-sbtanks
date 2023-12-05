@@ -59,5 +59,5 @@ abstract class PlayerUiViewController[RM >: Tank, RV, CVController, CVSlotKey, C
                 playerSidebarView.healthView.setRemainingHealth(p.tankData.health)
             case _ => ()
     
-    private def onPlayerDamaged(amount: Int) = 
+    private def onPlayerDamaged(source: Any, amount: Int) = 
         playerTank.foreach(t => playerSidebarView.healthView.setRemainingHealth(t.tankData.health))
