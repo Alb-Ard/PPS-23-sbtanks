@@ -22,6 +22,7 @@ import org.aas.sbtanks.lifecycle.PointsManager
 import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer
 import org.aas.sbtanks.physics.PhysicsContainer
 import org.aas.sbtanks.physics.PhysicsWorld
+import scalafx.scene.media.MediaPlayer
 
 /**
   * A class used to manage all components required for a game
@@ -33,7 +34,13 @@ import org.aas.sbtanks.physics.PhysicsWorld
 class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)):
     val IS_DEBUG = true
 
+    /**
+     * An event that is invoked when the game has ended.
+     */
     val gameEnded = EventSource[Unit]
+    /**
+     * An event that is invoked when the game has restarted
+     */
     val restartedGame = EventSource[Unit]
 
     given PhysicsContainer = PhysicsWorld
@@ -46,6 +53,7 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
     private val gameLoop = GameLoop(entityRepository, Seq(entityRepository))
     private val pauseUiView = JFXPauseMenu(interfaceScale, windowSize)
 
+    private var gameoverSound = MediaPlayer(JFXMediaPlayer.BULLET_SFX._1)
     private var cleanup: Option[() => Any] = Option.empty
 
     /**
@@ -60,9 +68,10 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
                 container.children.add(playerSidebar)
         val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer, ViewSlot.Ui):
             override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) =
-                JFXMediaPlayer.play(JFXMediaPlayer.GAME_OVER_SFX)
+                gameoverSound = JFXMediaPlayer.play(JFXMediaPlayer.GAME_OVER_SFX)
                 currentContext.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
             override protected def restart(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]): this.type =
+                gameoverSound.stop()
                 restartedGame(())
                 this
         val pauseController = new JFXPauseController(gameLoop, pauseUiView):
