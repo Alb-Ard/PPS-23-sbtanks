@@ -8,7 +8,7 @@ import org.aas.sbtanks.entities.obstacles.LevelObstacle.Trees.playerBase
 import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer
 import org.aas.sbtanks.entities.repository.context.{EntityRepositoryContext, EntityRepositoryContextAware}
 import org.aas.sbtanks.event.EventSource
-import org.aas.sbtanks.lifecycle.LevelSequencer
+import org.aas.sbtanks.lifecycle.{LevelSequencer, PointsManager}
 import org.aas.sbtanks.lifecycle.scalafx.JFXGameBootstrapper
 import org.aas.sbtanks.lifecycle.view.scalafx.JFXGameOverView
 import org.aas.sbtanks.player.PlayerTank
@@ -56,7 +56,10 @@ abstract class JFXPlayerDeathController[VSlotKey](using context: EntityRepositor
      */
     private def gameover(u: Unit): Unit =
         val gameOverView = new JFXGameOverView(levelSequencer, INTERFACE_SCALE, windowSize)
-        gameOverView.retryRequested += {_ => restart(context)}
+        gameOverView.retryRequested += { _ =>
+            PointsManager.resetAmount()
+            restart(context)
+        }
         gameOverView.exitRequested += {_ => System.exit(0)}
         setupGameoverContext(context).viewSlots.get(uiSlotKey).foreach(c => c.children.add(gameOverView))
 

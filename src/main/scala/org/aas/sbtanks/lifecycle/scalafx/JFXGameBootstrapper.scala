@@ -55,9 +55,14 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
                 container.children.add(playerSidebar)
         val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer, ViewSlot.Ui):
             override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) =
-                JFXMediaPlayer.play(JFXMediaPlayer.GAME_OVER_MUSIC)
+                //JFXMediaPlayer.play(JFXMediaPlayer.GAME_OVER_MUSIC)
                 currentContext.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
             override protected def restart(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]): this.type =
+//                JFXMediaPlayer.mediaEnded once { m =>
+//                    m match
+//                        case m if m == JFXMediaPlayer.GAME_OVER_MUSIC(0) => restart(currentContext)
+//                        case _ => ()
+//                }
                 restartedGame(())
                 this
         val pauseController = new JFXPauseController(gameLoop, pauseUiView):
