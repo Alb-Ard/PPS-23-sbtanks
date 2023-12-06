@@ -40,6 +40,10 @@ Delle 3 user story a cui stavo lavorando in queste due settimane, le prime due s
 Purtroppo, l'ultima di queste è quella che ha più sofferto a causa dei problemi precedentemente citati: i numerosi imprevisti che hanno portato via *intere giornate di lavoro* mi hanno costretto a dedicare il tempo rimanente per il completamento dei task delle precedenti User Story.
 Sono riuscito comunque a realizzare degli iniziali mockup per uno di questi e ho qualche idea per una possibile implementazione in grado di soddisfare quanto richiesto.
 ## 6.2.3 Sprint 3 - Dal 13 al 26 novembre
+### 6.2.3.1 Review Alberto Arduini
+Questo sprint si è concentrato sullo sviluppo dell'interfaccia utente da mostrare durante il gioco.
+Per questo è stato abbastanza semplice, tuttavia, per poter accomodare vari layout in modo generico e avere un sistema per cambiarli in modo semplice, ha richiesto l'implementazione del sistema del [contesto di visualizzazione](4_Design_di_dettaglio.md#4%202%20Contesto%20di%20visualizzazione) delle *View*.
+Inoltre, è stata implementa anche la gestione base dei punti, ma è rimasta però in sospeso per lo sprint successivo l'integrazione delle sue funzionalità con il resto del sistema.
 ### 6.2.3.2 Review Andrea Bianchi
 ## 6.2.4 Sprint 4 - Dal 27 novembre al 9 dicembre
 ### 6.2.4.2 Review Andrea Bianchi
