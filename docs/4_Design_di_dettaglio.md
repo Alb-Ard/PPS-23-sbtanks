@@ -271,3 +271,20 @@ DualBinder o-- EntityBinding
 
 
 ```
+# 4.6 Pattern di progettazione
+## Builder
+L'utilizzo dei builder ci ha permesso per quei tipi di entità più complesse, ovvero i *tank*, di poterne specificare le proprietà in modo più semplice.
+Inoltre, questi builder sono stati implementati in modo funzionale sfruttando le *case class* e il loro metodo `copy`, per creare nuove istanze del builder modificando solo alcuni parametri lasciando invariati gli altri.
+## Factory e Factory methods
+Le factory sono state ampiamente utilizzate per la creazione di oggetti molto comuni o, unite anche al pattern strategy, quando era necessario indicare ad un oggetto come creare, per uso interno o esterno, un altro oggetto.
+## Singleton
+Si è cercato di limitare l'uso dei singleton a favore di parametri `using` dove possibile e dove opportuno, in quanto tendono a rendere il codice più opaco su ciò che usa internamente e anche dipendente dal singleton in maniera stretta. Comunque si è ritenuto opportuno usare alcuni oggetti globali singleton, soprattutto per quando riguarda la creazione delle factory di oggetti o per quei sistemi globali non centrali al funzionamento.
+## Strategy
+Grazie al supporto avanzato di scala per *higher-order functions*, *currying* e per i *type alias* si è fatto uso abbondante del pattern strategy non solo per ottenere codice più riutilizzabile e generico, ma anche per poter scrivere classi e `trait` con comportamenti forniti dall'esterno senza legarne l'implementazione a specifiche interfacce.
+## *self-type*
+Il meccanismo dei *self-type* è stato molto utilizzato per avere una definizione dichiarativa delle dipendenze di un oggetto, non solo come già illustrato nella [composizione delle entità](4_Design_di_dettaglio.md#4%204%201%20Composizione%20delle%20entità), ma in generale in tutta l'applicazione.
+## Producer-consumer
+## Adapter
+Il pattern dell'adapter è stato utilizzato principalmente nello sviluppo delle estensioni della [repository delle entità](4_Design_di_dettaglio.md#4%204%202%20Repository%20delle%20entità), in quanto il loro scopo è adattare i suoi eventi a scopi diversi per i vari sistemi di gioco.
+## Template method
+## Observer
