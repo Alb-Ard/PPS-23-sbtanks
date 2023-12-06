@@ -170,7 +170,7 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         //val enemies = EnemyFactory.createFromString("BBB", 11, 11, 1).map(_.asInstanceOf[ControllableTank])
 
-        val g = new EnemyTankGenerator(entityRepository, "BBBBBBBBB", 11, 11, tileSize, viewScale)
+        val g = new EnemyTankGenerator(entityRepository, "B", 11, 11, tileSize, viewScale)
 
         entityRepository.addController(g)
 

@@ -8,13 +8,14 @@ import org.aas.sbtanks.enemies.controller.AiMovableController
 import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 import org.aas.sbtanks.entities.tank.controller.TankController
 import org.aas.sbtanks.entities.tank.view.TankView
+import org.aas.sbtanks.enemies.ai.shooting.ShootingEntity
 import scalafx.scene.Node
 import scalafx.stage.Stage
 import scalafx.scene.layout.Pane
 
 class EnemyController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(private val enemyTank: ControllableTank, private val enemyView: TankView, viewScale: Double, tileSize: Double)
     extends TankController(Seq((enemyTank, enemyView)), viewScale)
-    with AiMovableController(enemyTank.asInstanceOf[MovementEntity], tileSize)
+    with AiMovableController(enemyTank.asInstanceOf[MovementEntity with ShootingEntity], tileSize)
     with Steppable:
 
     private var test: Double = 3.0
