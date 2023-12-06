@@ -45,7 +45,7 @@ case class PlayerTankBuilder(private val x: Double = 0,
         new PlayerTank()
             with PositionBehaviour(x, y)
             with ConstrainedMovementBehaviour
-            with DirectionBehaviour
+            with DirectionBehaviour(0, 0)
             with CollisionBehaviour(collisionSizeX, collisionSizeY, collisionLayer, collisionMask.toSeq)
             with DamageableBehaviour
             with TankMultipleShootingBehaviour:

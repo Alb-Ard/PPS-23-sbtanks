@@ -114,8 +114,10 @@ object JFXEntityMvRepositoryFactory:
                     this
 
                 protected override def removeDebugView(collider: Collider, container: Pane): this.type =
-                    container.children.removeAll(debugRects(collider))
-                    debugRects = debugRects - collider
+                    debugRects = debugRects.get(collider).map(c =>
+                        container.children.removeAll(debugRects(collider))
+                        debugRects - collider
+                    ).getOrElse(debugRects)
                     this
     
     extension (entityRepository: EntityMvRepositoryContainer[AnyRef, Node] with EntityControllerRepository[AnyRef, Node, DefaultContext] with EntityControllerReplacer[AnyRef, Node, DefaultContext])
@@ -124,9 +126,10 @@ object JFXEntityMvRepositoryFactory:
                 enemyTankSpawnEvent: EventSource[Tank],
                 tankAnimationSpeed: Double
             ): entityRepository.type =
-            entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(TANK_UNIT_MOVE_SPEED, VIEW_SCALE, TILE_SIZE, (bulletModel, bulletView) => entityRepository.addModelView(bulletModel, Option(bulletView))))
+            val bulletCreator = (bullet: AnyRef, view: Node) => entityRepository.addModelView(bullet, Option(view))
+            entityRepository.registerControllerFactory(m => m.isInstanceOf[PlayerTank], JFXPlayerTankController.factory(TANK_UNIT_MOVE_SPEED, VIEW_SCALE, TILE_SIZE, bulletCreator))
                     .registerControllerFactory(m => m.isInstanceOf[LevelObstacle], LevelObstacleController.factory(VIEW_SCALE * TILE_SIZE))
                     .registerControllerFactory(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && !m.asInstanceOf[DamageableBehaviour].isDamageable, EnemySpawnController.factory(VIEW_SCALE * TILE_SIZE, TILE_SIZE, entityRepository, enemyTankSpawnEvent, tankAnimationSpeed))
-                    .registerControllerReplacer(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && m.asInstanceOf[DamageableBehaviour].isDamageable, EnemyController.factory(VIEW_SCALE, TILE_SIZE))
+                    .registerControllerReplacer(m => m.isInstanceOf[Tank] && !m.isInstanceOf[PlayerTank] && m.asInstanceOf[DamageableBehaviour].isDamageable, EnemyController.factory(VIEW_SCALE, TILE_SIZE, bulletCreator))
                     .registerControllerFactory(m => m.isInstanceOf[Bullet], JFXBulletController.factory(BULLET_UNIT_MOVE_SPEED, VIEW_SCALE, TILE_SIZE))
                     .registerControllerFactory(m => m.isInstanceOf[PickablePowerUp[?]], PowerUpController.factory[Tank](VIEW_SCALE * TILE_SIZE, entityRepository, pickupEvent))

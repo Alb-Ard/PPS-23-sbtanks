@@ -17,7 +17,6 @@ import javafx.scene.input.KeyCode.A
 import javafx.scene.input.KeyCode.D
 
 import org.aas.sbtanks.player.controller.scalafx.JFXPlayerInputController
-import org.aas.sbtanks.player.controller.scalafx.JFXPlayerTankController
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.entities.tank.controller.TankInputController
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
@@ -29,9 +28,12 @@ class MockTankView extends TankView:
     override def look(rotation: Double): Unit = ()
     override def move(x: Double, y: Double): Unit = ()
 
-class MockJFXPlayerTankController(tank: ControllableTank) extends TankInputController(tank, MockTankView(), 1 / 16D, 1, 16D, JFXPlayerInputController()):
+class MockSound:
+    def play() = ()
+    def stop() = ()
+
+class MockJFXPlayerTankController(tank: ControllableTank) extends TankInputController(tank, MockTankView(), 1 / 16D, 1, 16D, JFXPlayerInputController(), MockSound()):
     def simulateInput(event: KeyEvent) = inputEvents.handleKeyPressEvent(event)
-    override protected def shoot() = this
 
 object MockJFXPlayerTankController:
     val MOCK_STAGE = EntityRepositoryContext[Stage, Any, Any](new JFXApp3.PrimaryStage())

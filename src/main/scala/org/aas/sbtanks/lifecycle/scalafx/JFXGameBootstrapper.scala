@@ -31,6 +31,7 @@ import org.aas.sbtanks.lifecycle.PointsContainer
 import org.aas.sbtanks.lifecycle.PointsGiver
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityMvRepositoryFactory.addDefaultControllerFactories
 import scalafx.scene.media.MediaPlayer
+import org.aas.sbtanks.lifecycle.scalafx.JFXGameBootstrapper._
 
 /**
   * A class used to manage all components required for a game
@@ -41,17 +42,12 @@ import scalafx.scene.media.MediaPlayer
   */
 class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)):
     private val TANK_ANIMATION_SPEED = 16D
-
     private val IS_DEBUG = true
 
     /**
      * An event that is invoked when the game has ended.
      */
-    val gameEnded = EventSource[Unit]
-    /**
-     * An event that is invoked when the game has restarted
-     */
-    val restartedGame = EventSource[Unit]
+    val gameEnded = EventSource[GameEndedArgs]
 
     private val powerupPickupped = EventSource[PowerUp[Tank]]
     private val enemyTankSpawned = EventSource[Tank]
@@ -70,7 +66,6 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
     private val binder = new PowerUpChainBinder[Tank]
     private val pointsGiver = PointsGiver.create(entityRepository, powerupPickupped)
 
-    private var gameoverSound = MediaPlayer(JFXMediaPlayer.BULLET_SFX._1)
     private var cleanup: Option[() => Any] = Option.empty
 
     /**
@@ -83,17 +78,11 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
         val playerUiViewController = new PlayerUiViewController[AnyRef, Node, Stage, ViewSlot, Pane](entityRepository, playerSidebar, ViewSlot.Ui):
             override protected def addViewToContext(container: Pane) =
                 container.children.add(playerSidebar)
-        val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer, ViewSlot.Ui):
-            override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) =
-                gameoverSound = JFXMediaPlayer.play(JFXMediaPlayer.GAME_OVER_SFX)
-                currentContext.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
-            override protected def restart(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]): this.type =
-                gameoverSound.stop()
-                restartedGame(())
-                this
+        val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer, ViewSlot.Ui)
+        playerDeathController.playerDied += { _ => endGame(EndGameType.Lose) }
         val pauseController = new JFXPauseController(gameLoop, pauseUiView):
             override def quit() =
-                endGame()
+                endGame(EndGameType.Exit)
         var enemyGenerator = Option.empty[EnemyTankGenerator]
         var binderController = Option.empty[PowerUpBinderController]
         levelSequencer.levelChanged += { (level, enemyString) => 
@@ -115,15 +104,23 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
             enemyGenerator.foreach(entityRepository.removeController)
             binderController.foreach(entityRepository.removeController)
         })
-        PointsManager.addAmount(500)
         levelSequencer.start()
         gameLoop.setPaused(false)
         this
     
-    def endGame(): this.type =
+    def endGame(endType: EndGameType): this.type =
         gameLoop.setPaused(true)
         entityRepository.clear()
         cleanup.foreach(_())
+        val completedLevelCount = levelSequencer.completedLevelCount
         levelSequencer.reset()
-        gameEnded(())
+        gameEnded(GameEndedArgs(endType, completedLevelCount, summon[PointsContainer].amount))
         this
+
+object JFXGameBootstrapper:
+    enum EndGameType:
+        case Win
+        case Exit
+        case Lose
+
+    case class GameEndedArgs(val endType: EndGameType, val completedLevelCount: Int, val points: Int)

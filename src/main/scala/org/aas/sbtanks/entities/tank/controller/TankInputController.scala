@@ -12,9 +12,10 @@ import org.aas.sbtanks.entities.tank.view.TankView
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.common.Pausable
+import org.aas.sbtanks.physics.PhysicsContainer
 
-abstract class TankInputController[+A <: TankInputEvents](tank: ControllableTank, view: TankView, speedMultiplier: Double, viewScale: Double, tileSize: Double, protected val inputEvents: A)
-    extends TankController(Seq((tank, view)), viewScale, tileSize)
+abstract class TankInputController[+A <: TankInputEvents, S <: TankControllerMoveSound](using PhysicsContainer)(tank: ControllableTank, view: TankView, speedMultiplier: Double, viewScale: Double, tileSize: Double, protected val inputEvents: A, protected override val moveSound: S)
+    extends TankController(tank, view, viewScale, tileSize, moveSound)
     with Steppable
     with Pausable:
 
@@ -28,10 +29,9 @@ abstract class TankInputController[+A <: TankInputEvents](tank: ControllableTank
     }
 
     override def step(delta: Double) = 
+        super.step(delta)
         tank.moveRelative(tank.directionX * tank.tankData.speed * speedMultiplier, tank.directionY * tank.tankData.speed * speedMultiplier)
         this
     
     override def setPaused(paused: Boolean) = 
         super.setPaused(paused)
-
-    protected def shoot(): this.type

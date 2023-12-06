@@ -13,13 +13,56 @@ import org.aas.sbtanks.entities.tank.structure.Tank
 import TankController.ControllableTank
 import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
 import org.aas.sbtanks.behaviours.DamageableBehaviour
+import reflect.Selectable.reflectiveSelectable
+import org.aas.sbtanks.event.EventSource
+import org.aas.sbtanks.entities.bullet.controller.BulletController.CompleteBullet
+import org.aas.sbtanks.entities.bullet.view.scalafx.JFXBulletView
+import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer
+import org.aas.sbtanks.physics.PhysicsContainer
+import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 
-trait TankController(tanks: Seq[(ControllableTank, TankView)], viewScale: Double, tileSize: Double):
-    tanks.foreach((t, v) => t.directionChanged += { (x, y) => 
-        v.lookInDirection(x, y)
-        v.isMoving(t.directionX != 0 || t.directionY != 0)
-    })
-    tanks.foreach((t, v) => t.positionChanged += { (x, y) => v.move(x * viewScale * tileSize, y * viewScale * tileSize) })
+type TankControllerMoveSound = {
+    def play(): Unit
+    def stop(): Unit
+}
+
+trait TankController[S <: TankControllerMoveSound](using PhysicsContainer)(tank: ControllableTank, tankView: TankView, viewScale: Double, tileSize: Double, protected val moveSound: S) extends Steppable:
+    private val SHOOT_DELAY_AMOUNT = 1D
+
+    val bulletShot = EventSource[(CompleteBullet, JFXBulletView)]
+
+    private var shootDelay = 0.0
+
+    tank.directionChanged += { (x, y) => 
+        tankView.lookInDirection(x, y)
+        tankView.isMoving(x != 0 || y != 0)
+        if x == 0 && y == 0 then
+            moveSound.stop()
+        else
+            moveSound.play()
+    }
+    tank.positionChanged += { (x, y) => 
+        tankView.move(x * viewScale * tileSize, y * viewScale * tileSize)
+    }
+
+    override def step(delta: Double) = 
+        shootDelay += delta
+        this
+
+    protected def shoot() = 
+        if shootDelay >= SHOOT_DELAY_AMOUNT then
+            val bullet = tank.shoot(isPlayerBullet = true)
+                .map(b => (
+                    b,
+                    new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale)),
+                ))
+                .foreach((b, v) =>
+                    v.move(b.positionX * tileSize * viewScale, b.positionY * tileSize * viewScale)
+                    bulletShot(b, v)
+                )
+            JFXMediaPlayer.play(JFXMediaPlayer.BULLET_SFX)
+            shootDelay -= SHOOT_DELAY_AMOUNT
+        this
 
 object TankController:    
     type ControllableTank = Tank

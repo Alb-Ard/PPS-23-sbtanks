@@ -7,7 +7,6 @@ import org.aas.sbtanks.behaviours.PositionBehaviour
 import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 import org.aas.sbtanks.entities.obstacles.view.scalafx.JFXAnimatedObstacleView
 import org.aas.sbtanks.lifecycle.scalafx.JFXGameBootstrapper
-import org.aas.sbtanks.lifecycle.view.scalafx.JFXGameOverView
 import scalafx.scene.layout.Pane
 import scalafx.stage.Stage
 

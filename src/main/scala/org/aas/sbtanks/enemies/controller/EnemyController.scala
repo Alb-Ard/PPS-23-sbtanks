@@ -11,9 +11,13 @@ import org.aas.sbtanks.entities.tank.view.TankView
 import scalafx.scene.Node
 import scalafx.stage.Stage
 import scalafx.scene.layout.Pane
+import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer
+import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer._
+import scalafx.scene.media.MediaPlayer
+import org.aas.sbtanks.physics.PhysicsContainer
 
-class EnemyController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(private val enemyTank: ControllableTank, private val enemyView: TankView, viewScale: Double, tileSize: Double)
-    extends TankController(Seq((enemyTank, enemyView)), viewScale, tileSize)
+class EnemyController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS], physics: PhysicsContainer)(private val enemyTank: ControllableTank, private val enemyView: TankView, viewScale: Double, tileSize: Double)
+    extends TankController(enemyTank, enemyView, viewScale, tileSize, JFXMediaPlayer.play(JFXMediaPlayer.ENEMY_MOVE_SFX, (p: MediaPlayer) => p.setLooping(true).setLoopDuration(0.05D)))
     with AiMovableController(enemyTank.asInstanceOf[MovementEntity], tileSize)
     with Steppable:
 
@@ -22,8 +26,10 @@ class EnemyController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK
         this
 
 object EnemyController:
-    def factory(viewScale: Double, tileSize: Double)(oldController: Any, context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: TankView) =
-        new EnemyController(using context)(tank, view, viewScale, tileSize)
+    def factory(using PhysicsContainer)(viewScale: Double, tileSize: Double, bulletConsumer: (AnyRef, Node) => Any)(oldController: Any, context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: TankView) =
+        val controller = new EnemyController(using context)(tank, view, viewScale, tileSize)
+        controller.bulletShot += { (b, v) => bulletConsumer(b, v) }
+        controller
 
         
 

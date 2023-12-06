@@ -11,7 +11,16 @@ import scalafx.scene.input.KeyEvent
 import scalafx.scene.Node
 import scalafx.Includes
 import org.aas.sbtanks.resources.scalafx.{JFXImageLoader, JFXMediaPlayer}
+import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer._
 import org.aas.sbtanks.physics.PhysicsContainer
+import scalafx.scene.media.MediaPlayer
+import javafx.scene.media.MediaPlayer.Status
+import scalafx.scene.media.AudioClip
+import org.aas.sbtanks.event.EventSource
+import org.aas.sbtanks.entities.bullet.view.BulletView
+import org.aas.sbtanks.entities.bullet.controller.BulletController.CompleteBullet
+import scalafx.util.Duration
+import scalafx.Includes._
 
 /**
  * a controller used to handle the player's tank, handling events such as key pressed and firing bullets.
@@ -25,10 +34,9 @@ import org.aas.sbtanks.physics.PhysicsContainer
  * @tparam VSK
  * @tparam VS
  */
-abstract class JFXPlayerTankController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(tank: ControllableTank, speedMultiplier: Double, view: TankView, viewScale: Double, tileSize: Double)
-    extends TankInputController(tank, view, speedMultiplier, viewScale, tileSize, JFXPlayerInputController())
-    with EntityRepositoryContextAware
-    with Includes:
+class JFXPlayerTankController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS], physics: PhysicsContainer)(tank: ControllableTank, speedMultiplier: Double, view: TankView, viewScale: Double, tileSize: Double)
+    extends TankInputController(tank, view, speedMultiplier, viewScale, tileSize, JFXPlayerInputController(), JFXMediaPlayer.play(JFXMediaPlayer.PLAYER_MOVE_SFX, (p: MediaPlayer) => p.setLooping(true).setLoopDuration(0.05D)))
+    with EntityRepositoryContextAware:
 
     registerSceneEventHandlers(context.viewController)
 
@@ -38,20 +46,6 @@ abstract class JFXPlayerTankController[VSK, VS](using context: EntityRepositoryC
 
 object JFXPlayerTankController:
     def factory(using physics: PhysicsContainer)(speedMultiplier: Double, viewScale: Double, tileSize: Double, bulletConsumer: (AnyRef, Node) => Any)(context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: TankView) =
-        new JFXPlayerTankController(using context)(tank, speedMultiplier, view, viewScale, tileSize):
-
-            var shootDelay = 0.0
-
-            override def step(delta: Double) =
-                shootDelay += delta
-                super.step(delta)
-
-            override def shoot() =
-                if(shootDelay >= 1.0)
-                    val bullet = tank.shoot(1, true).head
-                    val bulletView = new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
-                    bulletView.move(bullet.positionX * tileSize * viewScale, bullet.positionY * tileSize * viewScale)
-                    bulletConsumer(bullet, bulletView)
-                    JFXMediaPlayer.play(JFXMediaPlayer.BULLET_SFX)
-                    shootDelay = 0.0
-                this
+        val controller = new JFXPlayerTankController(using context)(tank, speedMultiplier, view, viewScale, tileSize)
+        controller.bulletShot += { (b, v) => bulletConsumer(b, v) }
+        controller
