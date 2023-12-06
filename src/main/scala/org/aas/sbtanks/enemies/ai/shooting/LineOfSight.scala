@@ -11,8 +11,6 @@ import org.aas.sbtanks.physics.{Collider, CollisionLayer, PhysicsContainer, Phys
 
 
 
-
-
 trait LineOfSight(private val lineCollisions: Seq[CollisionLayer], private val exclusion: Seq[Collider], private val seeThrough: Int = 5):
     this: PositionBehaviour with DirectionBehaviour =>
 
@@ -21,6 +19,7 @@ trait LineOfSight(private val lineCollisions: Seq[CollisionLayer], private val e
     def findFirstDirectionCollider(): (Option[Collider], (Double, Double)) =
         val collidersAndDirections = directionIterator
             .map(direction => (getCollidersOn(direction).headOption, direction))
+            .take(getCollisionLines(this).size)
             .find:
                 case (collider, _) => collider.isDefined
 
@@ -43,11 +42,11 @@ trait LineOfSight(private val lineCollisions: Seq[CollisionLayer], private val e
 
 
     private def getVerticalLine(backwards: Boolean = false): Seq[Collider] =
-        PhysicsWorld.verticalRayCast(this.positionX, this.positionY, if backwards then Some(-Double.MaxValue) else Option.empty, lineCollisions, exclusion)
+        PhysicsWorld.verticalRayCast(this.positionX, this.positionY, if backwards then Some(-Int.MaxValue) else Option.empty, lineCollisions, exclusion)
 
 
     private def getHorizontalLine(backwards: Boolean = false): Seq[Collider] =
-        PhysicsWorld.horizontalRayCast(this.positionX, this.positionY, if backwards then Some(-Double.MaxValue) else Option.empty, lineCollisions, exclusion)
+        PhysicsWorld.horizontalRayCast(this.positionX, this.positionY, if backwards then Some(-Int.MaxValue) else Option.empty, lineCollisions, exclusion)
 
 
 

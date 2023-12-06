@@ -19,6 +19,7 @@ class EnemyController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK
     with Steppable:
 
     private var test: Double = 3.0
+    enemyTank.setPosition(enemyTank.positionX, enemyTank.positionY)
 
     override def step(delta: Double) =
         test -= delta

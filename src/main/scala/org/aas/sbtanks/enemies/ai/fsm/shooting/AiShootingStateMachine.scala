@@ -33,7 +33,7 @@ object AiShootingStateMachine extends AbstractStateMachine[ShootingEntity, Focus
                 case _ => transition(Idle)
             newFocus <- checkForTarget()
         yield
-            true
+            newFocus.isDefined
 
 object AiShootingStateMachineUtils:
     def checkAiPriorityTarget(entity: ShootingEntity): (Boolean, ShootingEntity) =

@@ -141,10 +141,10 @@ object Main extends JFXApp3 with scalafx.Includes:
         val levelFactory = JFXLevelFactory(tileSize, viewScale, 1)
 
         levelFactory.createFromString("UUUUUUUUUUU" +
-                                      "U--TTTTT--U" +
-                                      "U--SSwSS--U" +
-                                      "U--SwwwS--U" +
-                                      "U--TSTST--U" +
+                                      "U--TT-----U" +
+                                      "UUUSSwWS--U" +
+                                      "U--SwwBS--U" +
+                                      "U--TSTWT--U" +
                                       "U----P----U" +
                                       "U--SwwwS--U" +
                                       "U--TSTST--U" +
@@ -170,7 +170,7 @@ object Main extends JFXApp3 with scalafx.Includes:
 
         //val enemies = EnemyFactory.createFromString("BBB", 11, 11, 1).map(_.asInstanceOf[ControllableTank])
 
-        val g = new EnemyTankGenerator(entityRepository, "B", 11, 11, tileSize, viewScale)
+        val g = new EnemyTankGenerator(entityRepository, "BBBBB", 11, 11, tileSize, viewScale)
 
         entityRepository.addController(g)
 
