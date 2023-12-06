@@ -10,6 +10,7 @@ import scala.util.Random
 
 /**
  *  object representing a state machine for controlling the movement behavior of AI entities.
+ *  Extends AbstractStateMachine with ShootingEntity and FocusPolicy types.
  */
 object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, DirectionMovePolicy]:
     import AiMovementStateMachineUtils.*
@@ -100,8 +101,8 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
  * object to provide utility methods for computing AI movement states.
  */
 object AiMovementStateMachineUtils:
-    val MAX_ITERATION_BEFORE_DEFAULT = 5
-    val SCALE_FACTOR_MOVEMENT = 100D
+    private val MAX_ITERATION_BEFORE_DEFAULT = 5
+    private val SCALE_FACTOR_MOVEMENT = 100D
 
     /**
      * Computes the AI state for movement based on the provided entity and parameters.

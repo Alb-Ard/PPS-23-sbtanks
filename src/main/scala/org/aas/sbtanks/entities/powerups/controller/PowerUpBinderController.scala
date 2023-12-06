@@ -25,9 +25,6 @@ import org.aas.sbtanks.entities.powerups.effects.Timer.TimerPowerUp
 
 
 
-
-
-
 /**
  * A controller for managing power-up binding behaviors in the game.
  *
@@ -45,7 +42,6 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
      * Chains the picked-up power-up to the tank power-up binder.
      */
     pickup += { powerUp =>
-        println("PICK")
         tankPowerUpsBinder.chain(powerUp)
     }
 
@@ -74,19 +70,12 @@ class PowerUpBinderController(entityRepo: EntityMvRepositoryContainer[AnyRef, No
                   case expiredPowerUps:TimeablePowerUp =>
                       tankPowerUpsBinder.unchain(expiredPowerUps.resetDuration())
 
-
-
     /**
      * Sets a new pickable power-up in the game world.
-     * TODO: This method is a placeholder and requires a factory for power-up type and position generation.
      */
     private def setNewPickablePowerUp() =
         val (p, imagePath) = PickablePowerUpFactory.getRandomPowerUp(width, height)
-        
 
-        /*
-            TODO: refactor
-         */
         entityRepo.addModelView(
             p,
             Option(new JFXPowerUpView(JFXImageLoader.loadFromResources(imagePath, 16D, 4D)))

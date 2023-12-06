@@ -15,7 +15,7 @@ import scalafx.scene.layout.Pane
 
 class EnemyController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(private val enemyTank: ControllableTank, private val enemyView: TankView, viewScale: Double, tileSize: Double)
     extends TankController(Seq((enemyTank, enemyView)), viewScale)
-    with AiMovableController(enemyTank.asInstanceOf[MovementEntity with ShootingEntity], tileSize)
+    with AiMovableController(enemyTank.asInstanceOf[Tank with MovementEntity with ShootingEntity], tileSize)
     with Steppable:
 
     private var test: Double = 3.0

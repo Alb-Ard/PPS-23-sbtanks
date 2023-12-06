@@ -6,7 +6,18 @@ import org.aas.sbtanks.enemies.ai.fsm.{AbstractStateMachine, StateMachine, State
 import org.aas.sbtanks.enemies.ai.shooting.{AiShootingState, ShootingEntity}
 import org.aas.sbtanks.physics.Collider
 
-object AiShootingStateMachine extends AbstractStateMachine[ShootingEntity, FocusPolicy]:
+/**
+ * object representing a state machine for for AI shooting focus behaviour.
+ * Extends AbstractStateMachine with ShootingEntity and FocusPolicy types.
+ */
+object AiFocusShootingStateMachine extends AbstractStateMachine[ShootingEntity, FocusPolicy]:
+
+    /**
+     * Transitions the state based on the given transition.
+     *
+     * @param value The focus policy for the shooting entity.
+     * @return A State datatype representing the transition.
+     */
     override def transition(value: FocusPolicy): State[ShootingEntity, Unit] =
         for
             target <- gets(_.findFirstDirectionCollider())
@@ -18,6 +29,11 @@ object AiShootingStateMachine extends AbstractStateMachine[ShootingEntity, Focus
         yield
             ()
 
+    /**
+     * Checks for the actual entity and returns the target colliders along its direction as a state operation.
+     *
+     * @return A monadic state returning an optional set of target collider.
+     */
     private def checkForTarget(): State[ShootingEntity, Option[Seq[Collider]]] =
         for
             inFocus <- gets(e => e.getCollidersOn(e.directionX, e.directionY))
@@ -25,6 +41,11 @@ object AiShootingStateMachine extends AbstractStateMachine[ShootingEntity, Focus
         yield
             inFocus
 
+    /**
+     * Checks if the target is actually in focus for a target and transitions the state accordingly.
+     *
+     * @return A state representing the check for the target in focus returning a boolean value.
+     */
     def isTargetInFocus: State[ShootingEntity, Boolean] =
         for
             focus <- checkForTarget()
@@ -35,9 +56,12 @@ object AiShootingStateMachine extends AbstractStateMachine[ShootingEntity, Focus
         yield
             newFocus.isDefined
 
+/**
+ * object to provide utility methods for computing AI shooting focus states.
+ */
 object AiShootingStateMachineUtils:
     def checkAiPriorityTarget(entity: ShootingEntity): (Boolean, ShootingEntity) =
-        AiShootingStateMachine.isTargetInFocus.runAndReturn(entity)
+        AiFocusShootingStateMachine.isTargetInFocus.runAndReturn(entity)
 
 
 

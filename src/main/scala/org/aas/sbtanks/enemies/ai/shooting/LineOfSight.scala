@@ -11,7 +11,7 @@ import org.aas.sbtanks.physics.{Collider, CollisionLayer, PhysicsContainer, Phys
 
 
 
-trait LineOfSight(private val lineCollisions: Seq[CollisionLayer], private val exclusion: Seq[Collider], private val seeThrough: Int = 5):
+trait LineOfSight(private val lineCollisions: Seq[CollisionLayer], private val exclusion: Seq[Collider], private val seeThrough: Int = 8):
     this: PositionBehaviour with DirectionBehaviour =>
 
     private val directionIterator = Iterator.continually(Seq(Bottom, Right, Left, Top)).flatten
@@ -50,7 +50,7 @@ trait LineOfSight(private val lineCollisions: Seq[CollisionLayer], private val e
 
 
 
-object LineOfSight {
+object LineOfSight:
     def getCollisionLines(los: LineOfSight): Map[Direction, () => Seq[Collider]] = Map(
         Bottom -> (() => los.getVerticalLine()),
         Top -> (() => los.getVerticalLine(true)),
@@ -58,7 +58,6 @@ object LineOfSight {
         Right -> (() => los.getHorizontalLine()),
         NoDirection -> (() => Seq.empty)
     )
-}
 
 
 

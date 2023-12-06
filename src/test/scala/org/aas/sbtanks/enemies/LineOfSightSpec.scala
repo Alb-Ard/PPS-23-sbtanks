@@ -17,7 +17,7 @@ import org.scalatest.matchers.HavePropertyMatchResult
 import org.aas.sbtanks.physics.Collider
 import org.aas.sbtanks.entities.obstacles.ObstacleMatchers
 
-class AiShootingSpec extends AnyFlatSpec
+class LineOfSightSpec extends AnyFlatSpec
     with Matchers 
     with BeforeAndAfterEach
     with ObstacleMatchers:
