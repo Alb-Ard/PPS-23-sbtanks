@@ -22,6 +22,7 @@ import org.aas.sbtanks.entities.tank.controller.TankInputController
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 import org.aas.sbtanks.entities.tank.view.TankView
 import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
+import org.aas.sbtanks.physics.PhysicsContainer
 
 class MockTankView extends TankView:
     override def isMoving(value: Boolean): Unit = ()
@@ -32,7 +33,7 @@ class MockSound:
     def play() = ()
     def stop() = ()
 
-class MockJFXPlayerTankController(tank: ControllableTank) extends TankInputController(tank, MockTankView(), 1 / 16D, 1, 16D, JFXPlayerInputController(), MockSound()):
+class MockJFXPlayerTankController(using PhysicsContainer)(tank: ControllableTank) extends TankInputController(tank, MockTankView(), 1 / 16D, 1, 16D, JFXPlayerInputController(), MockSound()):
     def simulateInput(event: KeyEvent) = inputEvents.handleKeyPressEvent(event)
 
 object MockJFXPlayerTankController:
