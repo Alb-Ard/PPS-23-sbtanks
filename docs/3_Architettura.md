@@ -8,6 +8,44 @@ Nel nostro caso specifico, nell'applicazione abbiamo considerato ogni entità di
 Al contrario, la logica specifica di ogni entità è implementata tramite il *Presenter* (che abbiamo optato di nominare comunque *Controller* nel codice a fine di mantenere una nomenclatura più generale), il quale ha i compiti di:
 1. Gestisce il *Model*, variandolo in base agli input dell'utente, alle decisioni prese dall'AI oppure dagli eventi di gioco;
 2. Reagisce agli eventi di modifica del *Model* per aggiornare la sua *View* corrispondente.
+Un'altra nota sulla nostra implementazione è che abbiamo deciso di non avere delle interfacce, *trait* o classi "base" specifici per le componenti di *Model* e *View* delle entità, al fine di avere poter sviluppare in modo più libero e avere un sistema più generico per la loro gestione.
+Per questo:
+- Ai *Model* è richiesto di essere solo delle `AnyRef`, in quanto il sistema ha bisogno di avere delle loro istanze (e quindi non funzionerebbe correttamente in caso di utilizzo di `AnyVal`);
+- Per le *View* si richiede di essere `Node`, l'elemento base delle interfacce di scalafx. Inoltre, per evitare riscritture di codice, sono stati creati dei *mixin* base che forniscono delle funzionalità comuni a tutte le view, come `MoveableView` o `DirectionableView` (e le loro estensioni specifiche `JFXMoveableView` e `JFXDirectionableView`).
+Per i *Presenter* delle entità, invece, visto il loro compito di dover aggiornare i propri *Model* e *View*, è richiesto di ereditare l'interfaccia `Steppable`, in quanto è con essa che abbiamo gestito l'evoluzione nel tempo delle entità nel gioco.
+```plantuml
+@startuml
+together {
+class AnyRef
+
+entity Tank
+AnyRef <|-- Tank
+entity Bullet
+AnyRef <|-- Bullet
+entity LevelObstacle
+AnyRef <|-- LevelObstacle
+}
+
+together {
+class Node
+
+interface TankView
+class JFXTankView
+Node <|-- JFXTankView
+TankView <|-- JFXTankView
+}
+
+together {
+interface Steppable
+
+interface TankController
+
+class EnemyTankController
+Steppable <|-- EnemyTankController
+TankController <|-- EnemyTankController
+}
+@enduml
+```
 # 3.2 Architettura generale
 L'architettura generale dell'applicazione è la seguente:
 ```plantuml
