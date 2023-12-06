@@ -81,3 +81,24 @@ Tra le funzioni offerte da questo, vi sono:
 Tutto questo è stato realizzato integrando e usufruendo gli strumenti del [sistema delle entità.](5_Implementazione.md#511-sistema-delle-entità)
 
 # 5.3 Stefano Guidi
+Ho realizzato le seguenti componenti:
+ - sistema dei potenziamenti e dell'applicazione dei loro effetti sulle entità di gioco 
+ - AI del movimento dei nemici nella mappa
+ - AI del focus shooting dei nemici e Line of Sight (quest'ultimo realizzato in collaborazione)
+ - Sistema di generazione dei nemici e potenziamenti sulla mappa
+
+## Sistema dei potenziamenti
+Si è cercato di mantenere indipendente la logica del concetto di potenziamento mantenendosi il piu' generici e flessibili possibile:
+ - `PowerUp[E]` rappresenta la struttura di base per l'applicazione e inversione dell'effetto su un'entità. E' stato scelta di definirlo come abstract class invece che come trait, ciò per semplificare l'integrazione con trait di middleware come `PowerUpConstrait[E]`.
+	 - NOTA: per quanto riguarda i metodi di apply e revert si è scelto di imporre una limitazione sul un tipo generico: `apply[A <: E](entity: A): A`. Ciò permette di mantenere un'invarianza sul sottotipo specifico dell'entità, rendendo piu' semplice la gestione funzionale dei potenziamenti ed evitando ambiguità' di typing troppo generico
+- `PowerUpConstraint[E]`: trait di "middleware" che estende `PowerUp[E]`. Esegue un override per l'`apply`   di `PowerUp[E]` ponendo un predicato di tipo `E => Boolean` sull'applicazione di un dato potenziamento su un'entità
+- `FuncPowerUp[E]`: classe concreta per i potenziamenti, definisce un powerup come una struttura definita da una funzione di applicazione e inversione `E => E`
+- `ContextualFuncPowerUp[C, E]`: ulteriore estensione di `FuncPowerUp[E]`. Permette di fornire un'informazione di contesto supplementare `C` oltre all'entità `E`. E' costituito da una funzione di mapping `(C, E) => E` 
+
+## Sistema di Binding dei potenziamenti sulle entità
+Per semplificare l'applicazione dei potenziamenti si è scelto di utilizzare una serie di meccanismi per semplificarne l'utilizzo e la gestione delle entità affette da essi:
+ - `PowerUpChain[E]`: estensione del `PowerUp[E]`,  prende in ingresso una sequenza di potenziamenti e permette di applicarli in maniera unitaria ad un'entità. E' possibile inoltre eseguire il `chain` ed `unchain` di ulteriori potenziamenti da aggiungere alla sequenza, tutto ciò mantenendosi completamente immutabile
+ - `DualBinder[E]`:  Trait necessario a mantenere lo stato delle entità consistente con i loro relativi aggiornamenti in seguito all'applicazione dei potenziamenti si è deciso di realizzare un sistema a doppio riferimento, permettendo di eseguire il `bind` e `unbind` delle entità, nello specifico tale riferimento è stato realizzato nel seguente modo:
+	 - `EntityBinding`: case class, mantiene un doppio riferimento ad ogni entità tramite un `supplier: () => E ` per ottenere lo stato dell'entità aggiornata e un `consumer: E => Unit ` per aggiornare il suo stato corrente
+	Questa soluzione permette di gestire in maniera piu' semplice la gestione delle entità bindate senza ulteriori complicazioni e problemi di consistenza
+Entrambi i meccanismi sono stati integrati in una componente `PowerUpChainBinder[E]` che fornisce entrambe le funzionalità  mantenendosi sempre generico rispetto al tipo di entità
