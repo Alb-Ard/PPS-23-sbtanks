@@ -284,7 +284,10 @@ Grazie al supporto avanzato di scala per *higher-order functions*, *currying* e 
 ## *self-type*
 Il meccanismo dei *self-type* è stato molto utilizzato per avere una definizione dichiarativa delle dipendenze di un oggetto, non solo come già illustrato nella [composizione delle entità](4_Design_di_dettaglio.md#4%204%201%20Composizione%20delle%20entità), ma in generale in tutta l'applicazione.
 ## Producer-consumer
+Pattern utilizzato in particolare per i *power-up* per la modifica di oggetti in modo completamente funzionale e indipendente da eventuali interfacce specifiche, sfruttando un producer per ottenere l'oggetto di partenza e un consumer per fornire il risultato.
 ## Adapter
 Il pattern dell'adapter è stato utilizzato principalmente nello sviluppo delle estensioni della [repository delle entità](4_Design_di_dettaglio.md#4%204%202%20Repository%20delle%20entità), in quanto il loro scopo è adattare i suoi eventi a scopi diversi per i vari sistemi di gioco.
 ## Template method
+Pattern che abbiamo molto utilizzato parallelamente alle factory e ai builder, andando a creare classi con metodi protetti astratti, implementati poi *in-place* all'interno dei metodi di costruzione in modo da semplificare il codice.
 ## Observer
+Come già citato nella descrizione degli [eventi](4_Design_di_dettaglio.md#4%201%20Eventi), abbiamo ampiamente fatto uso di questo pattern per il trasporto delle informazioni e per la notifica degli avvenimenti di gioco tra i vari sistemi senza doverli esplicitamente legare tra loro.

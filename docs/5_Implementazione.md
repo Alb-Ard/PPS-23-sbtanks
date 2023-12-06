@@ -21,10 +21,10 @@ Una nota aggiuntiva sul sistema dei contesti di visualizzazione è il *mixin* `E
 Infatti, esso obbliga chi lo estende a fornire un contesto tra i parametri `using` con i parametri generici di tipo specificati.
 ## 5.1.3 Gestione del *tank* e del player
 Per gestire i tank è stata creata una gerarchia di *Controller*:
-- `TankController`: gestisce una *sequenza* di *tank* e che va ad aggiornare le loro *View*;
+- `TankController`: gestisce una sequenza di *tank* e che va ad aggiornare le loro *View*;
 - `TankInputController`: aggiunge la reattività del controller rispetto a degli eventi di input, nello specifico quelli nel *mixin* `TankInputEvents`;
 - `EnemyController`: gestisce un *tank* tramite una macchina a stati che reagisce allo stato di gioco. Generalmente usato per i nemici;
-- `JFXPlayerTankController`: gestisce un *tank* controllato del giocatore tramite gli eventi di input ricevuti dallo `Stage` di *scalafx* tramite un `JFXPlayerInputProvider`.
+- `JFXPlayerTankController`: gestisce un *tank* controllato del giocatore tramite gli eventi di input ricevuti dallo `Stage` di scalafx tramite un `JFXPlayerInputProvider`.
 ## 5.1.4 Sistema fisico
 Il sistema fisico è utilizza un modello molto semplice in cui ogni entità ha un proprio *axis-aligned bounding box* (o *AABB*), ovvero un rettangolo con una posizione e una dimensione che rappresenta lo spazio che l'entità occupa.
 Questi `AABB` sono forniti dalle classi che implementano `Collider` che, nel caso delle entità, è fatto tramite il `CollisionBehaviour`, che fornisce anche alcune funzionalità aggiuntive.
@@ -62,11 +62,9 @@ nemici che appariranno nel corso del livello. Le stringhe sono state realizzate 
 Ciascun livello viene salvato come risorsa del programma come un *file .txt*, alla quale vi si accede tramite l'utilizzo di una `class` di caricamento `LevelLoader`. Questa recupera e riorganizza nella maniera
 appropriata le stringhe dei file in maniera tale che siano immediatamente utilizzabili dalle altre classi quali `LevelSequencer`.
 ## 5.2.3 Salvataggio e Lettura di dati in file
-Per poter mantenere le informazioni sull'username e sul punteggio più alto raggiunto, è stata creata una classe `JFXSavedDataLoader` apposita. Questa è in grado di *leggere* le informazioni contenute
-in un file esterno al gioco, rendendole disponibili al `trait SavedDataContainer` e alla sua istanza `SavedDataManager`. Durante l'uso dell'applicazione, lo *score e username* potrebbero essere modificati: in tale casistica,
-le nuove informazioni vengono inizialmente salvate all'intero del manager `object` locale, per poi venire a seguito salvate nel file esterno richiamando la funzione apposita sempre fornita da `JFXSavedDataLoader`.
+Per poter mantenere le informazioni sull'username e sul punteggio più alto raggiunto, è stata creata una classe `JFXSavedDataLoader` apposita. Questa è in grado di *leggere* le informazioni contenute in un file esterno al gioco, rendendole disponibili al `trait SavedDataContainer` e alla sua istanza `SavedDataManager`. Durante l'uso dell'applicazione, lo *score* e lo *username* potrebbero essere modificati: in tale casistica, le nuove informazioni vengono inizialmente salvate all'intero del manager `object` locale, per poi venire a seguito salvate nel file esterno richiamando la funzione apposita sempre fornita da `JFXSavedDataLoader`.
 ## 5.2.3 Schermata di Game Over
-Nel caso di sconfitta, viene richiamata una *view* apposita `JFXGameOverView` che funge da schermata di game over della partita. Questa descrive:
+Nel caso di sconfitta, viene richiamata una *View* apposita `JFXGameOverView` che funge da schermata di game over della partita. Questa descrive:
 - il livello in cui il giocatore ha perso;
 - il punteggio che è stato raggiunto;
 - il punteggio più alto corrente;

@@ -11,7 +11,7 @@ Al contrario, la logica specifica di ogni entità è implementata tramite il *Pr
 Un'altra nota sulla nostra implementazione è che abbiamo deciso di non avere delle interfacce, *trait* o classi "base" specifici per le componenti di *Model* e *View* delle entità, al fine di avere poter sviluppare in modo più libero e avere un sistema più generico per la loro gestione.
 Per questo:
 - Ai *Model* è richiesto di essere solo delle `AnyRef`, in quanto il sistema ha bisogno di avere delle loro istanze (e quindi non funzionerebbe correttamente in caso di utilizzo di `AnyVal`);
-- Per le *View* si richiede di essere `Node`, l'elemento base delle interfacce di scalafx. Inoltre, per evitare riscritture di codice, sono stati creati dei *mixin* base che forniscono delle funzionalità comuni a tutte le view, come `MoveableView` o `DirectionableView` (e le loro estensioni specifiche `JFXMoveableView` e `JFXDirectionableView`).
+- Per le *View* si richiede di essere `Node`, l'elemento base delle interfacce di scalafx. Inoltre, per evitare riscritture di codice, sono stati creati dei *mixin* base che forniscono delle funzionalità comuni a tutte le *View*, come `MoveableView` o `DirectionableView` (e le loro estensioni specifiche `JFXMoveableView` e `JFXDirectionableView`).
 Per i *Presenter* delle entità, invece, visto il loro compito di dover aggiornare i propri *Model* e *View*, è richiesto di ereditare l'interfaccia `Steppable`, in quanto è con essa che abbiamo gestito l'evoluzione nel tempo delle entità nel gioco.
 ```plantuml
 @startuml
@@ -86,7 +86,7 @@ Infatti, per le varie componenti citate abbiamo:
 - `JFXMainMenuView` come *View* generale;
 - `JFXBootstrapper` e `GameLoop` come *Presenter in-game*;
 - `EntityMvContext` come *View in-game*;
-- `EntityMvRepository` come *Model in-game*
+- `EntityMvRepository` come *Model in-game*.
 # 3.3 Scelte tecnologiche
 Le scelte tecnologiche fatte riguardano principalmente l'utilizzo della libreria [scalafx](https://www.scalafx.org/) come *wrapper* di [JavaFX](https://openjfx.io/)  che sfrutta alcune funzionalità avanzate di scala e che implementa alcune astrazioni aggiuntive per facilitarne l'uso.
-Questo ha facilitato lo sviluppo delle View delle svariate entità, oltre che la realizzazione dei menù di gioco e le loro funzionalità.
+Questo ha facilitato lo sviluppo delle View delle svariate entità, oltre che la realizzazione dei menù di gioco e le loro funzionalità, soprattutto grazie agli operatori che scalafx mette a disposizione per rendere reattive le proprietà dell'interfaccia.
