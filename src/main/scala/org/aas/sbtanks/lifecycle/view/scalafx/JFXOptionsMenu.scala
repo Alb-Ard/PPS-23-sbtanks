@@ -32,11 +32,11 @@ import scalafx.Includes
  */
 class JFXOptionsMenu(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)) extends VBox with Includes:
     /**
-     * Event invoked when the user request to reset the highest saved score
+     * An event invoked when the user request to reset the highest saved score
      */
     val resetHighScoreRequested = EventSource[Unit]
     /**
-     * Event invoked when the user request to go back to the main menu
+     * an Event invoked when the user request to go back to the main menu
      */
     val mainMenuRequested = EventSource[Unit]
 

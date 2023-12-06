@@ -9,12 +9,22 @@ import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 import scalafx.stage.Stage
 import scalafx.scene.input.KeyEvent
 import scalafx.scene.Node
-import scalafx.scene.layout.Pane
 import scalafx.Includes
-import org.aas.sbtanks.resources.scalafx.JFXImageLoader
-import org.aas.sbtanks.player.view.ui.PlayerHealthView
+import org.aas.sbtanks.resources.scalafx.{JFXImageLoader, JFXMediaPlayer}
 import org.aas.sbtanks.physics.PhysicsContainer
 
+/**
+ * a controller used to handle the player's tank, handling events such as key pressed and firing bullets.
+ *
+ * @param context The current context.
+ * @param tank the player tank.
+ * @param speedMultiplier the player tank speed multiplier to match model with view.
+ * @param view the player tank view.
+ * @param viewScale the scale of the view.
+ * @param tileSize the size of the tile.
+ * @tparam VSK
+ * @tparam VS
+ */
 abstract class JFXPlayerTankController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(tank: ControllableTank, speedMultiplier: Double, view: TankView, viewScale: Double, tileSize: Double)
     extends TankInputController(tank, view, speedMultiplier, viewScale, tileSize, JFXPlayerInputController())
     with EntityRepositoryContextAware
@@ -40,6 +50,8 @@ object JFXPlayerTankController:
                 if(shootDelay >= 1.0)
                     val bullet = tank.shoot(1, true).head
                     val bulletView = new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
+                    bulletView.move(bullet.positionX * tileSize * viewScale, bullet.positionY * tileSize * viewScale)
                     bulletConsumer(bullet, bulletView)
+                    JFXMediaPlayer.play(JFXMediaPlayer.BULLET_SFX)
                     shootDelay = 0.0
                 this

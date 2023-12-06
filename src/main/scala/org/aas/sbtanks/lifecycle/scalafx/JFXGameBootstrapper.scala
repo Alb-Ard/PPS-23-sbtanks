@@ -19,6 +19,7 @@ import org.aas.sbtanks.lifecycle.controller.scalafx.JFXPauseController
 import org.aas.sbtanks.event.EventSource
 import scalafx.beans.property.IntegerProperty
 import org.aas.sbtanks.lifecycle.PointsManager
+import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer
 import org.aas.sbtanks.physics.PhysicsContainer
 import org.aas.sbtanks.physics.PhysicsWorld
 import org.aas.sbtanks.enemies.controller.EnemyTankGenerator
@@ -29,6 +30,7 @@ import org.aas.sbtanks.entities.powerups.PowerUp.PowerUp
 import org.aas.sbtanks.lifecycle.PointsContainer
 import org.aas.sbtanks.lifecycle.PointsGiver
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityMvRepositoryFactory.addDefaultControllerFactories
+import scalafx.scene.media.MediaPlayer
 
 /**
   * A class used to manage all components required for a game
@@ -40,7 +42,15 @@ import org.aas.sbtanks.entities.repository.scalafx.JFXEntityMvRepositoryFactory.
 class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)):
     private val TANK_ANIMATION_SPEED = 16D
 
+    private val IS_DEBUG = true
+
+    /**
+     * An event that is invoked when the game has ended.
+     */
     val gameEnded = EventSource[Unit]
+    /**
+     * An event that is invoked when the game has restarted
+     */
     val restartedGame = EventSource[Unit]
 
     private val powerupPickupped = EventSource[PowerUp[Tank]]
@@ -49,7 +59,7 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
     given PhysicsContainer = PhysicsWorld
     given PointsContainer = PointsManager
 
-    private val entityRepository = JFXEntityMvRepositoryFactory.create().addDefaultControllerFactories(powerupPickupped, enemyTankSpawned, TANK_ANIMATION_SPEED)
+    private val entityRepository = JFXEntityMvRepositoryFactory.create(IS_DEBUG).addDefaultControllerFactories(powerupPickupped, enemyTankSpawned, TANK_ANIMATION_SPEED)
     private val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
     private val levelFactory = JFXLevelFactory(JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE, 1, TANK_ANIMATION_SPEED)
     private val levelLoader = LevelLoader()
@@ -60,6 +70,7 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
     private val binder = new PowerUpChainBinder[Tank]
     private val pointsGiver = PointsGiver.create(entityRepository, powerupPickupped)
 
+    private var gameoverSound = MediaPlayer(JFXMediaPlayer.BULLET_SFX._1)
     private var cleanup: Option[() => Any] = Option.empty
 
     /**
@@ -73,9 +84,11 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
             override protected def addViewToContext(container: Pane) =
                 container.children.add(playerSidebar)
         val playerDeathController = new JFXPlayerDeathController(entityRepository, levelSequencer, ViewSlot.Ui):
-            override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) = 
+            override protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]) =
+                gameoverSound = JFXMediaPlayer.play(JFXMediaPlayer.GAME_OVER_SFX)
                 currentContext.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
             override protected def restart(currentContext: EntityRepositoryContext[Stage, ViewSlot, Pane]): this.type =
+                gameoverSound.stop()
                 restartedGame(())
                 this
         val pauseController = new JFXPauseController(gameLoop, pauseUiView):
