@@ -1,6 +1,9 @@
 package org.aas.sbtanks.physics
 
 object Raycast:
+    val INFINITE_NEGATIVE = -9999
+    val INFINITE_POSITIVE = 9999
+
     extension (physicsContainer: PhysicsContainer)
         /**
           * Casts a vertical ray on the physics container and checks ALL the colliders that intersect it
@@ -14,7 +17,7 @@ object Raycast:
           * @return A sequence of all the colliders intersected by the ray, orederer by distance from the nearest to the farthest
           */
         def verticalRayCast(fromX: Double, fromY: Double, length: Option[Double], layers: Seq[CollisionLayer], exclusions: Seq[Collider]) =
-            physicsContainer.getBoxOverlaps(AABB(fromX, fromY, 0D, length.getOrElse(Double.MaxValue)), layers, exclusions).sortWith(isNearest(fromX, fromY))
+            physicsContainer.getBoxOverlaps(AABB(fromX, fromY, 0D, length.getOrElse(INFINITE_POSITIVE)), layers, exclusions).sortWith(isNearest(fromX, fromY))
 
         /**
          * Casts a horizontal ray on the physics container and checks ALL the colliders that intersect it
@@ -28,7 +31,7 @@ object Raycast:
          * @return A sequence of all the colliders intersected by the ray, orederer by distance from the nearest to the farthest
          */
         def horizontalRayCast(fromX: Double, fromY: Double, length: Option[Double], layers: Seq[CollisionLayer], exclusions: Seq[Collider]) =
-            physicsContainer.getBoxOverlaps(AABB(fromX, fromY, length.getOrElse(Double.MaxValue), 0D), layers, exclusions).sortWith(isNearest(fromX, fromY))
+            physicsContainer.getBoxOverlaps(AABB(fromX, fromY, length.getOrElse(INFINITE_POSITIVE), 0D), layers, exclusions).sortWith(isNearest(fromX, fromY))
 
     /**
       * Checks if a given collider is the nearest to a source point in respect to another collider

@@ -15,7 +15,8 @@ case class EnemyTankBuilder(x: Double = 0,
                             collisionSizeY: Double = 1,
                             collisionLayer: CollisionLayer = CollisionLayer.TanksLayer,
                             collisionMask: Set[CollisionLayer] = PlayerTankBuilder.DEFAULT_COLLISION_MASK,
-                            isCharged: Boolean = false
+                            isCharged: Boolean = false,
+                            seeThoughBlocks: Int = 8
                            ):
 
     def setPosition(x: Double = x, y: Double = y) =
@@ -39,13 +40,16 @@ case class EnemyTankBuilder(x: Double = 0,
     def setCharged(value: Boolean) =
         copy(isCharged = value)
 
+    def setSeeThorughBlocks(amount: Int) =
+        copy(seeThoughBlocks = amount)
+
     def build(using physics: PhysicsContainer)() =
         new Tank(tankType)
             with PositionBehaviour(x, y)
             with ConstrainedMovementBehaviour
             with DirectionBehaviour
             with CollisionBehaviour(collisionSizeX, collisionSizeY, collisionLayer, collisionMask.toSeq)
-            with LineOfSight(Seq(CollisionLayer.WallsLayer), Seq.empty)
+            with LineOfSight(Seq(CollisionLayer.WallsLayer), Seq.empty, seeThoughBlocks)
             with DamageableBehaviour:
             override protected def applyDamage(amount: Int) =
                 updateTankData(tankData.updateHealth(_ - 1))

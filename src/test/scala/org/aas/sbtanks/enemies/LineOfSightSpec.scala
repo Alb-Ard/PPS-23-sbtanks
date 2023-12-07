@@ -22,7 +22,7 @@ class LineOfSightSpec extends AnyFlatSpec
     with BeforeAndAfterEach
     with ObstacleMatchers:
         
-    def enemyFactory(using PhysicsContainer)(x: Double, y: Double) = EnemyTankBuilder().setPosition(x, y).build()
+    def enemyFactory(using PhysicsContainer)(x: Double, y: Double) = EnemyTankBuilder().setPosition(x, y).setSeeThorughBlocks(8).build()
 
     def toObstacles(colliders: Seq[Collider]) = colliders.filter(_.isInstanceOf[LevelObstacle]).map(_.asInstanceOf[Collider with LevelObstacle])
 
@@ -30,7 +30,8 @@ class LineOfSightSpec extends AnyFlatSpec
         given PhysicsContainer = new Object() with PhysicsContainer 
 
         val tank = MockLevelFactory(enemyFactory)
-            .createFromString("UUUUUUU" +
+            .createFromString(
+                "UUUUUUU" +
                 "U-TTT-U" +
                 "U-SwS-U" +
                 "U--P--U" +
@@ -45,13 +46,33 @@ class LineOfSightSpec extends AnyFlatSpec
         all(toObstacles(tank.getCollidersOn(Right))) should not have (obstacleType (LevelObstacle.PlayerBase))
         all(toObstacles(tank.getCollidersOn(Left))) should not have (obstacleType (LevelObstacle.PlayerBase))
 
-
-    "An enemy tank" should "be able to spot the enemy base only within a certain range" in:
+    it should "see through line of sight colliders to spot the player base in a negative direction" in:
         given PhysicsContainer = new Object() with PhysicsContainer 
 
         val tank = MockLevelFactory(enemyFactory)
-            .createFromString("UUUUU" +
+            .createFromString(
+                "UUUUUUU" +
+                "U-TBT-U" +
+                "U-SwS-U" +
+                "U--P--U" +
+                "U-WWW-U" +
+                "U-WWW-U" +
+                "UUUUUUU", 7)
+            .getMainEntity[ShootingEntity]
+
+        exactly(1, toObstacles(tank.getCollidersOn(Top))) should have (obstacleType (LevelObstacle.PlayerBase))
+
+        all(toObstacles(tank.getCollidersOn(Bottom))) should not have (obstacleType (LevelObstacle.PlayerBase))
+        all(toObstacles(tank.getCollidersOn(Right))) should not have (obstacleType (LevelObstacle.PlayerBase))
+        all(toObstacles(tank.getCollidersOn(Left))) should not have (obstacleType (LevelObstacle.PlayerBase))
+
+    it should "be able to spot the enemy base only within a certain range" in:
+        given PhysicsContainer = new Object() with PhysicsContainer 
+
+        val tank = MockLevelFactory(enemyFactory)
+            .createFromString(
                 "U-P-U" +
+                "U-W-U" +
                 "U-W-U" +
                 "U-W-U" +
                 "U-B-U", 5)

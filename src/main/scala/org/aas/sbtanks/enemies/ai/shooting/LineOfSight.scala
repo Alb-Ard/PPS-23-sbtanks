@@ -8,6 +8,7 @@ import org.aas.sbtanks.entities.obstacles.LevelObstacle
 import org.aas.sbtanks.entities.obstacles.LevelObstacle.PlayerBase
 import org.aas.sbtanks.physics.Raycast.*
 import org.aas.sbtanks.physics.{Collider, CollisionLayer, PhysicsContainer}
+import org.aas.sbtanks.physics.Raycast
 
 trait LineOfSight(using physics: PhysicsContainer)(private val lineCollisions: Seq[CollisionLayer], private val exclusion: Seq[Collider], private val seeThrough: Int = 8):
     this: PositionBehaviour with DirectionBehaviour =>
@@ -40,11 +41,11 @@ trait LineOfSight(using physics: PhysicsContainer)(private val lineCollisions: S
 
 
     private def getVerticalLine(backwards: Boolean = false): Seq[Collider] =
-        physics.verticalRayCast(this.positionX, this.positionY, if backwards then Some(-9999) else Option.empty, lineCollisions, exclusion)
+        physics.verticalRayCast(this.positionX, this.positionY, if backwards then Option(Raycast.INFINITE_NEGATIVE) else Option.empty, lineCollisions, exclusion)
 
 
     private def getHorizontalLine(backwards: Boolean = false): Seq[Collider] =
-        physics.horizontalRayCast(this.positionX, this.positionY, if backwards then Some(-9999) else Option.empty, lineCollisions, exclusion)
+        physics.horizontalRayCast(this.positionX, this.positionY, if backwards then Option(Raycast.INFINITE_NEGATIVE) else Option.empty, lineCollisions, exclusion)
 
 
 
