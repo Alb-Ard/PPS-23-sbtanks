@@ -53,4 +53,5 @@ object EnemySpawnController:
             tileSize - pixelSize,
             tileSize,
             viewScale))
-        JFXTankView(images, animationSpeed)
+        val invincibilityImages = JFXImageLoader.loadFromResources(Seq("invincibility_1.png", "invincibility_2.png"), tileSize, pixelSize)
+        JFXTankView(images, invincibilityImages, animationSpeed)
