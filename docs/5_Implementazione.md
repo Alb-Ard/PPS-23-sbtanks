@@ -85,47 +85,50 @@ Ho realizzato le seguenti componenti:
  - AI del focus shooting dei nemici e Line of Sight (quest'ultimo realizzato in collaborazione)
  - Sistema di generazione dei nemici e potenziamenti sulla mappa
 
-## Sistema dei potenziamenti
+## 5.3.1 Sistema dei potenziamenti
 Si è cercato di mantenere indipendente la logica del concetto di potenziamento mantenendosi il piu' generici e flessibili possibile:
  - `PowerUp[E]` rappresenta la struttura di base per l'applicazione e inversione dell'effetto su un'entità. E' stato scelta di definirlo come abstract class invece che come trait, ciò per semplificare l'integrazione con trait di middleware come `PowerUpConstrait[E]`.
-	 - NOTA: per quanto riguarda i metodi di apply e revert si è scelto di imporre una limitazione sul un tipo generico: `apply[A <: E](entity: A): A`. Ciò permette di mantenere un'invarianza sul sottotipo specifico dell'entità, rendendo piu' semplice la gestione funzionale dei potenziamenti ed evitando ambiguità' di typing troppo generico
+	 - NOTA: per quanto riguarda i metodi di apply e revert si è scelto di imporre una limitazione sul un tipo generico: `apply[A <: E](entity: A): A`. Ciò permette di mantenere un'invarianza sul sottotipo specifico dell'entità, rendendo piu' semplice la gestione funzionale dei potenziamenti ed evitando ambiguità' di typing generico facendo però in modo che l'utilizzo sulle entità `E` risulti semplice a prescindere del tipo specifico
 - `PowerUpConstraint[E]`: trait di "middleware" che estende `PowerUp[E]`. Esegue un override per l'`apply`   di `PowerUp[E]` ponendo un predicato di tipo `E => Boolean` sull'applicazione di un dato potenziamento su un'entità
 - `FuncPowerUp[E]`: classe concreta per i potenziamenti, definisce un powerup come una struttura definita da una funzione di applicazione e inversione `E => E`
 - `ContextualFuncPowerUp[C, E]`: ulteriore estensione di `FuncPowerUp[E]`. Permette di fornire un'informazione di contesto supplementare `C` oltre all'entità `E`. E' costituito da una funzione di mapping `(C, E) => E` 
 
-## Sistema di Binding dei potenziamenti sulle entità
+## 5.3.2 Sistema di Binding dei potenziamenti sulle entità
 Per semplificare l'applicazione dei potenziamenti si è scelto di utilizzare una serie di meccanismi per semplificarne l'utilizzo e la gestione delle entità affette da essi:
  - `PowerUpChain[E]`: estensione del `PowerUp[E]`,  prende in ingresso una sequenza di potenziamenti e permette di applicarli in maniera unitaria ad un'entità. E' possibile inoltre eseguire il `chain` ed `unchain` di ulteriori potenziamenti da aggiungere alla sequenza, tutto ciò mantenendosi completamente immutabile
- - `DualBinder[E]`:  Trait necessario a mantenere lo stato delle entità consistente con i loro relativi aggiornamenti in seguito all'applicazione dei potenziamenti si è deciso di realizzare un sistema a doppio riferimento, permettendo di eseguire il `bind` e `unbind` delle entità, nello specifico tale riferimento è stato realizzato nel seguente modo:
+ - `DualBinder[E]`:  Trait necessario a mantenere lo stato delle entità consistente con i loro relativi aggiornamenti in seguito all'applicazione dei potenziamenti: si è deciso di realizzare un sistema a doppio riferimento, permettendo di eseguire il `bind` e `unbind` dello stato delle entità, nello specifico tale riferimento è stato realizzato nel seguente modo:
 	 - `EntityBinding`: case class, mantiene un doppio riferimento ad ogni entità tramite un `supplier: () => E ` per ottenere lo stato dell'entità aggiornata e un `consumer: E => Unit ` per aggiornare il suo stato corrente
-	Questa soluzione permette di gestire in maniera piu' semplice la gestione delle entità bindate senza ulteriori complicazioni e problemi di consistenza
+	Questa soluzione permette di gestire in maniera piu' semplice le entità bindate senza ulteriori complicazioni dovute problemi di consistenza con il loro stato
 Entrambi i meccanismi sono stati integrati in una componente `PowerUpChainBinder[E]` che fornisce entrambe le funzionalità  mantenendosi sempre generico rispetto al tipo di entità
 
-## AI dei nemici
-Per incapsulare al meglio la logica di AI dei nemici si è scelto di strutturarle come automi a stati finiti. Per quanto tale approccio sia molto utilizzato in contesto AI risulta essere spesso una scelta poco idiomatica in ambiti funzionali in quanto ciò porta a lavorare spesso in maniera mutabile modificando lo stato degli oggetti.
-Si è scelto pertanto di adottare un approccio di tipo monadico sfruttando lo `State Monad pattern`. L'dea è quella di mantenere una costrutto monadico che permetta,dichiarativamente, di applicare una modifica sullo stato interno di un oggetto ma ritornare il risultato di una computazione. Ciò permette di incapsulare side-effects in maniera funzionale, permettendo di tracciare piu' semplicemente modifiche allo stato. Alcuni dettagli:
-- `State[S, A]`: case class state datatype, rappresenta una famiglia di costrutti monadici ed è computabile come una funzione `S => (A, S)` (prende uno stato e ritorna il nuovo stato modificato e un valore di ritorno della computazione)
+## 5.3.3 AI dei nemici
+Per incapsulare al meglio la logica di AI dei nemici si è scelto di strutturarle come automi a stati finiti. Per quanto tale approccio sia molto utilizzato in contesto AI risulta essere spesso una scelta poco idiomatica in ambiti funzionali in quanto ciò può portare a lavorare in maniera mutabile modificando lo stato interno degli oggetti.
+Si è scelto pertanto, di adottare un approccio di tipo monadico sfruttando lo `State Monad pattern`.
+L'dea è quella di mantenere una costrutto monadico che permetta,dichiarativamente, di applicare una modifica sullo stato interno di un oggetto ma, al tempo stesso, ritornare il risultato di una computazione. Ciò permette di incapsulare side-effects in maniera funzionale, fornendo la possibilità di tracciare piu' semplicemente modifiche allo stato. Alcuni dettagli:
+- `State[S, A]`: case class state datatype, rappresenta una famiglia di costrutti monadici ed è computabile come una funzione `S => (A, S)` (prende uno stato e ritorna il nuovo stato modificato e un valore di ritorno della computazione). Fornisce un functor mapping (`map[B](f: A => B): State[S, B])` ) ed una monadic flatmap (`flatMap[B](f: A => State[S, B]): State[S, B]`). E' stata inoltre fornito inoltre un metodo `withFilter(p: A => Boolean): State[S, Option[A]]` , per imporre una restrizione sul valore di ritorno dello stato sulla base di un predicato
 - `StateModifier[S[_], E]`: trait che fornisce le funzionalità necessarie ad eseguire modifiche e sullo stato, è parametrizzato da un `S[_]` monadico e un tipo `E` che definisca l'inner type da utilizzare
-- `StateMachine[S[_], E, A]`: trait che permette di manipolare lo stato interno di un tipo monadico sulla base di valori di transizione `A` ,  definisce un unico metodo di transizione `transition(value: A): S[Unit]` che si limita ad applicare un side effect funzionale di modifica dello stato
-Problematica: adattare `State` ai 2 precedenti trait monadici non è possibile di base (E' necessario infatti avere a disposizione un 1-kinded type `S[_]`), inoltre lo `State` datatype definisce una famiglia di 1-kinded type che possono essere trattati in maniera monadica (tutti quelli ottenibili fissando un constraint su uno dei due tipi). Fortunatamente in questo caso si è interessati a fissare il type class dello stato e mantenere un grado di libertà sul tipo di ritorno, sostanzialmente ci sono 2 possibilità per fare ciò:
+- `StateMachine[S[_], E, A]`: trait che permette di manipolare lo stato `E` interno di un costrutto monadico sulla base di valori di transizione `A` ,  definisce un unico metodo di transizione `transition(value: A): S[Unit]` che si limita ad applicare un side effect funzionale di modifica dello stato. Richiede inoltre come mixin self-type uno  `StateModifier `
+Problematica: adattare `State` ai 2 precedenti trait monadici non è possibile: E' necessario infatti avere a disposizione un 1-kinded type `S[_]`, inoltre lo `State` datatype definisce una famiglia di 1-kinded type infinita i quali possono essere trattati in maniera monadica (tutti quelli ottenibili fissando un constraint su uno dei due tipi). Fortunatamente in questo caso si è interessati a fissare il type class dello stato e mantenere un grado di libertà sul valore di ritorno, sostanzialmente ci sono 2 possibilità per fare ciò:
  - `type EnemyState[A] = State[FOO, A]`: il problema è che in questo modo è necessario definire un nuovo tipo per ogni nuovo stato che si vuole utilizzare
-- `type F[A] = State[E,A]})#F`: utilizzato il type projection di Scala è possibile definire type alias in-place. Per rendere trasparente l'utilizzo della type projection è stata realizzata una `AbstractStateMachine[S, A]`
+- `type F[A] = State[E,A]})#F`: utilizzando il type projection di Scala è possibile definire type alias in-place. Per rendere trasparente l'utilizzo della type projection è stata realizzata una `AbstractStateMachine[S, A]`
 Inizialmente si era adottato il primo approccio, ma durante la sviluppo si è passati al secondo.
 Partendo da ciò sono stati realizzati 2 automi:
  - `AiMovementStateMachine`: è una `AbstractStateMachine[MovementEntity, DirectionMovePolicy]`. Computa la prossima direzione lungo la quale spostarsi per il nemico
  - `AiFocusShootingStateMachine`: è un `AbstractStateMachine[ShootingEntity, FocusPolicy]`. Fa in modo che i nemici rimangano concentrati su obbiettivi target (nel nostro case sulla base del giocatore)
 NOTA: per mantenere uno stile dichiarativo, si è scelto di utilizzare come tipi dello stato (come `MovementEntity` e `ShootingEntity`), non dei tipi concreti veri e propri ma type alias che definiscano mixin di constraint sulle caratteristiche che debba avere un oggetto per essere elaborato dalla State Machine 
 
-## Raccolta dei potenziamenti
-Si è voluta denotare una separazione tra il concetto di `PowerUp` in termini di costrutto che altera le caratteristiche di un'entità e potenziamento come oggetto presente nel livello di gioco che può essere raccolto `PickablePowerUp`. Quest'ultimo è un potenziamente ma esteso con i mixin `PositionBehaviour` e `CollisionBehaviour`, permettendo quindi di aver assegnnabile una posizione nel modo e di poter entrare in collisione con il giocatore per la raccolta.  
+## 5.3.4 Raccolta dei potenziamenti
+Si è voluta denotare una separazione tra il concetto di `PowerUp` in termini di costrutto che altera le caratteristiche di un'entità e quella di  oggetto presente nel livello di gioco che può essere raccolto ossia  `PickablePowerUp`. Quest'ultimo è un type alias di  `PowerUp`  ma esteso con i mixin `PositionBehaviour` e `CollisionBehaviour`, permettendo quindi di aver assegnabile una posizione nel modo e di poter entrare in collisione con il giocatore per la raccolta.  
 
 
-## Line of sight
+## 5.3.5 Line of sight
 Questa funzionalità fornisce la possibilità (solo per i nemici) di di visualizzare le collisioni lungo la linea perpendicolari dei nemici per individuare obbiettivi su quali concentrarsi.
 Ho realizzato solo la porzione di frontend di questa feature(tramite un trait mixin `LineOfSigt`), ma il backend del suo funzionamento è stata fornito dalle estensioni  `RayCast` per i `PhysicsContainer` sviluppato da Arduini.
-In sostanza `LineOfSight` permette ad un'entità di filtrare determinati tipi di `Collider` (in questo caso la base del giocatore) lungo le direzioni cardinali rispetto alla sua posizione
+`LineOfSight` permette ad un'entità di filtrare determinati tipi di `Collider` (in questo caso la base del giocatore) lungo le direzioni cardinali rispetto alla sola posizione dell'entità che lo estende; è inoltre possibile fornire un parametro  ` seeThrough`  per indicare il numero di blocchi entro  il quale è possibile individuare il target e un parametro  `lineCollisions ` per indicare una sequenza di  `CollisionLayer ` da prendere in considerazione, nello specifico sono forniti di default:
+ -  `seeThrough=8 ` : come nel gioco originale è il limite entro il quale i nemici sono in grado di individuare la base
+ -  ` lineCollisions = Seq(CollisionLayer.WallsLayer)`:  in questo caso è necessario ignorare ostacoli non percorribili, potenziamenti e altri carri armati nell'individuare i collider (come nel gioco originale ha senso concentrarsi sulla base solo qualora ci sia un ostacolo da abbattere nel mezzo)
 
-## Generazione dei nemici 
+## 5.3.6 Generazione dei nemici 
 La generazione dei nemici permette di creare iterativamente i nemici all'interno di un livello tramite una stringa di valori che ne definisce la tipologia (e.g. sequenza di basic tank, armor tank e di nuovo basic tank: "BAB"). 
 Tramite un object `EnemyFactory` che fornisce:
  - la possibilità di generare nemici potenziati ogni `eachCharged` nemici generati (tale valore è stato mantenuto di default a quello del gioco originale, ossia 4)
