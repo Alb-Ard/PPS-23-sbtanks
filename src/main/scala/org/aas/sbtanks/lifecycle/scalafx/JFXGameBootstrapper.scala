@@ -63,7 +63,6 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
     private val levelSequencer = LevelSequencer[AnyRef, Node](levels, levelFactory, entityRepository)
     private val gameLoop = GameLoop(entityRepository, Seq(entityRepository))
     private val pauseUiView = JFXPauseMenu(interfaceScale, windowSize)
-    private val binder = new PowerUpChainBinder[Tank]
     private val pointsGiver = PointsGiver.create(entityRepository, powerupPickupped)
 
     private var cleanup: Option[() => Any] = Option.empty
@@ -89,8 +88,9 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
             enemyGenerator.foreach(entityRepository.removeController)
             binderController.foreach(entityRepository.removeController)
             enemyGenerator = Option(new EnemyTankGenerator(entityRepository, enemyString, level.size, level.size, JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE))
-            binderController = Option(new PowerUpBinderController(entityRepository, level.size, level.size, binder, powerupPickupped, enemyTankSpawned))
+            binderController = Option(new PowerUpBinderController(entityRepository, level.size, level.size, PowerUpChainBinder[Tank](), powerupPickupped, enemyTankSpawned))
             entityRepository.addController(enemyGenerator.get)
+                .addController(binderController.get)
             playerUiViewController.setEnemyCount(enemyGenerator.get.remainingEnemyCount) 
             playerUiViewController.setCompletedLevelCount(levelSequencer.completedLevelCount)
         }
