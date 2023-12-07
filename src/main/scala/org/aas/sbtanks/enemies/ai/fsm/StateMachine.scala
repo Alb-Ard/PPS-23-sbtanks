@@ -1,12 +1,11 @@
 package org.aas.sbtanks.enemies.ai.fsm
 
-import org.aas.sbtanks.enemies.ai.State.Monad
 
 /**
- * Trait representing a state machine that operates on a state of type `S` with elements of type `E` and transitions using values of type `A`.
+ * Monadic Trait representing a state machine that operates on a state of type `S` with elements of type `E` and transitions using values of type `A`.
  * It requires a mixin of the `StateModifier` trait to handle state modifications.
  *
- * @tparam S The type of the state container.
+ * @tparam S The type of the state container, it should be a monadic type.
  * @tparam E The type of elements in the state.
  * @tparam A The type of values used for transitions.
  */
