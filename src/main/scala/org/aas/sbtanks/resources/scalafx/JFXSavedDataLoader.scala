@@ -2,10 +2,20 @@ package org.aas.sbtanks.resources.scalafx
 
 import java.io.{BufferedReader, File, FileNotFoundException, FileReader, FileWriter}
 
+/**
+ * This class is used to recover data from an external file that will be used in the game.
+ */
 class JFXSavedDataLoader:
     private val DATA_FILE_PATH = "./savedData.cfg"
     private val NEWLINE = sys.props("line.separator")
 
+    /**
+     * This method saves the highest score and the username into an external file.
+     *
+     * @param highScore the high score int that will be saved.
+     * @param username the username string that will be saved.
+     * @return this type.
+     */
     def saveDataToDisk(highScore: Int, username: String): this.type =
         try
             val dataWriter = FileWriter(File(DATA_FILE_PATH))
@@ -19,6 +29,11 @@ class JFXSavedDataLoader:
                 er.printStackTrace()
         this
 
+    /**
+     * This method loads and retrieves saved data from external file.
+     *
+     * @return this type.
+     */
     def loadSavedDiskData(): (String, Int) =
         var savedData = ("", 0)
         try

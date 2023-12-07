@@ -12,12 +12,21 @@ import org.aas.sbtanks.physics.PhysicsContainer
  * Trait used as behaviour for enemy and player tanks to shoot various amounts of bullets at a time.
  */
 trait TankMultipleShootingBehaviour:
+    /**
+     * The tank that is currently shooting
+     */
     this: Tank with PositionBehaviour with DirectionBehaviour =>
 
+    /**
+     * offset used to generate initial position of bullet
+     */
     val BULLET_OFFSET = 0.1D
 
     private val bulletFactory = BulletFactory()
-    
+
+    /**
+     * number of bullets that will be shot. This can be changed in shoot method.
+     */
     var shots = 1
 
     /**

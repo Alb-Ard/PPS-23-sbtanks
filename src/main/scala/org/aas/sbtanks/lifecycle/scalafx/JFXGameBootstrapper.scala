@@ -107,7 +107,13 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
         levelSequencer.start()
         gameLoop.setPaused(false)
         this
-    
+
+    /**
+     * Ends the game.
+     *
+     * @param endType the different ways the game can end: Win, Exit or Lose.
+     * @return this bootstrapper.
+     */
     def endGame(endType: EndGameType): this.type =
         gameLoop.setPaused(true)
         entityRepository.clear()

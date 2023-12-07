@@ -7,22 +7,53 @@ import org.aas.sbtanks.player.PlayerTank
 import scala.reflect.ClassTag
 import org.aas.sbtanks.event.EventSource
 
+/**
+ * This class's main function is to load the proper sequence of the game'levels.
+ *
+ * @param modelClassTag
+ * @param viewClassTag
+ * @param levels
+ * @param levelFactory
+ * @param entityRepository
+ * @tparam M
+ * @tparam V
+ */
 class LevelSequencer[M >: PlayerTank, V](using modelClassTag: ClassTag[M], viewClassTag: ClassTag[V])(levels: Seq[(String, Int, String)], levelFactory: LevelFactory[M, V], entityRepository: LevelFactory[M, V]#LevelEntityRepository):
     val levelChanged = EventSource[(LevelContainer[M, V], String)]
 
     private var remainingLevelsQueue = Queue.from(levels)
     private var currentLevel = Option.empty[LevelContainer[M, V]]
 
+    /**
+     * returns the number of levels completed.
+     *
+     * @return Number of completed levels.
+     */
     def completedLevelCount = levels.size - remainingLevelsQueue.size - 1
 
+    /**
+     * starts the current level.
+     *
+     * @return the current level.
+     */
     def start(): this.type = currentLevel match
         case None => advanceToNextLevel()
         case Some(_) => this
 
+    /**
+     * declares the current level as complete and calls another method to move to next level.
+     *
+     * @return the current level.
+     */
     def completeLevel(): this.type = currentLevel match
         case None => this
         case Some(_) => advanceToNextLevel()
 
+    /**
+     * resets the current level.
+     *
+     * @return this current level.
+     */
     def reset(): this.type = 
         endCurrentLevel()
         currentLevel = Option.empty
