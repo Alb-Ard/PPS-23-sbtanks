@@ -22,9 +22,7 @@ enum PowerUpType:
     case Star
     case Timer
 
-/*
-    TODO: SETUP POSITIONS
- */
+
 object PickablePowerUpFactory:
 
     private val POWERUP_COLLISION_SIZE = 1
