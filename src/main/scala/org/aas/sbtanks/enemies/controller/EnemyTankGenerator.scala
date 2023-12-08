@@ -39,7 +39,8 @@ import org.aas.sbtanks.enemies.spawn.EnemyFactory.withPosition
 type EntityControllerWithMv[M, V] =  EntityMvRepositoryContainer[M, V] with EntityControllerRepository[M, V, ?]
 
 /**
- * A class representing an enemy tank generator that produces and spawns enemy tanks based on a predefined string pattern.
+ * A class representing an enemy tank generator that produces and spawns enemy tanks based on a predefined string pattern. It also asynchronously provide
+ * each new enemy tank with a suitable new position based on the physic world state
  *
  * @param entityRepository  The entity repository to manage the generated enemy tanks.
  * @param tankString        The string pattern defining the types and order of enemy tanks.

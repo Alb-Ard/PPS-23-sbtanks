@@ -143,7 +143,7 @@ object Main extends JFXApp3 with scalafx.Includes:
         levelFactory.createFromString("UUUUUUUUUUU" +
                                       "U--TT-----U" +
                                       "UUUSSwWS--U" +
-                                      "U--SwwBS--U" +
+                                      "U--Sww-S--U" +
                                       "U--TSTWT--U" +
                                       "U----P----U" +
                                       "U--SwwwS--U" +

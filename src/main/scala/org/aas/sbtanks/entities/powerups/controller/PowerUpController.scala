@@ -59,7 +59,7 @@ class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage
      */
     private def checkTankCollision(colliders: Seq[Collider]): Seq[Tank] =
         colliders.collect:
-            case element: Tank if element.isInstanceOf[PlayerTank] => element
+            case element: PlayerTank => element
 
 
     /**

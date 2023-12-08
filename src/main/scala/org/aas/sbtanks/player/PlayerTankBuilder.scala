@@ -8,7 +8,6 @@ import org.aas.sbtanks.behaviours.CollisionBehaviour
 import org.aas.sbtanks.behaviours.ConstrainedMovementBehaviour
 import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.behaviours.DamageableBehaviour
-import org.aas.sbtanks.entities.tank.TankExample.updatedTank
 import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
 
 case class PlayerTank() extends Tank(PlayerTankData)
