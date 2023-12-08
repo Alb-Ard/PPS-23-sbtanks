@@ -15,8 +15,9 @@ import org.aas.sbtanks.common.view.scalafx.JFXImageViewAnimator
 import scalafx.scene.layout.StackPane
 import org.aas.sbtanks.common.view.MoveableView
 import org.aas.sbtanks.common.view.DirectionableView
+import scalafx.scene.Group
 
-class JFXTankView(private val images: Seq[Seq[Image]], private val invincibilityImages: Seq[Image], animationSpeed: Double = 1) extends StackPane
+class JFXTankView(private val images: Seq[Seq[Image]], private val invincibilityImages: Seq[Image], animationSpeed: Double = 1) extends Group
     with TankView
     with Includes
     with MoveableView
@@ -44,7 +45,7 @@ class JFXTankView(private val images: Seq[Seq[Image]], private val invincibility
     private class InvincibilityImage(images: Seq[Image], animationSpeed: Double = 1) extends ImageView(images.applyOrElse(0, _ => null))
         with Includes
         with JFXMoveableView
-        with JFXImageViewAnimator(images, animationSpeed):
+        with JFXImageViewAnimator(images, animationSpeed, true):
 
         def isDamageable(value: Boolean) =
             visible = value

@@ -12,6 +12,9 @@ trait JFXImageViewAnimator(private var images: Seq[Image], speed: Double, privat
         image = images(((now / 1000D / 1000D / 1000D) * speed % images.length).asInstanceOf[Int])
     }
 
+    if isAnimationRunning then
+        startAnimation()
+
     def isAnimationRunning = running
 
     def startAnimation(): this.type =
