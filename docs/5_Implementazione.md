@@ -43,6 +43,15 @@ Il sistema audio è stato costruito come un *wrapper* attorno alle funzionalità
 Esso è poi ereditato da `JFXPersistentSoundMixer` che permette di salvare e caricare i valori dei volumi, in modo che siano persistenti tra le sessioni di gioco.
 Infine, quest'ultimo `trait` è esteso da un `object` `JFXMediaPlayer` che fornisce alcune costanti fisse per i suoni del gioco e un metodo per per-caricare i suoni in memoria, per evitare blocchi durante il gioco alla prima riproduzione di un suono.
 # 5.2 Andrea Bianchi
+I componenti su cui mi sono principalmente occupato riguardano il *frontend* dell'applicazione,
+insieme anche a svariati diversi aspetti del *backend* fondamentali per il suo funzionamento. Tra i componenti
+che ho creato vi sono:
+- la realizzazione e la gestione dei proiettili del gioco;
+- il caricamento dei livelli e delle sequenze dei nemici a partire da file;
+- il salvataggio e la lettura di dati a partire da un file esterno all'applicazione;
+- la realizzazione e gestione di un menù per fornire nuove opzioni per il giocatore;
+- una schermata di game over nel caso di sconfitta.
+
 ## 5.2.1 Realizzazione e gestione dei proiettili
 I proiettili che vengono utilizzati nel gioco, vengono realizzati a partire da un semplice *modello* iniziale definito come  `class Bullet`, contentente solo alcune informazioni minimali. Il fulcro della sua piena realizzazione
 si concentra invece all'interno di `TankMultipleShootingBehaviour`, un `trait` ereditabile dai diversi *tank* del gioco per usufruire di una funzione di sparo del proiettile. Si genera così una sequenza di oggetti di `CompleteBullet`,
