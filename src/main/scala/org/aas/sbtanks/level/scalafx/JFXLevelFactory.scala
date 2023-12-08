@@ -60,5 +60,6 @@ final case class JFXLevelFactory(tileSize: Double, viewScale: Double, tileAnimat
                 tileSize - pixelSize,
                 tileSize,
                 viewScale))
-        val tankView = JFXTankView(images, tankAnimationSpeed)
+        val invincibilityImages = JFXImageLoader.loadFromResources(Seq("effects/invincibility_1.png", "effects/invincibility_2.png"), tileSize, viewScale)
+        val tankView = JFXTankView(images, invincibilityImages, tankAnimationSpeed)
         Seq((tank, tankView))

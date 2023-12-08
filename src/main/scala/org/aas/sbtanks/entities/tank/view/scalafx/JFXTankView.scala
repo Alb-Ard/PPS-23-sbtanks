@@ -55,6 +55,7 @@ class JFXTankView(private val images: Seq[Seq[Image]], private val invincibility
         
     private val mainImage = MainImage(images, animationSpeed)
     private val invincibilityImage = InvincibilityImage(invincibilityImages, animationSpeed)
+    children.addAll(mainImage, invincibilityImage)
 
     override def move(x: Double, y: Double) = 
         mainImage.move(x, y)
