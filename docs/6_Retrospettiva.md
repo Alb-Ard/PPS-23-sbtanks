@@ -145,7 +145,9 @@ Nel tempo rimanente ci si è occupati di sviluppare il sistema AI di focus shoot
 | Bullet Fixes                               | Andrea Bianchi  | 3   | 3   | 3   | 3   | 3   | 2   | 2   | 1   | 1   | 0   |     |     |     |     |     |
 | Data Saved and Loaded from External File   | Andrea Bianchi  | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 1   | 1   | 0   |     |     |     |     |     |
 ### 6.2.4.1 Review Alberto Arduini
-
+Per quest'ultimo sprint mi sono concentrato sugli ultimi aspetti dell'interfaccia utente, in modo da poter avere il ciclo di vita dell'applicazione completo.
+In particolare, ho implementato l'astrazione del game loop e dell'inizializzazione del gioco, oltre che i menù iniziali e di pausa.
+Infine, mi sono occupato dell'integrazione finale di tutti i sistemi di gioco, aiutato per ogni feature dall'implementatore originale e facendo eventuali modifiche di adattamento dove necessario.
 ### 6.2.4.2 Review Andrea Bianchi
 L'ultimo sprint è stato quello decisivo: ho passato la prima metà a realizzare i componenti finali, quali la *lettura di dati da un file esterno al programma*
 e la creazione di un *nuovo menù* secondario contenente una serie di svariate *opzioni* per il giocatore.
