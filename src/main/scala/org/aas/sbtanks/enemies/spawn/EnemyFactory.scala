@@ -17,7 +17,7 @@ object EnemyFactory:
     /**
      * Creates an enemy tank builder based on the specified character type.
      *
-     * @param enemyType The character representing the type of enemy tank.
+     * @param enemyTypeChar The character representing the type of enemy tank.
      * @return An instance of the corresponding enemy tank type.
      */
     private def createEnemyBuilder(enemyTypeChar: Char): Option[EnemyTankBuilder] =
@@ -43,11 +43,8 @@ object EnemyFactory:
     /**
      * Extension method for the EnemyTankBuilder class to set its position on the game board.
      *
-     * @param builder The enemy tank builder to set the position for.
      * @return A new Tank whenever its possible to locate one or else an empty Option .
      */
-
-
     extension (builder: EnemyTankBuilder)
         def withPosition(using physics: PhysicsContainer)(width: Double, height: Double) =
             val positionProvider = (w: Double, h: Double) => PositionProvider(w, h)

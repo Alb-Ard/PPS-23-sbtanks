@@ -2,6 +2,9 @@ package org.aas.sbtanks.enemies.ai
 
 import scala.util.Random
 
+/**
+ * Utility object for handling directions in a 2D space as type aliases.
+ */
 object DirectionUtils:
     
 

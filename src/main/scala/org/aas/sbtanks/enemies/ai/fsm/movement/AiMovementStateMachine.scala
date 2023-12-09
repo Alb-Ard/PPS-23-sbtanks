@@ -19,11 +19,11 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
      * Transitions the state based on the given transition.
      *
      * @param value The direction move policy.
-     * @return A State datatype representing the transition.
+     * @return A State datatype without result return representing the transition.
      */
     override def transition(value: DirectionMovePolicy): State[MovementEntity, Unit] =
         for
-            dir <- gets(x => (x.directionX.asInstanceOf[Double], x.directionY.asInstanceOf[Double]))
+            dir <- gets(x => (x.directionX, x.directionY))
             newDir <- (dir, value) match
 
                 case (Bottom, Reset) => pure(Bottom)
@@ -63,7 +63,7 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
     private def checkMove(scaleFactor: Double): State[MovementEntity, Option[(Double, Double)]] =
         for
             s0 <- getState
-            x <- gets(e => (e.directionX.asInstanceOf[Double], e.directionY.asInstanceOf[Double]))
+            x <- gets(e => (e.directionX, e.directionY))
             if s0.testMoveRelative(x(0) / scaleFactor, x(1) / scaleFactor)
         yield x
 

@@ -32,6 +32,7 @@ import org.aas.sbtanks.lifecycle.PointsGiver
 import org.aas.sbtanks.entities.repository.scalafx.JFXEntityMvRepositoryFactory.addDefaultControllerFactories
 import scalafx.scene.media.MediaPlayer
 import org.aas.sbtanks.lifecycle.scalafx.JFXGameBootstrapper._
+import org.aas.sbtanks.player.PlayerTank
 
 /**
   * A class used to manage all components required for a game
@@ -50,12 +51,12 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
     val gameEnded = EventSource[GameEndedArgs]
 
     private val powerupPickupped = EventSource[PowerUp[Tank]]
-    private val enemyTankSpawned = EventSource[Tank]
+    private val tankSpawned = EventSource[Tank]
 
     given PhysicsContainer = PhysicsWorld
     given PointsContainer = PointsManager
 
-    private val entityRepository = JFXEntityMvRepositoryFactory.create(IS_DEBUG).addDefaultControllerFactories(powerupPickupped, enemyTankSpawned, TANK_ANIMATION_SPEED)
+    private val entityRepository = JFXEntityMvRepositoryFactory.create(IS_DEBUG).addDefaultControllerFactories(powerupPickupped, tankSpawned, TANK_ANIMATION_SPEED)
     private val playerSidebar = JFXPlayerSidebarView.create(interfaceScale, windowSize(1))
     private val levelFactory = JFXLevelFactory(JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE, 1, TANK_ANIMATION_SPEED)
     private val levelLoader = LevelLoader()
@@ -88,11 +89,12 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
             enemyGenerator.foreach(entityRepository.removeController)
             binderController.foreach(entityRepository.removeController)
             enemyGenerator = Option(new EnemyTankGenerator(entityRepository, enemyString, level.size, level.size, JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE))
-            binderController = Option(new PowerUpBinderController(entityRepository, level.size, level.size, PowerUpChainBinder[Tank](), powerupPickupped, enemyTankSpawned))
+            binderController = Option(new PowerUpBinderController(entityRepository, level.size, level.size, PowerUpChainBinder[Tank](), powerupPickupped, tankSpawned))
             entityRepository.addController(enemyGenerator.get)
                 .addController(binderController.get)
             playerUiViewController.setEnemyCount(enemyGenerator.get.remainingEnemyCount) 
             playerUiViewController.setCompletedLevelCount(levelSequencer.completedLevelCount)
+            entityRepository.entitiesOfModelType[PlayerTank].foreach(e => tankSpawned(e(0)))
         }
         entityRepository.addController(playerDeathController)
             .addController(playerUiViewController)
