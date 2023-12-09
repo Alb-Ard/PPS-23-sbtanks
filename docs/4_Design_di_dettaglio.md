@@ -50,7 +50,7 @@ Tutto questo è gestito tramite una semplice interfaccia `Steppable` che richied
 ## 4.3.3 Gestione dei livelli
 I diversi livelli e componenti che compongono ciascun livello vengono dapprima caricati a partire da file risorse tramite un `LevelLoader`, che restituisce
 tramite un metodo `getLevel()` tutte le informazioni del layout e della sequenza di nemici per ciascun livello. A seguito, queste informazioni vengono passate ad oggetto `LevelFactory` che rielabora
-i parametri passati per la generazione dei suddetti livelli. Per l'avanzamento e la terminazione di ciascun livello vi è infine un oggett `LevelSequencer`, che mantiene informazioni riguardanti il giocatore passando da un livello all'altro.
+i parametri passati per la generazione dei suddetti livelli. 
 ## 4.3.4 Pausa del gioco
 La pausa è stata gestita tramite un *mixin* `Pausable` che fornisce la funzionalità di poter impostare un oggetto come in-pausa in modo osservabile.
 Questo è stato implementato all'interno dei controller di `Tank` e `Bullet` (in quanto sono le due entità dinamiche dell'applicazione) per interromperne il normale funzionamento mentre il gioco è in pausa.
