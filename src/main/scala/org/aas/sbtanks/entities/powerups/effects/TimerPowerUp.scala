@@ -17,7 +17,7 @@ object Timer:
 
 
 object TimerPowerUpUtils:
-    val STOP_TIME_POWER_UP_DURATION = 10.0
+    val STOP_TIME_POWER_UP_DURATION = 10D
     private val FROZEN_BULLET_SPEED = 0
     private val FROZEN_TANK_SPEED = 0
 

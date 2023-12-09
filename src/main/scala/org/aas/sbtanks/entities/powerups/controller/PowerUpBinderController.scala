@@ -43,7 +43,6 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
      * Chains the picked-up power-up to the tank power-up binder.
      */
     pickup += { powerUp =>
-        println("PROVA")
         tankPowerUpsBinder.chain(powerUp)
     }
 
@@ -70,9 +69,7 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
               .filter(_.isExpired)
               .foreach:
                   case expiredPowerUp: TimeablePowerUp =>
-                      println("BEFORE: " + tankPowerUpsBinder.getPowerUps)
                       tankPowerUpsBinder.unchain(expiredPowerUp.resetDuration())
-                      println("AFTER: " + tankPowerUpsBinder.getPowerUps)
 
     /**
      * Sets a new pickable power-up in the game world.

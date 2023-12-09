@@ -24,9 +24,7 @@ enum PowerUpType:
     case Star
     case Timer
 
-/*
-    TODO: SETUP POSITIONS
- */
+
 trait PickablePowerUpFactory(using PhysicsContainer):
 
     private val POWERUP_COLLISION_SIZE = 1
