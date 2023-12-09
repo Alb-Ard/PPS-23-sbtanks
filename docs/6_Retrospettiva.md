@@ -64,7 +64,12 @@ Il primo sprint è stato complessivamente positivo. E' stato implementato corret
 | Player Gameover controller   | Andrea Bianchi  | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   |
 | Gameover View                | Andrea Bianchi  | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   |
 
-
+### 6.2.2.1 Review Alberto Arduini
+Questo sprint è stato sicuramente più impegnativo del precedente, in quanto le task hanno necessitato un'attenzione particolare durante la progettazione.
+Questo perché il sistema della gestione delle entità avrebbe dovuto aveva una alta integrazione con tutte le altre parti di progetto, sviluppate da me o da altri membri del team. E' stata quindi necessaria fare particolare attenzione ad avere non solo un sistema solido e ben strutturato, ma anche con un interfaccia esposta semplice e completa.
+Da questa progettazione è risultata la repository delle entità con le sue estensioni, uno dei punti cardine dell'architettura del progetto.
+I risultati li ho potuti vedere anche già nell'implementazione delle task finali dello sprint, in quanto si appoggiavano sul lavoro precedente. Queste sono state, infatti, molto semplici da sviluppare grazie alle fondamenta fornite dal sistema che ho creato in precedenza.
+Inoltre, in questo sprint, ho anche aiutato Andrea Bianchi nello sviluppo della logica del *Controller* dei proiettili
 ### 6.2.2.2 Review Andrea Bianchi
 Durante queste settimane numerosi imprevisti si sono presentati, limitando le mie ore di disponibilità necessarie per l'implementazione finale di questi user story. Malgrado tali difficoltà, sono riuscito ad usufruire ed integrare in una maniera che ritengo sia sufficientemente ottimizzata il lavoro dei miei colleghi, elaborando così una soluzione ideale per la risoluzione dei task necessari.
 Durante le due settimane, ho creato una miglioria del sistema precedentemente utilizzato per sparare i proiettili del tank, offrendo la possibilità di stabilire la quantità di proiettili che ciascun tipo di tank sia in grado di sparare, oltre alla realizzazione finale della view e del controller per i bullets che vengono generati.
@@ -76,25 +81,34 @@ Sono riuscito comunque a realizzare degli iniziali mockup per uno di questi e ho
 Questo sprint ci sono state diverse problematiche. In questa fase ci si è concentrati sulla realizzazione di un sistema di AI per il movimento dei nemici e delle tipologie di powerup (feature introdotta alla fine dello sprint precedente). La realizzazione è risultata complicata a causa della genericità dei requisiti del dominio (il gioco originale presentava potenziamenti di natura molto diversa tra loro), inoltre essendo il progetto ancora in fase iniziale alcune funzionalità necessarie ad implementarlo era ancora mancanti, si è cercato pertanto di concentrarsi sulle caratteristiche comuni per costruire un sistema robusto sul quale possa risultare semplice aggiungere elementi mancanti in sprint successivi. 
 Per quanto riguarda l'AI del movimento non si è riusciti a completare la realizzazione a causa di diverse motivazione (e.g. problemi nella correttezza dello unit testing e consistenza di alcuni stati del nemico), pertanto si è scelto di portare per la fine dello sprint una prima versione minimale ma funzionante per ottimizzare per quanto possibile il valore percepito per la fine dello sprint
 ## 6.2.3 Sprint 3 - Dal 13 al 26 novembre
-| Backlog item                           | Assignee      | D0 | D1 | D2 | D3 | D4 | D5 | D6 | D7 | D8 | D9 | D10 | D11 | D12 | D13 | D14 |
-|----------------------------------------| ------------- |----|----|----|----|----|----|----|----|----|----|-----|-----|-----|-----|-----|
-| Ai Movement Logic                      | Stefano Guidi | 5  | 3  | 2  | 1  | 2  | 0  |    |    |    |    |     |     |     |     |     |
-| Ai Focus Shooting                      | Stefano Guidi | 4  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 2   | 2   | 2   | 4   | 3   |
-| Enemy Timing Spawn Controller          | Stefano Guidi | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 1  | 0  |    |     |     |     |     |     |
-| Sequence of enemies factory            | Stefano Guidi | 2  | 2  | 2  | 2  | 2  | 2  | 2  | 2  | 2  | 1  | 0   |     |     |     |     |
-| Generator Controller                   | Stefano Guidi | 2  | 2  | 2  | 2  | 2  | 2  | 2  | 2  | 1  | 1  | 1   | 0   |     |     |     |
-| Line of sight (frontend)               | Stefano GUidi | 3  | 3  | 3  | 3  | 3  | 3  | 2  | 2  | 2  | 2  | 2   | 2   | 1   | 1   | 0   |
-| Player Gameover controller             | Andrea Bianchi | 3  | 3  | 3  | 2  | 2  | 2  | 2  | 2  | 1  | 0  |     |     |     |     |     |
-| Player Life Loss and Respawn           | Andrea Bianchi | 2  | 2  | 2  | 2  | 2  | 2  | 2  | 2  | 0  |    |     |     |     |     |     |
-| Gameover View                          | Andrea Bianchi | 3  | 3  | 3  | 2  | 2  | 2  | 2  | 2  | 0  |    |     |     |     |     |     |
-| Exit and Restart functions in Gameover | Andrea Bianchi | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3   | 3   | 3   | 2   | 2   |
-| Level File Loader                      | Andrea Bianchi | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 2  | 2  | 1   | 1   | 1   | 1   | 0   |
-| Enemy Sequence Loader                  | Andrea Bianchi | 1  | 1  | 1  | 1  | 1  | 1  | 1  | 1  | 1  | 1  | 1   | 1   | 1   | 1   | 0   |
-| Level Tile Design                      | Andrea Bianchi | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 2  | 2  | 1   | 1   | 1   | 1   | 1   |
+| Backlog item                              | Assignee        | D0  | D1  | D2  | D3  | D4  | D5  | D6  | D7  | D8  | D9  | D10 | D11 | D12 | D13 | D14 |
+| ----------------------------------------- | --------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Points UI                                 | Alberto Arduini | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   |
+| Remaining enemies UI                      | Alberto Arduini | 2   | 2   | 2   | 1   | 1   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   |
+| Remaining player lifes UI                 | Alberto Arduini | 2   | 2   | 1   | 1   | 1   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   |
+| Level sequence and progression controller | Alberto Arduini | 5   | 5   | 5   | 5   | 3   | 3   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 2   |
+| Damaged event on DamageableBehaviour      | Alberto Arduini | 1   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   |
+| Save player health on level completion    | Alberto Arduini | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   |
+| Restore player health on level start      | Alberto Arduini | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 
+| Global points manager                     | Alberto Arduini | 3   | 3   | 3   | 3   | 1   | 1   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   |
+| Ai Movement Logic                         | Stefano Guidi   | 5   | 3   | 2   | 1   | 2   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   |
+| Ai Focus Shooting                         | Stefano Guidi   | 4   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 2   | 2   | 2   | 4   | 3   |
+| Enemy Timing Spawn Controller             | Stefano Guidi   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 1   | 0   |     |     |     |     |     |     |
+| Sequence of enemies factory               | Stefano Guidi   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 1   | 0   |     |     |     |     |
+| Generator Controller                      | Stefano Guidi   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 1   | 1   | 1   | 0   |     |     |     |
+| Line of sight (frontend)                  | Stefano GUidi   | 3   | 3   | 3   | 3   | 3   | 3   | 2   | 2   | 2   | 2   | 2   | 2   | 1   | 1   | 0   |
+| Player Gameover controller                | Andrea Bianchi  | 3   | 3   | 3   | 2   | 2   | 2   | 2   | 2   | 1   | 0   |     |     |     |     |     |
+| Player Life Loss and Respawn              | Andrea Bianchi  | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 0   |     |     |     |     |     |     |
+| Gameover View                             | Andrea Bianchi  | 3   | 3   | 3   | 2   | 2   | 2   | 2   | 2   | 0   |     |     |     |     |     |     |
+| Exit and Restart functions in Gameover    | Andrea Bianchi  | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 2   | 2   |
+| Level File Loader                         | Andrea Bianchi  | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 2   | 2   | 1   | 1   | 1   | 1   | 0   |
+| Enemy Sequence Loader                     | Andrea Bianchi  | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 1   | 0   |
+| Level Tile Design                         | Andrea Bianchi  | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 2   | 2   | 1   | 1   | 1   | 1   | 1   |
 ### 6.2.3.1 Review Alberto Arduini
 Questo sprint si è concentrato sullo sviluppo dell'interfaccia utente da mostrare durante il gioco.
 Per questo è stato abbastanza semplice, tuttavia, per poter accomodare vari layout in modo generico e avere un sistema per cambiarli in modo semplice, ha richiesto l'implementazione del sistema del [contesto di visualizzazione](4_Design_di_dettaglio.md#4%202%20Contesto%20di%20visualizzazione) delle *View*.
 Inoltre, è stata implementa anche la gestione base dei punti, ma è rimasta però in sospeso per lo sprint successivo l'integrazione delle sue funzionalità con il resto del sistema.
+Una nota riguardo a questo sprint è che, per via di impegni personali e di lavoro, non ho potuto fare progressi durante la seconda settimana, quindi è stato necessario anche un lavoro di organizzazione più puntuale per la decisione di quali task fossero più importanti e urgenti, in modo da poterle svolgere prima e lasciare in sospeso solo attività minori.
 ### 6.2.3.2 Review Andrea Bianchi
 Vi si è dapprima concentrati sull'implementazione di una semplice funzione di *respawn* associata al PlayerTank. Una volta elaborato ciò, si è passato allo sviluppo di un controller dedicato alla *gestione del game over.*
 Un lavoro non troppo difficile fatta eccezione per la funzione necessaria per ricominciare la partita si è rilevata più complessa del previsto.
@@ -106,21 +120,28 @@ svolti dai colleghi: un compito che ha richiesto grande concentrazione e attenzi
 In questo sprint ci si è occupato di risolvere le problematiche sorte alla fine del precedente sprint, ossia il completamento e miglioramento del sistema di Ai per il movimento (per terminare ciò lavoro è stato richiesto circa un 40% dello sprint). Inoltre in questa fase si è iniziato ad utilizzare integrare con il lavoro degli altri, in particolare il contesto di visualizzazione e l'entity repository. Ciò ha permesso di aggiungere, ulteriore valore al risultato dello sprint.
 Nel tempo rimanente ci si è occupati di sviluppare il sistema AI di focus shooting e alcune funzionalità correlate, la quali (seppur in maniera minima) è stata lasciata in sospeso per lo sprint successivo. Inoltre si è sviluppato un primo semplice sistema per la generazione di sequenze di nemici
 ## 6.2.4 Sprint 4 - Dal 27 novembre al 9 dicembre
-| Backlog item                             | Assignee       | D0 | D1 | D2 | D3 | D4 | D5 | D6 | D7 | D8 | D9 | D10 | D11 | D12 | D13 | D14 |
-|------------------------------------------|----------------|----|----|----|----|----|----|----|----|----|----|-----|----| -- | -- | -- |
-| Powerup object Controller                | Stefano Guidi  | 3  | 2  | 0  |    |    |    |    |    |    |    |     |    |    |    |    |
-| Ai Focus Shooting                        | Stefano Guidi  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 1  | 2   | 2  |    |    |    |
-| Charged Tanks                            | Stefano Guidi  | 2  | 2  | 2  | 1  | 0  |    |    |    |    |    |     |    |    |    |    |
-| Position provider mechanism              | Stefano Guidi  | 3  | 3  | 2  | 2  | 2  | 2  | 2  | 2  | 2  | 0  |     |    |    |    |    |
-| PickablePowerUp spawn                    | Stefano Guidi  | 2  | 2  | 1  | 1  | 1  | 2  | 2  | 1  | 1  | 0  |     |    |    |    |    |
-| Powerup Binder Controller                | Stefano Guidi  | 4  | 3  | 4  | 4  | 3  | 3  | 3  | 2  | 0  |    |     |    |    |    |    |
-| Level Tile Design                        | Andrea Bianchi | 1  | 1  | 0  |    |    |    |    |    |    |    |     |    |    |    |    |
-| Game Option View                         | Andrea Bianchi | 3  | 3  | 2  | 2  | 1  | 1  | 1  | 0  |    |    |     |    |    |    |    |
-| Reset Best Score Option                  | Andrea Bianchi | 2  | 2  | 1  | 1  | 1  | 1  | 0  |    |    |    |     |    |    |    |    |
-| Set Username Option                      | Andrea Bianchi | 2  | 2  | 1  | 1  | 1  | 1  | 0  |    |    |    |     |    |    |    |    |
-| Exit and Restart functions in Gameover   | Andrea Bianchi | 2  | 2  | 2  | 2  | 2  | 1  | 1  | 1  | 1  | 1  | 0   |    |    |    |    |
-| Bullet Fixes                             | Andrea Bianchi | 3  | 3  | 3  | 3  | 3  | 2  | 2  | 1  | 1  | 0  |     |    |    |    |    |
-| Data Saved and Loaded from External File | Andrea Bianchi | 2  | 2  | 2  | 2  | 2  | 2  | 2  | 1  | 1  | 0  |    |    |    |    |    |
+| Backlog item                             | Assignee        | D0  | D1  | D2  | D3  | D4  | D5  | D6  | D7  | D8  | D9  | D10 | D11 | D12 | D13 | D14 |
+| ---------------------------------------- | --------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Title screen view                        | Alberto Arduini | 5   |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+| Pause menù action                        | Alberto Arduini | 2   |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+| Pause UI                                 | Alberto Arduini | 1   |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+| Point bonus preset                       | Alberto Arduini | 2   |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+| Add points on events                     | Alberto Arduini | 2   |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+| Pause game logic                         | Alberto Arduini | 2   |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+| Powerup object Controller                | Stefano Guidi   | 3   | 2   | 0   |     |     |     |     |     |     |     |     |     |     |     |     |
+| Ai Focus Shooting                        | Stefano Guidi   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 1   | 2   | 2   |     |     |     |
+| Charged Tanks                            | Stefano Guidi   | 2   | 2   | 2   | 1   | 0   |     |     |     |     |     |     |     |     |     |     |
+| Position provider mechanism              | Stefano Guidi   | 3   | 3   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 0   |     |     |     |     |     |
+| PickablePowerUp spawn                    | Stefano Guidi   | 2   | 2   | 1   | 1   | 1   | 2   | 2   | 1   | 1   | 0   |     |     |     |     |     |
+| Powerup Binder Controller                | Stefano Guidi   | 4   | 3   | 4   | 4   | 3   | 3   | 3   | 2   | 0   |     |     |     |     |     |     |
+| Level Tile Design                        | Andrea Bianchi  | 1   | 1   | 0   |     |     |     |     |     |     |     |     |     |     |     |     |
+| Game Option View                         | Andrea Bianchi  | 3   | 3   | 2   | 2   | 1   | 1   | 1   | 0   |     |     |     |     |     |     |     |
+| Reset Best Score Option                  | Andrea Bianchi  | 2   | 2   | 1   | 1   | 1   | 1   | 0   |     |     |     |     |     |     |     |     |
+| Set Username Option                      | Andrea Bianchi  | 2   | 2   | 1   | 1   | 1   | 1   | 0   |     |     |     |     |     |     |     |     |
+| Exit and Restart functions in Gameover   | Andrea Bianchi  | 2   | 2   | 2   | 2   | 2   | 1   | 1   | 1   | 1   | 1   | 0   |     |     |     |     |
+| Bullet Fixes                             | Andrea Bianchi  | 3   | 3   | 3   | 3   | 3   | 2   | 2   | 1   | 1   | 0   |     |     |     |     |     |
+| Data Saved and Loaded from External File | Andrea Bianchi  | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 1   | 1   | 0   |     |     |     |     |     |
+### 6.2.4.1 Review Alberto Arduini
 
 ### 6.2.4.2 Review Andrea Bianchi
 L'ultimo sprint è stato quello decisivo: ho passato la prima metà a realizzare i componenti finali, quali la *lettura di dati da un file esterno al programma*
@@ -128,8 +149,7 @@ e la creazione di un *nuovo menù* secondario contenente una serie di svariate *
 Terminate queste iniziali implementazioni, ho *finalizzato* le view di game over e delle opzioni, sistemando errori presenti nel metodo di restart e altre imprecisioni di minor importanza.
 Durante ciò, grazie ai confronti e l'aiuto dei miei colleghi, ho *esteso il lavoro svolto precedentemente per il modello e il controller dei proiettili del gioco*, integrandolo appieno
 con il mondo di gioco e correggendo i problemi di movimento, direzione e collisione che si erano riscontrati durante le fasi di testing.
-
-## 6.2.4.3 Review Stefano Guidi
+### 6.2.4.3 Review Stefano Guidi
 Quest'ultimo sprint ci si è concentrato sul realizzare aspetti di lifecycle per feature comunque consistenti con il lavoro precedentemente svolto (in particolare integrazione di ulteriori funzionalità e miglioramenti per la generazione di sequenze dei nemici in ogni livello e una gestione dei potenziamenti raccoglibili nel livello). Inoltre ci si è occupati di sistemare alcuni dettagli su alcune feature che precedentemente erano rimaste bloccanti (tali modifiche non hanno apportato problemi ne eccessivo tempo per attuarle). In generale le problematiche principali sono state quelle relative a problemi di integrazione su alcune componenti che, fino a quel momento, non erano state ancora messe in relazione tra loro
 # 6.3 Commenti finali
 Lo svolgimento di questo progetto ci ha permesso di provare con mano e analizzare tutto il processo di sviluppo di un *software* con un occhio più rigido e professionale, non solo per l'utilizzo di una metodologia (Scrum) più rigida e strutturata, ma anche per quanto riguarda le interazioni con il team, sia in termini di stesura del codice che di verifica immediata della qualità.
