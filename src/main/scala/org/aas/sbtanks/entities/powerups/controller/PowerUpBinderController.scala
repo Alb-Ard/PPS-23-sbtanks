@@ -43,6 +43,7 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
      * Chains the picked-up power-up to the tank power-up binder.
      */
     pickup += { powerUp =>
+        println("PROVA")
         tankPowerUpsBinder.chain(powerUp)
     }
 
@@ -69,7 +70,9 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
               .filter(_.isExpired)
               .foreach:
                   case expiredPowerUp: TimeablePowerUp =>
+                      println("BEFORE: " + tankPowerUpsBinder.getPowerUps)
                       tankPowerUpsBinder.unchain(expiredPowerUp.resetDuration())
+                      println("AFTER: " + tankPowerUpsBinder.getPowerUps)
 
     /**
      * Sets a new pickable power-up in the game world.
@@ -87,8 +90,9 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
      *
      * @param player The player tank to be set up with power-ups.
      */
-    private def setUpPlayer(player: PlayerTank) =
-        tankPowerUpsBinder.bind(player)
+    private def setUpPlayer(player: PlayerTank, bind: Boolean) =
+        if bind then
+            tankPowerUpsBinder.bind(player)
         tankPowerUpsBinder.chain(HelmetPowerUp())
 
 
@@ -101,7 +105,7 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
     private def registerEntity(tank: Tank): this.type =
         tankPowerUpsBinder.bind(tank)
         tank match
-            case tank1: PlayerTank => setUpPlayer(tank1)
+            case tank1: PlayerTank => setUpPlayer(tank1, false)
             case _ =>
 
         tank match
@@ -109,7 +113,7 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
                 tank.destroyed += { _ =>
                     tankPowerUpsBinder.unbind(tank)
                     tank match
-                        case t: PlayerTank => setUpPlayer(t)
+                        case t: PlayerTank => setUpPlayer(t, true)
                         case _ =>
                     if (tank.isCharged) this.setNewPickablePowerUp()
                 }

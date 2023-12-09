@@ -41,7 +41,7 @@ trait LineOfSight(using physics: PhysicsContainer)(private val lineCollisions: S
 
 
     private def getVerticalLine(backwards: Boolean = false): Seq[Collider] =
-        physics.verticalRayCast(this.positionX, this.positionY, if backwards then Option(Raycast.INFINITE_NEGATIVE) else Option.empty, lineCollisions, exclusion)
+        physics.verticalRayCast(this.positionX + 0.5, this.positionY + 0.5, if backwards then Option(Raycast.INFINITE_NEGATIVE) else Option.empty, lineCollisions, exclusion)
 
 
     private def getHorizontalLine(backwards: Boolean = false): Seq[Collider] =

@@ -59,6 +59,7 @@ object PowerUp:
          * @return The modified entity after applying the power-up constraint.
          */
         abstract override def apply[A <: E](entity: A): A = Some(entity).filter(predicate).map(super.apply).getOrElse(entity)
+        abstract override def revert[A <: E](entity: A): A = Some(entity).filter(predicate).map(super.revert).getOrElse(entity)
 
     /**
       * @param f Function that should apply the effect by returning a modified entity of the same type

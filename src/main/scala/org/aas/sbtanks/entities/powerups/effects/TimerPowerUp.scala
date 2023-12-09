@@ -31,6 +31,7 @@ object TimerPowerUpUtils:
 
     val g: (MapContext[Tank, (Int, Int)], Tank) => Tank =
         (c,t) =>
+            println(c)
             val (speed, bulletSpeed) = c.getValue(t).get
             t updateTankData(t.tankData
                 .updateSpeed(_ => speed)

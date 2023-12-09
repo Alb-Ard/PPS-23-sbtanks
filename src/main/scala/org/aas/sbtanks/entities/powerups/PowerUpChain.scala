@@ -133,19 +133,19 @@ class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E
      * @return The current instance of PowerUpChainBinder after the modification.
      */
     override def chain(next: PowerUp[E]): this.type =
-        val currentBindings = entities.map(_.supplier()).map(EntityBinding(_))
+        //val currentBindings = entities.map(_.supplier()).map(EntityBinding(_))
 
         powerUpBindings = powerUpBindings.filter:
-            case (_, storedEntities) => entities.contains(currentBindings) 
+            case (_, storedEntities) => storedEntities.nonEmpty
 
-        powerUpBindings += (next -> currentBindings)
+        powerUpBindings += (next -> entities)
 
         entities.foreach(e => e.consumer(
             next(e.supplier()))
         )
 
 
-        super.chain(next)
+        //super.chain(next)
         this
 
     /**
@@ -162,11 +162,11 @@ class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E
             last.revert(e.supplier()))
         )
 
-        entities = entities.filterNot(b => validBindings.exists(_.supplier() == b.supplier()))
+        //entities = entities.filterNot(b => validBindings.exists(_.supplier() == b.supplier()))
 
         powerUpBindings -= last
 
-        super.unchain(last)
+        //super.unchain(last)
         this
 
 

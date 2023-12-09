@@ -26,7 +26,7 @@ trait AiMovableController(val entity: Tank with MovementEntity with ShootingEnti
     
         fixedOnPriorityTarget(entity)
             .map(e => computeAiState(e.asInstanceOf[MovementEntity], movementBias = offset))
-            .foreach((d, e) => e.moveRelative(d(0) * e.asInstanceOf[Tank].tankData.speed * (1 / offset), d(1) * e.asInstanceOf[Tank].tankData.speed * (1 / offset)))
+            .foreach((d, e) => e.moveRelative(d(0) * speedSupplier() * (1 / offset), d(1) * speedSupplier() * (1 / offset)))
         this
 
 
