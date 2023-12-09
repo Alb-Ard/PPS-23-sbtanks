@@ -44,7 +44,6 @@ class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage
         
         checkTankCollision(colliders).headOption match
             case Some(_) =>
-                println("PICKUP EVENT")
                 pickup(powerUp)
                 entityRepo.removeModelView(powerUp)
             case _ =>

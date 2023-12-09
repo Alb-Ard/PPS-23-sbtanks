@@ -19,7 +19,6 @@ object Grenade:
 
     /**
      * A case object representing the Grenade power-up, which is a functional power-up for tanks with a specific constraint on its use.
-     * Being an instantaneous powerup its duration effect is 0
      * It combines functions 'f' and 'g' with a specified constraint.
      */
     case class GrenadePowerUp() extends FuncPowerUp[Tank](f, g) with PowerUpConstraint[Tank](constraint)
@@ -28,12 +27,13 @@ object Grenade:
  * Utility functions related to the Grenade power-up.
  */
 object GrenadePowerUpUtils:
+    private val MAX_DAMAGE = 9999
 
     /**
      * Function 'f' represents the effect of the Grenade power-up on a tank.
      * In this case, it make sure the tank is destroyed.
      */
-    val f: Tank => Tank = t => {t.asInstanceOf[DamageableBehaviour].damage((), 9999); t}
+    val f: Tank => Tank = t => {t.asInstanceOf[DamageableBehaviour].damage((), MAX_DAMAGE); t}
 
     /**
      * Function 'g' represents the identity function, indicating no additional modification to the tank.

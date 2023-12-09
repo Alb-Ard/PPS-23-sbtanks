@@ -17,7 +17,6 @@ class JFXPowerUpView(image: Image) extends ImageView(image) with PowerUpView wit
     
     override def show(): Unit = this.animate()
 
-    override def destroy(): Unit = ???
 
 
 
@@ -29,18 +28,6 @@ object JFXPowerUpView:
 
 
 
-object PowerUpViewTest extends JFXApp3:
-
-
-    override def start(): Unit =
-        val view =  JFXPowerUpView("entities/powerups/powerup_star.png")
-
-        //view.animate()
-
-        stage = new PrimaryStage:
-            title = "Power-Up View"
-            scene = new Scene:
-                content = ImageView(view)
 
 
 

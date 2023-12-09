@@ -10,6 +10,10 @@ import org.aas.sbtanks.player.PlayerTank
 object Timer:
     import TimerPowerUpUtils.*
 
+    /**
+     * Case class representing the Timer power-up instance. which is a functional power-up for tanks with a context, a time duration and a constraint
+     *
+     */
     case class TimerPowerUp()
         extends ContextualFuncPowerUp[MapContext[Tank, (Int, Int)], Tank](MapContext[Tank, (Int, Int)]())(f, g)
         with TimeablePowerUp(STOP_TIME_POWER_UP_DURATION)

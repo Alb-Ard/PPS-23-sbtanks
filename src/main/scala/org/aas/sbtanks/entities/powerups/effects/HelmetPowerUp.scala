@@ -8,10 +8,18 @@ import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
 import org.aas.sbtanks.player.PlayerTank
 
-
+/**
+ * Object representing the Helmet power-up, providing utility functions and a case class for the power-up instance.
+ */
 object Helmet:
     import HelmetPowerUpUtils.*
 
+
+    /**
+     * Case class representing the Helmet power-up, which is a functional power-up for tanks with a specific constraint on its use a time effect.
+     *
+     *
+     */
     case class HelmetPowerUp() extends FuncPowerUp[Tank](f, g) with TimeablePowerUp(HELMET_POWER_UP_DURATION) with PowerUpConstraint[Tank](constraint)
 
 object HelmetPowerUpUtils:
@@ -30,32 +38,6 @@ object HelmetPowerUpUtils:
     val constraint: Tank => Boolean =
         _.isInstanceOf[PlayerTank]
 
-
-object test extends App:
-    import Helmet.*
-
-    var tank = new BasicTank with DamageableBehaviour:
-        override protected def applyDamage(source: Any, amount: Int): this.type =
-            updateTankData(tankData.updateHealth(_ - 1))
-            tankData.health match
-                case v if v <= 0 =>
-                    destroy(())
-                    this
-                case _ => this
-
-    val p = new HelmetPowerUp with PositionBehaviour
-
-
-    tank = p(tank)
-
-    tank = tank.damage(test, 1)
-    println(tank.tankData.health)
-
-
-    tank = p.revert(tank)
-
-    tank = tank.damage(test, 1)
-    println(tank.tankData.health)
 
 
 
