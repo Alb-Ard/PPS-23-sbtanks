@@ -25,7 +25,7 @@ class JFXTankView(private val images: Seq[Seq[Image]], private val invincibility
 
     private class MainImage (images: Seq[Seq[Image]], animationSpeed: Double = 1) extends ImageView(images.applyOrElse(0, _ => Seq.empty).applyOrElse(0, _ => null))
         with Includes
-        with JFXMoveableView
+        with JFXMoveableView[ImageView]
         with JFXDirectionableView
         with JFXImageViewAnimator(images(0), animationSpeed):
 
@@ -44,7 +44,7 @@ class JFXTankView(private val images: Seq[Seq[Image]], private val invincibility
 
     private class InvincibilityImage(images: Seq[Image], animationSpeed: Double = 1) extends ImageView(images.applyOrElse(0, _ => null))
         with Includes
-        with JFXMoveableView
+        with JFXMoveableView[ImageView]
         with JFXImageViewAnimator(images, animationSpeed, true):
 
         def isDamageable(value: Boolean) =

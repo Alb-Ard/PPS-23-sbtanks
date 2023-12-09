@@ -25,7 +25,8 @@ import org.aas.sbtanks.entities.repository.context.EntityRepositoryContext
 import org.aas.sbtanks.physics.PhysicsContainer
 
 class MockTankView extends TankView:
-    override def isMoving(value: Boolean): Unit = ()
+    override def isMoving(value: Boolean): this.type = this
+    override def isDamageable(value: Boolean): this.type = this
     override def look(rotation: Double): Unit = ()
     override def move(x: Double, y: Double): Unit = ()
 

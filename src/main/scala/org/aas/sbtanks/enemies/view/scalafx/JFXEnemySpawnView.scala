@@ -10,7 +10,7 @@ class JFXEnemySpawnView(private val images: Seq[Image], animationSpeed: Double =
     extends ImageView(images.head)
     with EnemySpawnView
     with JFXImageViewAnimator(images, animationSpeed, false)
-    with JFXMoveableView:
+    with JFXMoveableView[ImageView]:
 
     override def initSpawnAnimation(): JFXEnemySpawnView.this.type =
         this.startAnimation()
