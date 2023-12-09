@@ -46,18 +46,23 @@ rispettiva view, sono ancora in fase di sviluppo e necessitano ulteriore tempo p
 ### 6.2.1.3 Review Stefano Guidi
 Il primo sprint è stato complessivamente positivo. E' stato implementato correttamente sia  un primo sistema generale per i Powerup che le strutture dati di base per il Tank e le loro tipologie. Ci si è resi conto di aver sottostimato la complessità nel realizzare un sistema di powerup efficace e di qualità, pertanto altre feature correlate (e.g. tipologie di  effetti per i potenziamenti e meccanismi generali per il loro uso) verranno suddivise in un' ulteriori feature per lo sprint successivo
 ## 6.2.2 Sprint 2 - Dal 30 ottobre al 12 novembre
-| Backlog item                 | Assignee      | D0 | D1 | D2 | D3 | D4 | D5 | D6 | D7 | D8 | D9 | D10 | D11 | D12 | D13 | D14 | 
-|------------------------------| ------------- |----|----|----|----|----|----|----|----|----|----|-----|-----|-----|-----|-----|
-| Power-up effect types        | Stefano Guidi | 5  | 5  | 5  | 5  | 4  | 5  | 4  | 3  | 0  |    |     |     |     |     |     |   
-| Entity state machine         | Stefano Guidi | 6  | 6  | 5  | 5  | 5  | 5  | 4  | 4  | 2  | 0  |     |     |     |     |     |  
-| Enemy Controller             | Stefano Guidi | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 2  | 2  | 2   | 0   |     |     |     |  
-| Ai Movement logic            | Stefano Guidi | 4  | 5  | 5  | 5  | 7  | 7  | 7  | 7  | 5  | 5  | 4   | 3   | 3   | 5   | 5   |
-| Bullet Entity                | Andrea Bianchi | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 2  | 2  | 2  | 2   | 2   | 0   |     |     |
-| Bullet View                  | Andrea Bianchi | 2  | 2  | 2  | 2  | 2  | 2  | 2  | 1  | 1  | 1  | 1   | 1   | 0   |     |     |
-| Tank Damage/Elimination      | Andrea Bianchi | 5  | 5  | 5  | 5  | 5  | 5  | 5  | 2  | 2  | 2  | 2   | 2   | 2   | 0   |     |
-| PLayer Life Loss and Respawn | Andrea Bianchi | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 2   | 2   | 2   | 2   | 2   |
-| Player Gameover controller   | Andrea Bianchi | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3   | 3   | 3   | 3   | 3   |
-| Gameover View                | Andrea Bianchi | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3   | 3   | 3   | 3   | 3   |
+| Backlog item                 | Assignee        | D0  | D1  | D2  | D3  | D4  | D5  | D6  | D7  | D8  | D9  | D10 | D11 | D12 | D13 | D14 |
+| ---------------------------- | --------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Entity models container      | Alberto Arduini | 5   | 5   | 3   | 2   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   |
+| Entity controllers container | Alberto Arduini | 3   | 3   | 3   | 3   | 3   | 1   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   |
+| Entity creation              | Alberto Arduini | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 1   | 1   | 0   | 0   | 0   | 0   | 0   | 0   |
+| Entity deletion              | Alberto Arduini | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 2   | 2   | 1   | 0   | 0   | 0   |
+| Entity views manager         | Alberto Arduini | 3   | 3   | 3   | 3   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 1   | 0   | 0   | 
+| Power-up effect types        | Stefano Guidi   | 5   | 5   | 5   | 5   | 4   | 5   | 4   | 3   | 0   |     |     |     |     |     |     |
+| Entity state machine         | Stefano Guidi   | 6   | 6   | 5   | 5   | 5   | 5   | 4   | 4   | 2   | 0   |     |     |     |     |     |
+| Enemy Controller             | Stefano Guidi   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 2   | 2   | 2   | 0   |     |     |     |
+| Ai Movement logic            | Stefano Guidi   | 4   | 5   | 5   | 5   | 7   | 7   | 7   | 7   | 5   | 5   | 4   | 3   | 3   | 5   | 5   |
+| Bullet Entity                | Andrea Bianchi  | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 2   | 2   | 2   | 2   | 2   | 0   |     |     |
+| Bullet View                  | Andrea Bianchi  | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 1   | 1   | 1   | 1   | 1   | 0   |     |     |
+| Tank Damage/Elimination      | Andrea Bianchi  | 5   | 5   | 5   | 5   | 5   | 5   | 5   | 2   | 2   | 2   | 2   | 2   | 2   | 0   |     |
+| PLayer Life Loss and Respawn | Andrea Bianchi  | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 2   | 2   | 2   | 2   | 2   |
+| Player Gameover controller   | Andrea Bianchi  | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   |
+| Gameover View                | Andrea Bianchi  | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   |
 
 
 ### 6.2.2.2 Review Andrea Bianchi
