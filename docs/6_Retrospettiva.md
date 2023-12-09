@@ -120,27 +120,30 @@ svolti dai colleghi: un compito che ha richiesto grande concentrazione e attenzi
 In questo sprint ci si è occupato di risolvere le problematiche sorte alla fine del precedente sprint, ossia il completamento e miglioramento del sistema di Ai per il movimento (per terminare ciò lavoro è stato richiesto circa un 40% dello sprint). Inoltre in questa fase si è iniziato ad utilizzare integrare con il lavoro degli altri, in particolare il contesto di visualizzazione e l'entity repository. Ciò ha permesso di aggiungere, ulteriore valore al risultato dello sprint.
 Nel tempo rimanente ci si è occupati di sviluppare il sistema AI di focus shooting e alcune funzionalità correlate, la quali (seppur in maniera minima) è stata lasciata in sospeso per lo sprint successivo. Inoltre si è sviluppato un primo semplice sistema per la generazione di sequenze di nemici
 ## 6.2.4 Sprint 4 - Dal 27 novembre al 9 dicembre
-| Backlog item                             | Assignee        | D0  | D1  | D2  | D3  | D4  | D5  | D6  | D7  | D8  | D9  | D10 | D11 | D12 | D13 | D14 |
-| ---------------------------------------- | --------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Title screen view                        | Alberto Arduini | 5   |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
-| Pause menù action                        | Alberto Arduini | 2   |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
-| Pause UI                                 | Alberto Arduini | 1   |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
-| Point bonus preset                       | Alberto Arduini | 2   |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
-| Add points on events                     | Alberto Arduini | 2   |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
-| Pause game logic                         | Alberto Arduini | 2   |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
-| Powerup object Controller                | Stefano Guidi   | 3   | 2   | 0   |     |     |     |     |     |     |     |     |     |     |     |     |
-| Ai Focus Shooting                        | Stefano Guidi   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 1   | 2   | 2   |     |     |     |
-| Charged Tanks                            | Stefano Guidi   | 2   | 2   | 2   | 1   | 0   |     |     |     |     |     |     |     |     |     |     |
-| Position provider mechanism              | Stefano Guidi   | 3   | 3   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 0   |     |     |     |     |     |
-| PickablePowerUp spawn                    | Stefano Guidi   | 2   | 2   | 1   | 1   | 1   | 2   | 2   | 1   | 1   | 0   |     |     |     |     |     |
-| Powerup Binder Controller                | Stefano Guidi   | 4   | 3   | 4   | 4   | 3   | 3   | 3   | 2   | 0   |     |     |     |     |     |     |
-| Level Tile Design                        | Andrea Bianchi  | 1   | 1   | 0   |     |     |     |     |     |     |     |     |     |     |     |     |
-| Game Option View                         | Andrea Bianchi  | 3   | 3   | 2   | 2   | 1   | 1   | 1   | 0   |     |     |     |     |     |     |     |
-| Reset Best Score Option                  | Andrea Bianchi  | 2   | 2   | 1   | 1   | 1   | 1   | 0   |     |     |     |     |     |     |     |     |
-| Set Username Option                      | Andrea Bianchi  | 2   | 2   | 1   | 1   | 1   | 1   | 0   |     |     |     |     |     |     |     |     |
-| Exit and Restart functions in Gameover   | Andrea Bianchi  | 2   | 2   | 2   | 2   | 2   | 1   | 1   | 1   | 1   | 1   | 0   |     |     |     |     |
-| Bullet Fixes                             | Andrea Bianchi  | 3   | 3   | 3   | 3   | 3   | 2   | 2   | 1   | 1   | 0   |     |     |     |     |     |
-| Data Saved and Loaded from External File | Andrea Bianchi  | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 1   | 1   | 0   |     |     |     |     |     |
+| Backlog item                               | Assignee        | D0  | D1  | D2  | D3  | D4  | D5  | D6  | D7  | D8  | D9  | D10 | D11 | D12 | D13 | D14 |
+| ------------------------------------------ | --------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Title screen view                          | Alberto Arduini | 5   | 5   | 3   | 2   | 0   |     |     |     |     |     |     |     |     |     |     |
+| Pause menù action                          | Alberto Arduini | 2   | 2   | 2   | 2   | 0   |     |     |     |     |     |     |     |     |     |     |
+| Pause UI                                   | Alberto Arduini | 1   | 1   | 1   | 0   |     |     |     |     |     |     |     |     |     |     |     |
+| Point bonus preset                         | Alberto Arduini | 2   | 2   | 2   | 2   | 2   | 0   |     |     |     |     |     |     |     |     |     |
+| Add points on events                       | Alberto Arduini | 2   | 2   | 2   | 2   | 2   | 1   |     |     |     |     |     |     |     |     |     |
+| Pause game logic                           | Alberto Arduini | 2   | 2   | 1   | 1   | 0   |     |     |     |     |     |     |     |     |     |     |
+| Level Sequence and Progressione Controller | Alberto Arduini | 2   | 2   | 1   | 0   |     |     |     |     |     |     |     |     |     |     |     |
+| Save player health on level completion     | Alberto Arduini | 1   | 1   | 1   | 0   |     |     |     |     |     |     |     |     |     |     |     |
+| Restore player health on level start  | Alberto Arduini | 1   | 1   | 1   | 0   |     |     |     |     |     |     |     |     |     |     |     |
+| Powerup object Controller                  | Stefano Guidi   | 3   | 2   | 0   |     |     |     |     |     |     |     |     |     |     |     |     |
+| Ai Focus Shooting                          | Stefano Guidi   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 1   | 2   | 2   |     |     |     |
+| Charged Tanks                              | Stefano Guidi   | 2   | 2   | 2   | 1   | 0   |     |     |     |     |     |     |     |     |     |     |
+| Position provider mechanism                | Stefano Guidi   | 3   | 3   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 0   |     |     |     |     |     |
+| PickablePowerUp spawn                      | Stefano Guidi   | 2   | 2   | 1   | 1   | 1   | 2   | 2   | 1   | 1   | 0   |     |     |     |     |     |
+| Powerup Binder Controller                  | Stefano Guidi   | 4   | 3   | 4   | 4   | 3   | 3   | 3   | 2   | 0   |     |     |     |     |     |     |
+| Level Tile Design                          | Andrea Bianchi  | 1   | 1   | 0   |     |     |     |     |     |     |     |     |     |     |     |     |
+| Game Option View                           | Andrea Bianchi  | 3   | 3   | 2   | 2   | 1   | 1   | 1   | 0   |     |     |     |     |     |     |     |
+| Reset Best Score Option                    | Andrea Bianchi  | 2   | 2   | 1   | 1   | 1   | 1   | 0   |     |     |     |     |     |     |     |     |
+| Set Username Option                        | Andrea Bianchi  | 2   | 2   | 1   | 1   | 1   | 1   | 0   |     |     |     |     |     |     |     |     |
+| Exit and Restart functions in Gameover     | Andrea Bianchi  | 2   | 2   | 2   | 2   | 2   | 1   | 1   | 1   | 1   | 1   | 0   |     |     |     |     |
+| Bullet Fixes                               | Andrea Bianchi  | 3   | 3   | 3   | 3   | 3   | 2   | 2   | 1   | 1   | 0   |     |     |     |     |     |
+| Data Saved and Loaded from External File   | Andrea Bianchi  | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 1   | 1   | 0   |     |     |     |     |     |
 ### 6.2.4.1 Review Alberto Arduini
 
 ### 6.2.4.2 Review Andrea Bianchi
