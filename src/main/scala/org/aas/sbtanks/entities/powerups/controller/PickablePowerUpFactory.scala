@@ -59,7 +59,6 @@ trait PickablePowerUpFactory(using PhysicsContainer):
             case _ =>
                 p.setPosition(0, 0)
 
-
     private def getImagePathBy(powerUpType: PowerUpType) =
         "entities/powerups/powerup_"
             .concat(
@@ -72,10 +71,12 @@ trait PickablePowerUpFactory(using PhysicsContainer):
 
 
     def getRandomPowerUp(width: Double, height: Double): (PickablePowerUp[?], String) =
-        val positionProvider = (w, h) => PositionProvider(w, h)
 
         val powerUpTypes = PowerUpType.values
 
         val powerUpType = powerUpTypes(Random.nextInt(powerUpTypes.length))
 
-        (providePowerUpInstance(powerUpType, width, height).asInstanceOf[PickablePowerUp[?]], getImagePathBy(powerUpType))
+        val (m,v) = (providePowerUpInstance(powerUpType, width, height).asInstanceOf[PickablePowerUp[?]], getImagePathBy(powerUpType))
+
+
+        (m, v)

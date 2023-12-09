@@ -61,8 +61,8 @@ object LevelObstacle:
                         Seq.empty
                     )
                     with DamageableBehaviour:
-                        override protected def applyDamage(amount: Int) =
-                            destroyed(())
+                        override protected def applyDamage(source: Any, amount: Int) =
+                            destroy(())
                             this
                 )
     

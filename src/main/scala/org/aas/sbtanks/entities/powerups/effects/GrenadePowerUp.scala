@@ -33,7 +33,7 @@ object GrenadePowerUpUtils:
      * Function 'f' represents the effect of the Grenade power-up on a tank.
      * In this case, it make sure the tank is destroyed.
      */
-    val f: Tank => Tank = t => {t.asInstanceOf[DamageableBehaviour].destroyed(()); t}
+    val f: Tank => Tank = t => {t.asInstanceOf[DamageableBehaviour].damage((), 9999); t}
 
     /**
      * Function 'g' represents the identity function, indicating no additional modification to the tank.
@@ -61,20 +61,20 @@ object x extends App:
 
 
     val t = new BasicTank with PositionBehaviour with DamageableBehaviour:
-        override protected def applyDamage(amount: Int): this.type =
+        override protected def applyDamage(source: Any, amount: Int): this.type =
             updateTankData(tankData.updateHealth(_ - 1))
             tankData.health match
                 case v if v <= 0 =>
-                    destroyed(())
+                    destroy(())
                     this
                 case _ => this
 
     val t2 = new PlayerTank with PositionBehaviour with DamageableBehaviour:
-        override protected def applyDamage(amount: Int): this.type =
+        override protected def applyDamage(source: Any, amount: Int): this.type =
             updateTankData(tankData.updateHealth(_ - 1))
             tankData.health match
                 case v if v <= 0 =>
-                    destroyed(())
+                    destroy(())
                     this
                 case _ => this
 

@@ -30,7 +30,7 @@ object EnemyFactory:
      * @param eachCharged An optional parameter specifying the charging behavior for every Nth enemy. Default is 4.
      * @return A sequence of enemy tank builders only corresponding to the valid characters in the input string.
      */
-    def createFromString(using physics: PhysicsContainer)(input: String, eachCharged: Int = 4) =
+    def createFromString(using physics: PhysicsContainer)(input: String, eachCharged: Int = 1) =
         input.map(createEnemyBuilder)
             .zipWithIndex
             .map:

@@ -35,8 +35,8 @@ class BulletFactory:
             with DirectionBehaviour(direction(0), direction(1))
             with CollisionBehaviour(BULLET_COLLISION_SIZE(0), BULLET_COLLISION_SIZE(1), CollisionLayer.BulletsLayer, BULLET_COLLISION_MASK)
             with DamageableBehaviour:
-                override def applyDamage(amount: Int) =
-                    destroyed(())
+                override def applyDamage(source: Any, amount: Int) =
+                    destroy(())
                     this
         .setBoundingBoxOffset(BULLET_COLLISION_OFFSET(0), BULLET_COLLISION_OFFSET(1))
 

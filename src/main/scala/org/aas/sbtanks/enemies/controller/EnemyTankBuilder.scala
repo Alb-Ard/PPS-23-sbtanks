@@ -51,11 +51,11 @@ case class EnemyTankBuilder(x: Double = 0,
             with CollisionBehaviour(collisionSizeX, collisionSizeY, collisionLayer, collisionMask.toSeq)
             with LineOfSight(Seq(CollisionLayer.WallsLayer), Seq.empty, seeThoughBlocks)
             with DamageableBehaviour:
-            override protected def applyDamage(amount: Int) =
+            override protected def applyDamage(source: Any, amount: Int) =
                 updateTankData(tankData.updateHealth(_ - 1))
                 tankData.health match
                     case v if v <= 0 =>
-                        destroyed(())
+                        destroy(())
                         this
                     case _ => this
         .setCharged(isCharged)

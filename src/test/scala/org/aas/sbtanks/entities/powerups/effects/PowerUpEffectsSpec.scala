@@ -32,11 +32,11 @@ class PowerUpEffectsSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEa
         val g = new GrenadePowerUp
 
         val damageableEnemyTank = new BasicTank() with DamageableBehaviour:
-            override protected def applyDamage(amount: Int): this.type =
+            override protected def applyDamage(source: Any, amount: Int): this.type =
                 updateTankData(tankData.updateHealth(_ - 1))
                 tankData.health match
                     case v if v <= 0 =>
-                        destroyed(())
+                        destroy(())
                         this
                     case _ => this
 
@@ -50,21 +50,21 @@ class PowerUpEffectsSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEa
         val g = new GrenadePowerUp
 
         val damageableEnemyTank = new BasicTank() with DamageableBehaviour:
-            override protected def applyDamage(amount: Int): this.type =
+            override protected def applyDamage(source: Any, amount: Int): this.type =
                 updateTankData(tankData.updateHealth(_ - 1))
                 tankData.health match
                     case v if v <= 0 =>
-                        destroyed(())
+                        destroy(())
                         this
                     case _ => this
 
 
         val damageablePlayerTank = new PlayerTank() with DamageableBehaviour:
-            override protected def applyDamage(amount: Int): this.type =
+            override protected def applyDamage(source: Any, amount: Int): this.type =
                 updateTankData(tankData.updateHealth(_ - 1))
                 tankData.health match
                     case v if v <= 0 =>
-                        destroyed(())
+                        destroy(())
                         this
                     case _ => this
 
@@ -106,11 +106,11 @@ class PowerUpEffectsSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEa
         var h = new HelmetPowerUp
 
         val damageableTank = new PlayerTank() with DamageableBehaviour:
-            override protected def applyDamage(amount: Int): this.type =
+            override protected def applyDamage(source: Any, amount: Int): this.type =
                 updateTankData(tankData.updateHealth(_ - 1))
                 tankData.health match
                     case v if v <= 0 =>
-                        destroyed(())
+                        destroy(())
                         this
                     case _ => this
 

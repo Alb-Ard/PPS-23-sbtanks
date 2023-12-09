@@ -49,11 +49,11 @@ case class PlayerTankBuilder(private val x: Double = 0,
             with CollisionBehaviour(collisionSizeX, collisionSizeY, collisionLayer, collisionMask.toSeq)
             with DamageableBehaviour
             with TankMultipleShootingBehaviour:
-                override protected def applyDamage(amount: Int) = 
+                override protected def applyDamage(source: Any, amount: Int) =
                     updateTankData(tankData.updateHealth(_ - 1))
                     tankData.health match
                         case v if v <= 0 =>
-                            destroyed(())
+                            destroy(())
                             this
                         case _ =>
                             respawn()

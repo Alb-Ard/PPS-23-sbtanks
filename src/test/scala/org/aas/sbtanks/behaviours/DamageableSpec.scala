@@ -9,7 +9,7 @@ class DamageableSpec extends AnyFlatSpec with Matchers:
     "A damageable behaviour" should "apply damage by default" in {
         var wasDamaged = false
         val damageable = new Object() with DamageableBehaviour:
-            override protected def applyDamage(amount: Int) =
+            override protected def applyDamage(source: Any, amount: Int) =
                 wasDamaged = true
                 this
         damageable.damage(())
@@ -19,7 +19,7 @@ class DamageableSpec extends AnyFlatSpec with Matchers:
     it should "invoke the damaged event when damaged" in {
         var wasDamaged = false
         val damageable = new Object() with DamageableBehaviour:
-            override protected def applyDamage(amount: Int) =
+            override protected def applyDamage(source: Any, amount: Int) =
                 this
         damageable.damaged += { _ => wasDamaged = true }
         damageable.damage(())
@@ -29,7 +29,7 @@ class DamageableSpec extends AnyFlatSpec with Matchers:
     it should "apply damage when it is damageable" in {
         var wasDamaged = false
         val damageable = new Object() with DamageableBehaviour:
-            override protected def applyDamage(amount: Int) =
+            override protected def applyDamage(source: Any, amount: Int) =
                 wasDamaged = true
                 this
         damageable.setDamageable(true).damage(())
@@ -39,7 +39,7 @@ class DamageableSpec extends AnyFlatSpec with Matchers:
     it should "not apply damage when it is not damageable" in {
         var wasDamaged = false
         val damageable = new Object() with DamageableBehaviour:
-            override protected def applyDamage(amount: Int) =
+            override protected def applyDamage(source: Any, amount: Int) =
                 wasDamaged = true
                 this
         damageable.setDamageable(false).damage(())
@@ -49,7 +49,7 @@ class DamageableSpec extends AnyFlatSpec with Matchers:
     it should "apply the correct amount of damage" in {
         var appliedDamage = Option.empty[Int]
         val damageable = new Object() with DamageableBehaviour:
-            override protected def applyDamage(amount: Int) =
+            override protected def applyDamage(source: Any, amount: Int) =
                 appliedDamage = Option(amount)
                 this
         damageable.setDamageable(true).damage(2)
