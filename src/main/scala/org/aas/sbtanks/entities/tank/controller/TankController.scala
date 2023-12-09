@@ -44,6 +44,8 @@ trait TankController[S <: TankControllerMoveSound](using PhysicsContainer)(tank:
     tank.positionChanged += { (x, y) => 
         tankView.move(x * viewScale * tileSize, y * viewScale * tileSize)
     }
+    tank.damageableChanged += tankView.isDamageable
+    tankView.isDamageable(tank.isDamageable)
 
     override def step(delta: Double) = 
         shootDelay += delta
