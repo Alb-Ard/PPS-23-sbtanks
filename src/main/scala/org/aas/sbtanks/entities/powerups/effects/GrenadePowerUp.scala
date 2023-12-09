@@ -22,7 +22,7 @@ object Grenade:
      * Being an instantaneous powerup its duration effect is 0
      * It combines functions 'f' and 'g' with a specified constraint.
      */
-    case class GrenadePowerUp() extends FuncPowerUp[Tank](f, g) with PowerUpConstraint[Tank](constraint) with TimeablePowerUp(0)
+    case class GrenadePowerUp() extends FuncPowerUp[Tank](f, g) with PowerUpConstraint[Tank](constraint)
 
 /**
  * Utility functions related to the Grenade power-up.
