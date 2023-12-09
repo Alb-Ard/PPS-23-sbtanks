@@ -4,7 +4,6 @@ import org.aas.sbtanks.behaviours.PositionBehaviour
 import org.aas.sbtanks.behaviours.DirectionBehaviour
 import org.aas.sbtanks.entities.powerups.PowerUp.ContextualFuncPowerUp
 import org.aas.sbtanks.entities.powerups.contexts.{CachedContext, CounterContext}
-import org.aas.sbtanks.entities.powerups.{SpeedBulletUp, SpeedUp}
 import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
 import org.aas.sbtanks.entities.tank.factories.PowerTankData
 import org.aas.sbtanks.entities.tank.structure.Tank

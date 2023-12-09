@@ -3,7 +3,7 @@ package org.aas.sbtanks.enemies.ai.fsm.shooting
 import org.aas.sbtanks.enemies.ai.State.State
 import org.aas.sbtanks.enemies.ai.fsm.shooting.FocusPolicy.*
 import org.aas.sbtanks.enemies.ai.fsm.{AbstractStateMachine, StateMachine, StateModifier}
-import org.aas.sbtanks.enemies.ai.shooting.{AiShootingState, ShootingEntity}
+import org.aas.sbtanks.enemies.ai.shooting.ShootingEntity
 import org.aas.sbtanks.physics.Collider
 
 /**
@@ -23,7 +23,7 @@ object AiFocusShootingStateMachine extends AbstractStateMachine[ShootingEntity, 
             target <- gets(_.findFirstDirectionCollider())
             newDir <- (target, value) match
                 case ((Some(_), targetDir), Idle) => pure(targetDir)
-                case _ => gets(x => (x.directionX.asInstanceOf[Double], x.directionY.asInstanceOf[Double]))
+                case _ => gets(x => (x.directionX, x.directionY))
 
             _ <- modify(_.setDirection(newDir(0), newDir(1)).asInstanceOf[ShootingEntity])
         yield
@@ -60,8 +60,12 @@ object AiFocusShootingStateMachine extends AbstractStateMachine[ShootingEntity, 
  * object to provide utility methods for computing AI shooting focus states.
  */
 object AiShootingStateMachineUtils:
-    def checkAiPriorityTarget(entity: ShootingEntity): (Boolean, ShootingEntity) =
-        AiFocusShootingStateMachine.isTargetInFocus.runAndReturn(entity)
+    def fixedOnPriorityTarget(entity: ShootingEntity): Option[ShootingEntity] =
+        Option(AiFocusShootingStateMachine.isTargetInFocus.runAndReturn(entity))
+            .withFilter:
+                case (hasFocus, _) => !hasFocus
+            .map:
+                case (_, newState) => newState
 
 
 

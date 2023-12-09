@@ -19,7 +19,7 @@ import org.aas.sbtanks.physics.PhysicsContainer
 
 class EnemyController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS], physics: PhysicsContainer)(private val enemyTank: ControllableTank, private val enemyView: TankView, viewScale: Double, tileSize: Double)
     extends TankController(enemyTank, enemyView, viewScale, tileSize, JFXMediaPlayer.play(JFXMediaPlayer.ENEMY_MOVE_SFX, (p: MediaPlayer) => p.setLooping(true).setLoopDuration(0.05D)))
-    with AiMovableController(enemyTank.asInstanceOf[Tank with MovementEntity with ShootingEntity], tileSize)
+    with AiMovableController(enemyTank.asInstanceOf[Tank with MovementEntity with ShootingEntity], tileSize, () => enemyTank.tankData.speed)
     with Steppable:
 
     enemyTank.setPosition(enemyTank.positionX, enemyTank.positionY)
