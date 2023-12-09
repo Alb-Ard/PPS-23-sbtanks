@@ -1,17 +1,17 @@
 # 2.1 Business
 L'applicazione sviluppata dovrà avere le seguenti caratteristiche:
-- Permette all'utente di svolgere/giocare delle partite ad un clone del gioco [Battle City](https://it.wikipedia.org/wiki/Battle_City) nella sua modalità classica a giocatore singolo;
+- Permettere all'utente di giocare più partite ad un clone del gioco [Battle City](https://it.wikipedia.org/wiki/Battle_City) nella sua modalità classica a giocatore singolo;
 - Opzionalmente, potranno essere rese disponibili altre modalità di gioco alternative;
 - L'applicativo dovrà replicare, nel modo più fedele possibile, le meccaniche di gioco base.
 # 2.2 Modello del dominio
-Il dominio è definito dalle caratteristiche del gioco Battle City (con le funzionalità e restrizioni descritte nel paragrafo [business](2_Requisiti.md#2%201%20Business)). 
-Ciò comporta il controllo di un carro armato attraverso un labirinto, la distruzione dei carri nemici e la protezione della propria base supportati da eventuali potenziamenti
+Il dominio è definito dalle caratteristiche del gioco Battle City (con tutte le sue funzionalità e restrizioni descritte nel paragrafo [business](2_Requisiti.md#2%201%20Business)). 
+Ciò comporta il controllo di un carro armato attraverso una mappa labirintica, la distruzione dei carri nemici e la protezione della propria base supportati da eventuali potenziamenti.
 Le seguenti entità sono state estrapolate nel definire un modello per tale dominio:
- 1. Contenitore del livello: rappresenta un singolo stage all'interno del gioco;
- 2. Carro armato: entità attiva principale del gioco, rappresenta da una parte l'agente con cui interagisce l'utente (giocatore) e dall'altra un'entità manipolata da AI (nemico);
- 3. Ostacolo: costituiscono la struttura dei livelli, possono avere diverse caratteristiche a seconda della loro categoria. La base del player rappresenta l'ostacolo più importante: la sua distruzione da parte dei nemici comporta la sconfitta istantanea;
- 4. Potenziamento: possono essere raccolti sul suolo del livello durante il gioco: permettono l'acquisizione di potenziamenti per il carro armato del giocatore, depotenziamenti per i nemici o alterazioni del livello di gioco;
- 5. Proiettile: permette di danneggiare nemici o il giocatore.
+ 1. **Contenitore del livello**: rappresenta un singolo stage all'interno del gioco;
+ 2. **Carro armato**: entità attiva principale del gioco, rappresenta in contemporanea l'agente con cui interagisce l'utente (giocatore) e una serie di entità manipolate da AI (nemici);
+ 3. **Ostacolo**: costituiscono la struttura dei livelli, possono avere diverse caratteristiche a seconda della loro categoria. La base del player rappresenta l'ostacolo più importante: la sua distruzione da parte dei nemici comporta la sconfitta istantanea;
+ 4. **Potenziamento**: possono essere raccolti sul suolo del livello durante il gioco: forniscono svariati bonus e migliorie per il carro armato del giocatore, depotenziamenti per i nemici o alterazioni del livello di gioco;
+ 5. **Proiettile**: permette di danneggiare nemici o il giocatore.
 ```plantuml
 @startuml
 entity Tank {
@@ -49,10 +49,11 @@ Tank --> Bullet: generate
 - Pulsante per riprendere il gioco;
 - Pulsante per l'abbandono della partita e ritorno al menù principale.
 ### 2.3.1.3 Schermata di *gameover*
-- Visualizzazione punteggio ottenuto nella partita;
-- Visualizzazione testo se il punteggio ottenuto è il nuovo punteggio più alto;
+- Visualizzazione del numero di livelli che sono stati completati;
+- Visualizzazione del punteggio ottenuto nella partita;
+- Visualizzazione del punteggio più alto per farne un confronto con quello ottenuto;
 - Pulsante per l'inizio di una nuova partita;
-- Pulsante per il ritorno al menù principale.
+- Pulsante per chiudere l'applicazione.
 ### 2.3.1.4 Svolgimento del gioco
 - Movimento del proprio carro armato;
 - Sparo dei proiettili dal proprio carro armato;
@@ -77,7 +78,7 @@ Tank --> Bullet: generate
 ### 2.3.2.3 Avanzamento nel gioco
 - Avanzamento di livello alla distruzione del numero di nemici richiesto dal livello;
 - Persistenza tra livelli delle vite rimanenti e del punteggio del giocatore;
-- Fallimento del livello ("*gameover*") alla distruzione della base del giocatore;
+- Fallimento del livello ("*gameover*") alla distruzione della base del giocatore o all'azzeramento delle sue vite;
 - Vittoria del gioco al completamento di tutti i livelli;
 - Mantenimento del punteggio massimo ottenuto tra tutte le partite giocate;
 - Persistenza del punteggio massimo alla chiusura dell'applicativo.
