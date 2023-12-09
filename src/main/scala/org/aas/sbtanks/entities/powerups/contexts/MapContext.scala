@@ -1,6 +1,11 @@
 package org.aas.sbtanks.entities.powerups.contexts
 
-
+/**
+ * A generic class representing a mapping context for entities and values.
+ *
+ * @tparam E The type of entities in the mapping.
+ * @tparam V The type of values associated with entities.
+ */
 class MapContext[E, V]:
     private var entityMap: Map[E, V] = Map.empty
 

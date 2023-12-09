@@ -14,6 +14,10 @@ import org.aas.sbtanks.player.PlayerTank
 
 object Star:
     import StarPowerUpUtils.*
+
+    /**
+     * Case class representing the Star power-up instance, which is a functional power-up for tanks with a specific constraint on its use a time effect and a context to support its appliance
+     */
     case class StarPowerUp() 
         extends ContextualFuncPowerUp[(CounterContext, CachedContext[Int]), Tank]((CounterContext(0), CachedContext[Int]()))(f, g)
         with PowerUpConstraint[Tank](constraint)

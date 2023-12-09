@@ -86,6 +86,7 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
      *
      *
      * @param player The player tank to be set up with power-ups.
+     * @param bind optionally initialize the player binding              
      */
     private def setUpPlayer(player: PlayerTank, bind: Boolean) =
         if bind then
