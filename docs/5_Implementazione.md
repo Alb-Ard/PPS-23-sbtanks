@@ -137,16 +137,16 @@ Si è voluta denotare una separazione tra il concetto di `PowerUp` in termini di
 
 
 ## 5.3.5 Line of sight
-Questa funzionalità fornisce la possibilità (solo per i nemici) di di visualizzare le collisioni lungo la linea perpendicolari dei nemici per individuare obbiettivi su quali concentrarsi.
+Questa funzionalità fornisce la possibilità (solo per i nemici) di visualizzare le collisioni lungo la linea perpendicolare dei nemici, così da individuare obiettivi su cui concentrarsi.
 Ho realizzato solo la porzione di frontend di questa feature(tramite un trait mixin `LineOfSigt`), ma il backend del suo funzionamento è stata fornito dalle estensioni  `RayCast` per i `PhysicsContainer` sviluppato da Arduini.
-`LineOfSight` permette ad un'entità di filtrare determinati tipi di `Collider` (in questo caso la base del giocatore) lungo le direzioni cardinali rispetto alla sola posizione dell'entità che lo estende; è inoltre possibile fornire un parametro  ` seeThrough`  per indicare il numero di blocchi entro  il quale è possibile individuare il target e un parametro  `lineCollisions ` per indicare una sequenza di  `CollisionLayer ` da prendere in considerazione, nello specifico sono forniti di default:
- -  `seeThrough=8 ` : come nel gioco originale è il limite entro il quale i nemici sono in grado di individuare la base
- -  ` lineCollisions = Seq(CollisionLayer.WallsLayer)`:  in questo caso è necessario ignorare ostacoli non percorribili, potenziamenti e altri carri armati nell'individuare i collider (come nel gioco originale ha senso concentrarsi sulla base solo qualora ci sia un ostacolo da abbattere nel mezzo)
+`LineOfSight` permette ad un'entità di filtrare determinati tipi di `Collider` (in questo caso la base del giocatore) lungo le direzioni cardinali rispetto alla sola posizione dell'entità che lo estende; è inoltre possibile fornire un parametro  ` seeThrough`  per indicare il numero di blocchi entro  il quale è possibile individuare il target e un parametro  `lineCollisions ` per indicare una sequenza di  `CollisionLayer ` da prendere in considerazione. Nello specifico sono forniti di default:
+ -  `seeThrough=8 ` : come nel gioco originale è il limite entro il quale i nemici sono in grado di individuare la base;
+ -  ` lineCollisions = Seq(CollisionLayer.WallsLayer)`:  in questo caso è necessario ignorare ostacoli non percorribili, potenziamenti e altri carri armati nell'individuare i collider (come nel gioco originale ha senso concentrarsi sulla base solo qualora ci sia un ostacolo da abbattere nel mezzo).
 
 ## 5.3.6 Generazione dei nemici 
 La generazione dei nemici permette di creare iterativamente i nemici all'interno di un livello tramite una stringa di valori che ne definisce la tipologia (e.g. sequenza di basic tank, armor tank e di nuovo basic tank: "BAB"). 
-Tramite un object `EnemyFactory` che fornisce:
- - la possibilità di generare nemici potenziati ogni `eachCharged` nemici generati (tale valore è stato mantenuto di default a quello del gioco originale, ossia 4)
- - Oltre a generare  i nemici relativamente alla loro tipologia, viene loro assegnata una posizione tramite un `PositionProvider` sulla base di una determinata `PositionStrategy` (il default è stato assegnato come generazione di posizioni random nella porzione superiore del livello, come da gioco originale)
+Il tutto si svolge tramite un object `EnemyFactory` che fornisce:
+ - la possibilità di generare nemici potenziati ogni `eachCharged` nemici generati (tale valore è stato mantenuto di default a quello del gioco originale, ossia 4);
+ - Oltre a generare  i nemici relativamente alla loro tipologia, viene loro assegnata una posizione tramite un `PositionProvider` sulla base di una determinata `PositionStrategy` (il default è stato assegnato come generazione di posizioni random nella porzione superiore del livello, come da gioco originale).
 
 
