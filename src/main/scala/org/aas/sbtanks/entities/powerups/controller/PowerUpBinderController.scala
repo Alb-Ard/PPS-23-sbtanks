@@ -63,13 +63,13 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
      */
     private def decreaseTimeablesTime(deltaTime: Double): Unit =
         tankPowerUpsBinder.getPowerUps
-              .collect:
-                  case element: TimeablePowerUp => element
-              .map(_.decreaseDuration(deltaTime))
-              .filter(_.isExpired)
-              .foreach:
-                  case expiredPowerUp: TimeablePowerUp =>
-                      tankPowerUpsBinder.unchain(expiredPowerUp.resetDuration())
+            .collect:
+                case element: TimeablePowerUp => element
+            .map(_.decreaseDuration(deltaTime))
+            .filter(_.isExpired)
+            .foreach:
+                case expiredPowerUp: TimeablePowerUp =>
+                    tankPowerUpsBinder.unchain(expiredPowerUp.resetDuration())
 
     /**
      * Sets a new pickable power-up in the game world.

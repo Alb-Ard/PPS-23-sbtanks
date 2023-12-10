@@ -16,7 +16,8 @@ class MapContext[E, V]:
      * @param value  The value associated with the entity.
      */
     def registerEntity(entity: E, value: V): Unit =
-        entityMap = entityMap + (entity -> value)
+        if !entityMap.contains(entity) then
+            entityMap = entityMap + (entity -> value)
 
 
     /**
