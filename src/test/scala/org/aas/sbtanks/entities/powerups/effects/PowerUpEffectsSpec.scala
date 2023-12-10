@@ -161,10 +161,5 @@ class PowerUpEffectsSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEa
 
         tank = s.revert(tank)
 
-        tank.tankData.bulletSpeed should be(PowerTankData.supplyData.bulletSpeed)
-        tank.shots should not be(ENHANCED_SHOT)
-
-        tank = s.revert(tank)
-
         tank.tankData.bulletSpeed should not be(PowerTankData.supplyData.bulletSpeed)
         tank.shots should not be (ENHANCED_SHOT)
