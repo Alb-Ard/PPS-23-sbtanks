@@ -77,10 +77,8 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
      * Sets a new pickable power-up in the game world.
      */
     private def setNewPickablePowerUp() =
-
-        val (p, imagePath) = powerupFactory.getRandomPowerUp(width, height)
-
         if entityRepo.entitiesOfModelType[PowerUp[?]].isEmpty then
+            val (p, imagePath) = powerupFactory.getRandomPowerUp(width, height)
             entityRepo.addModelView(
                 p,
                 Option(new JFXPowerUpView(JFXImageLoader.loadFromResources(imagePath, 16D, 4D)))

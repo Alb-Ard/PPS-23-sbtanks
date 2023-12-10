@@ -26,6 +26,9 @@ import scala.collection.mutable
 import org.aas.sbtanks.enemies.spawn.EnemyFactory.withPosition
 import org.aas.sbtanks.physics.PhysicsContainer
 
+import scala.math.random
+import scala.util.Random
+
 
 
 /**
@@ -69,6 +72,8 @@ class EnemyTankGenerator(using PhysicsContainer)(entityRepository: EntityControl
         this
 
     private def generateFromBuilder(tankBuilder: EnemyTankBuilder) =
+
+        given Random = Random
         tankBuilder
             .withPosition(width, height)
             .foreach:
