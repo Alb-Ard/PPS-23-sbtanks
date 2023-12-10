@@ -75,18 +75,19 @@ class PowerUpBinderSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEac
     "Same timeable powerups" should "be consistent and ignore powerups if applied multiple times" in:
         binder.bind(tank)
 
-        val TIMER_DURATION = 2000L
+        val TIMER_DURATION = 10L
+        val DECREASE_TIME = 2L
 
         val t = TimerPowerUp()
 
-        binder.chain(t).getPowerUps.head.asInstanceOf[TimeablePowerUp].decreaseDuration(1000)
+        binder.chain(t).getPowerUps.head.asInstanceOf[TimeablePowerUp].decreaseDuration(DECREASE_TIME)
 
 
         binder.chain(t)
 
         binder.getPowerUps should have size(1)
 
-        binder.getPowerUps.head.asInstanceOf[TimeablePowerUp].duration should be (1000)
+        binder.getPowerUps.head.asInstanceOf[TimeablePowerUp].duration should be (TIMER_DURATION - DECREASE_TIME)
 
     "A powerup with no more enitities registered" should "be cleared on successive chaining call" in:
         binder.bind(tank)
