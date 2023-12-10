@@ -48,10 +48,10 @@ class JFXTankView(private val images: Seq[Seq[Image]], private val invincibility
         with JFXImageViewAnimator(images, animationSpeed, true):
 
         def isDamageable(value: Boolean) =
-            visible = value
+            visible = !value
             value match
-                case true => startAnimation()
-                case _ => stopAnimation()
+                case true => stopAnimation()
+                case _ => startAnimation()
 
         
     private val mainImage = MainImage(images, animationSpeed)
