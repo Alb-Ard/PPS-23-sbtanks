@@ -41,6 +41,7 @@ object StarPowerUpUtils:
             t.asInstanceOf[TankMultipleShootingBehaviour].shots = INCREASED_NUMBER_BULLETS
             counter += 1
             t
+        case (_, t) => t
 
     val g: ((CounterContext, CachedContext[Int]), Tank) => Tank =
         case ((counter@CounterContext(1), cached: CachedContext[Int]), t: Tank) =>
@@ -50,6 +51,7 @@ object StarPowerUpUtils:
             t.asInstanceOf[TankMultipleShootingBehaviour].shots = DEFAULT_NUMBER_BULLETS
             counter -= 1
             t
+        case (_, t) => t
 
     val constraint: (Tank => Boolean) =
         _.isInstanceOf[PlayerTank]

@@ -37,7 +37,6 @@ import org.aas.sbtanks.physics.PhysicsContainer
  */
 class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], width: Double, height: Double, tankPowerUpsBinder: PowerUpChainBinder[Tank], pickup: EventSource[Option[PowerUp[Tank]]], tankSpawn: EventSource[Tank]) extends Steppable:
     private val powerupFactory = new Object() with PickablePowerUpFactory()
-    private var isPowerUpPresent = false
 
     /**
      * Handles the pickup event of tank-related power-ups.
@@ -47,7 +46,6 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
         case Some(p) =>
             tankPowerUpsBinder.chain(p)
         case None =>
-        isPowerUpPresent = false
     }
 
 
@@ -79,13 +77,14 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
      * Sets a new pickable power-up in the game world.
      */
     private def setNewPickablePowerUp() =
-        isPowerUpPresent = true
 
         val (p, imagePath) = powerupFactory.getRandomPowerUp(width, height)
-        entityRepo.addModelView(
-            p,
-            Option(new JFXPowerUpView(JFXImageLoader.loadFromResources(imagePath, 16D, 4D)))
-        )
+
+        if entityRepo.entitiesOfModelType[PowerUp[?]].isEmpty then
+            entityRepo.addModelView(
+                p,
+                Option(new JFXPowerUpView(JFXImageLoader.loadFromResources(imagePath, 16D, 4D)))
+            )
 
     /**
      * Sets up a player by adding to it an initial power-up (HelmetPowerUp).
@@ -119,7 +118,7 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
                     tank match
                         case t: PlayerTank => setUpPlayer(t, true)
                         case _ =>
-                    if (tank.isCharged && !isPowerUpPresent) this.setNewPickablePowerUp()
+                    if (tank.isCharged) this.setNewPickablePowerUp()
                 }
         this
 
