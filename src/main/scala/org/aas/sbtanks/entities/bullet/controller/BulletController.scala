@@ -66,16 +66,16 @@ class BulletController(using physics: PhysicsContainer)(bullet: CompleteBullet, 
      */
     private def handleCollision(collider: Collider) = collider match
         case tank: Tank with DamageableBehaviour =>
-            if(checkBulletPlayer(tank))
+            if checkBulletPlayer(tank) then
                 tank.damage(bullet)
                 true
             else
                 false
-        case obstacle: LevelObstacle with DamageableBehaviour =>
-            obstacle.damage(bullet)
+        case obstacle: LevelObstacle =>
+            if obstacle.isInstanceOf[DamageableBehaviour] then
+                obstacle.asInstanceOf[DamageableBehaviour].damage(bullet)
             true
-        case otherBullet: Bullet => 
-            otherBullet.isPlayerBullet != bullet.isPlayerBullet
+        case otherBullet: Bullet => otherBullet.isPlayerBullet != bullet.isPlayerBullet
         case damageable: DamageableBehaviour =>
             damageable.damage(bullet)
             true
@@ -88,7 +88,7 @@ class BulletController(using physics: PhysicsContainer)(bullet: CompleteBullet, 
             case _ => AABB(bulletBox.x, bulletBox.y - (bulletBox.height * EXPLOSION_MUTLIPLIER - bulletBox.height) / 2D, bulletBox.width, bulletBox.height * EXPLOSION_MUTLIPLIER)
         physics.getBoxOverlaps(explosionBox, bullet.layerMasks, Seq(bullet))
             .flatMap:
-                case c: LevelObstacle with DamageableBehaviour => Option(c)
+                case c: LevelObstacle => Option(c)
                 case _ => Option.empty
         
 

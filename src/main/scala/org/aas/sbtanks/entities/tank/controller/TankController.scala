@@ -27,7 +27,7 @@ type TankControllerMoveSound = {
 }
 
 trait TankController[S <: TankControllerMoveSound](using PhysicsContainer)(tank: ControllableTank, tankView: TankView, viewScale: Double, tileSize: Double, protected val moveSound: S) extends Steppable:
-    private val SHOOT_DELAY_AMOUNT = 1D
+    private val SHOOT_DELAY_AMOUNT = 0.2D
 
     val bulletShot = EventSource[(CompleteBullet, JFXBulletView)]
 
@@ -63,7 +63,7 @@ trait TankController[S <: TankControllerMoveSound](using PhysicsContainer)(tank:
                     bulletShot(b, v)
                 )
             JFXMediaPlayer.play(JFXMediaPlayer.BULLET_SFX)
-            shootDelay -= SHOOT_DELAY_AMOUNT
+            shootDelay = 0
         this
 
 object TankController:    
