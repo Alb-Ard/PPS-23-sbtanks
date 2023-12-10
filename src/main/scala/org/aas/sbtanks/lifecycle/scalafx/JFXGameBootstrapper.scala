@@ -95,6 +95,12 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
             playerUiViewController.setEnemyCount(enemyGenerator.get.remainingEnemyCount) 
             playerUiViewController.setCompletedLevelCount(levelSequencer.completedLevelCount)
             entityRepository.entitiesOfModelType[PlayerTank].foreach(e => tankSpawned(e(0)))
+            entityRepository.modelViewRemoved += { (m, _) => m match
+                case t: Tank if !t.isInstanceOf[PlayerTank] 
+                    && entityRepository.entitiesOfModelType[Tank].filterNot(_(0).isInstanceOf[PlayerTank]).length <= 0
+                    && enemyGenerator.map(_.remainingEnemyCount).getOrElse(0) <= 0 => levelSequencer.completeLevel()
+                case _ => ()   
+            }
         }
         entityRepository.addController(playerDeathController)
             .addController(playerUiViewController)
