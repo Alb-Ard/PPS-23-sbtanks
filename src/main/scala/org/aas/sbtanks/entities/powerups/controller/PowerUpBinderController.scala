@@ -32,18 +32,22 @@ import org.aas.sbtanks.physics.PhysicsContainer
  *
  * @param entityRepo The repository container for managing entities MVCs.
  * @param tankPowerUpsBinder The power-up binder specifically only for tank-related power-ups.
- * @param pickup An event source to be notified on when a tank-related power-up is picked up.
+ * @param pickup An event source to be notified on when a tank-related power-up is picked up or it disappaer
  * @param tankSpawn An event source to be notified on when a tank spawn in the level
  */
-class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], width: Double, height: Double, tankPowerUpsBinder: PowerUpChainBinder[Tank], pickup: EventSource[PowerUp[Tank]], tankSpawn: EventSource[Tank]) extends Steppable:
+class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], width: Double, height: Double, tankPowerUpsBinder: PowerUpChainBinder[Tank], pickup: EventSource[Option[PowerUp[Tank]]], tankSpawn: EventSource[Tank]) extends Steppable:
     private val powerupFactory = new Object() with PickablePowerUpFactory()
+    private var isPowerUpPresent = false
 
     /**
      * Handles the pickup event of tank-related power-ups.
-     * Chains the picked-up power-up to the tank power-up binder.
+     * Chains the picked-up power-up to the tank power-up binder if its not empty, else it means
      */
-    pickup += { powerUp =>
-        tankPowerUpsBinder.chain(powerUp)
+    pickup += {
+        case Some(p) =>
+            tankPowerUpsBinder.chain(p)
+        case None =>
+        isPowerUpPresent = false
     }
 
 
@@ -75,6 +79,8 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
      * Sets a new pickable power-up in the game world.
      */
     private def setNewPickablePowerUp() =
+        isPowerUpPresent = true
+
         val (p, imagePath) = powerupFactory.getRandomPowerUp(width, height)
         entityRepo.addModelView(
             p,
@@ -113,7 +119,7 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
                     tank match
                         case t: PlayerTank => setUpPlayer(t, true)
                         case _ =>
-                    if (tank.isCharged) this.setNewPickablePowerUp()
+                    if (tank.isCharged && !isPowerUpPresent) this.setNewPickablePowerUp()
                 }
         this
 

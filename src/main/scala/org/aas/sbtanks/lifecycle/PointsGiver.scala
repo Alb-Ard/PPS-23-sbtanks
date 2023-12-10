@@ -15,12 +15,12 @@ import org.aas.sbtanks.entities.powerups.PowerUp.PowerUp
   * @param repository The repository that will be checked for tank destruction
   * @param pickupEvent The event used to check when a pickup is collected
   */
-trait PointsGiver[M](using points: PointsContainer)(repository: EntityMvRepositoryContainer[M, ?], pickupEvent: EventSource[PowerUp[Tank]]):
+trait PointsGiver[M](using points: PointsContainer)(repository: EntityMvRepositoryContainer[M, ?], pickupEvent: EventSource[Option[PowerUp[Tank]]]):
     repository.modelViewAdded += { (m, _) => Option(m)
         .collect:
             case t: Tank with DamageableBehaviour if !t.isInstanceOf[PlayerTank] => t.destroyed once { s => onEnemyTankDestroyed(t, s) }
     }
-    pickupEvent += { _ => points.addAmount(PointsBonuses.pickupCollected) }
+    pickupEvent += { p => if p.isDefined then points.addAmount(PointsBonuses.pickupCollected) }
 
     private def onEnemyTankDestroyed(tank: Tank, source: Any) = Option(source)
         .collect:
@@ -38,5 +38,5 @@ object PointsGiver:
       * @param pickupEvent The event used to check when a pickup is collected
       * @return A new object with the PointsGiver trait
       */
-    def create[M](using points: PointsContainer)(repository: EntityMvRepositoryContainer[M, ?], pickupEvent: EventSource[PowerUp[Tank]]) =
+    def create[M](using points: PointsContainer)(repository: EntityMvRepositoryContainer[M, ?], pickupEvent: EventSource[Option[PowerUp[Tank]]]) =
         new Object() with PointsGiver(repository, pickupEvent)

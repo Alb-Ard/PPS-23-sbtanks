@@ -50,7 +50,7 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
      */
     val gameEnded = EventSource[GameEndedArgs]
 
-    private val powerupPickupped = EventSource[PowerUp[Tank]]
+    private val powerupPickupped = EventSource[Option[PowerUp[Tank]]]
     private val tankSpawned = EventSource[Tank]
 
     given PhysicsContainer = PhysicsWorld

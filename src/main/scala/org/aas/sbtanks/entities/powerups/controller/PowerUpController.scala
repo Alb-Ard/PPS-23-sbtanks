@@ -22,9 +22,9 @@ import scalafx.stage.Stage
  * @param powerUp    The pickable power-up instance associated with this controller.
  * @param view       The view representing the power-up in the game.
  * @param viewScale  The scale factor for the power-up view visualization.
- * @param pickup     An event source for notifying observers when a power-up is picked up.
+ * @param pickup     An event source for notifying observers when a power-up is picked up. Provide a powerup if its picked up or an empty optional if it disappear before pick-up
  */
-class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage, VSK, VS])(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], powerUp: PickablePowerUp[E], view: PowerUpView, viewScale: Double, pickup: EventSource[PowerUp[E]]) extends Steppable:
+class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage, VSK, VS])(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], powerUp: PickablePowerUp[E], view: PowerUpView, viewScale: Double, pickup: EventSource[Option[PowerUp[E]]]) extends Steppable:
 
 
     private var timeToDisappear: Double = 5.0
@@ -44,7 +44,7 @@ class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage
         
         checkTankCollision(colliders).headOption match
             case Some(_) =>
-                pickup(powerUp)
+                pickup(Option(powerUp))
                 entityRepo.removeModelView(powerUp)
             case _ =>
 
@@ -71,11 +71,12 @@ class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage
     override def step(delta: Double): this.type =
         timeToDisappear -= delta
         if timeToDisappear <= 0.0 then
+            pickup(Option.empty)
             entityRepo.removeModelView(powerUp)
         this
 
 object PowerUpController:
-    def factory[E](viewScale: Double, entityRepo: EntityMvRepositoryContainer[AnyRef, Node], pickup: EventSource[PowerUp[E]])(context: EntityRepositoryContext[Stage, ?, ?], powerUp: PickablePowerUp[E], view: PowerUpView) =
+    def factory[E](viewScale: Double, entityRepo: EntityMvRepositoryContainer[AnyRef, Node], pickup: EventSource[Option[PowerUp[E]]])(context: EntityRepositoryContext[Stage, ?, ?], powerUp: PickablePowerUp[E], view: PowerUpView) =
         new PowerUpController(using context)(entityRepo, powerUp, view, viewScale, pickup)
 
 

@@ -122,7 +122,7 @@ object JFXEntityMvRepositoryFactory:
     
     extension (entityRepository: EntityMvRepositoryContainer[AnyRef, Node] with EntityControllerRepository[AnyRef, Node, DefaultContext] with EntityControllerReplacer[AnyRef, Node, DefaultContext])
         def addDefaultControllerFactories(using context: DefaultContext, physics: PhysicsContainer)(
-                pickupEvent: EventSource[PowerUp[Tank]],
+                pickupEvent: EventSource[Option[PowerUp[Tank]]],
                 enemyTankSpawnEvent: EventSource[Tank],
                 tankAnimationSpeed: Double
             ): entityRepository.type =
