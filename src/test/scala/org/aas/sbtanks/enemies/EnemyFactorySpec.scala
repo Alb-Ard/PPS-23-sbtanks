@@ -15,6 +15,7 @@ import org.scalatest.matchers.Matcher
 
 import org.aas.sbtanks.enemies.spawn.EnemyFactory.withPosition
 import org.aas.sbtanks.physics.PhysicsWorld
+import scala.util.Random
 
 trait CollectionMatchers:
     class UniqueElementsMatcher[A](collection: Seq[A]) extends Matcher[A]:
@@ -35,10 +36,11 @@ class EnemyFactorySpec extends AnyFlatSpec with Matchers with PositionMatchers w
 
     "An EnemyFactory" should "be able to generate a sequence of specific types of enemies from a string of characters" in:
         given PhysicsContainer = new Object() with PhysicsContainer
-        val sequence: String = "B F A A"
+        val sequence: String = "b f a a"
         val enemies = EnemyFactory.createFromString(sequence)
             .map(_.build())
 
+        all(enemies) should not be (Option.empty)
         enemies should have size 4
         enemies(0).tankData should be(BasicTankData.supplyData)
         enemies(1).tankData should be(FastTankData.supplyData)
@@ -47,7 +49,8 @@ class EnemyFactorySpec extends AnyFlatSpec with Matchers with PositionMatchers w
 
     it should "assign positions accordingly to the Physic state of the level, in random but not in others collision positions" in:
         given PhysicsContainer = new Object() with PhysicsContainer
-        val sequence: String = "B B"
+        given Random = Random(420)
+        val sequence: String = "b b"
         val freePositions: Seq[(Double, Double)] = Seq((1, 1), (3, 1))
         MockLevelFactory((x, y) => EnemyTankBuilder().setPosition(x, y).build())
             .createFromString(
@@ -61,8 +64,7 @@ class EnemyFactorySpec extends AnyFlatSpec with Matchers with PositionMatchers w
         var enemies = EnemyFactory.createFromString(sequence)
             .map(_.withPosition(WIDTH, HEIGHT))
 
-        enemies.foreach:
-            _ should not be (Option.empty)
+        all(enemies) should not be (Option.empty)
 
         val filteredEnemies = enemies.map(x => x.get)
 
@@ -74,9 +76,9 @@ class EnemyFactorySpec extends AnyFlatSpec with Matchers with PositionMatchers w
 
 
 
-    "Every n tanks it" should "be spawned a special charged tanks" in :
+    it should "spawn a special charged tank every n tanks" in :
         given PhysicsContainer = new Object() with PhysicsContainer()
-        val sequence: String = "BBBBBBBB"
+        val sequence: String = "bbbbbbbb"
         val enemies = EnemyFactory.createFromString(sequence,EACH_CHARGED)
             .map(_.build())
 

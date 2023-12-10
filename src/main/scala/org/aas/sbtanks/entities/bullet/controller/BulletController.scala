@@ -12,6 +12,7 @@ import org.aas.sbtanks.player.PlayerTank
 import org.aas.sbtanks.entities.bullet.controller.BulletController.CompleteBullet
 import org.aas.sbtanks.physics.PhysicsWorld
 import org.aas.sbtanks.physics.AABB
+import org.aas.sbtanks.physics.PhysicsContainer
 
 /**
  * This is a controller used to determine interactions and behaviours of Bullets. It takes data of bullet, making it move
@@ -24,7 +25,7 @@ import org.aas.sbtanks.physics.AABB
  * @param viewScale the scale of the view
  * @param tileSize the size of each tile of the view
  */
-class BulletController(bullet: CompleteBullet, bulletView: BulletView, speedMultiplier: Double, viewScale: Double, tileSize: Double) extends Steppable:
+class BulletController(using physics: PhysicsContainer)(bullet: CompleteBullet, bulletView: BulletView, speedMultiplier: Double, viewScale: Double, tileSize: Double) extends Steppable:
     private val EXPLOSION_MUTLIPLIER = 3.5D
 
     bullet.overlapping += checkCollisions
@@ -73,6 +74,8 @@ class BulletController(bullet: CompleteBullet, bulletView: BulletView, speedMult
         case obstacle: LevelObstacle with DamageableBehaviour =>
             obstacle.damage(bullet)
             true
+        case otherBullet: Bullet => 
+            otherBullet.isPlayerBullet != bullet.isPlayerBullet
         case damageable: DamageableBehaviour =>
             damageable.damage(bullet)
             true
@@ -83,7 +86,7 @@ class BulletController(bullet: CompleteBullet, bulletView: BulletView, speedMult
         val explosionBox = Math.abs(bullet.directionY) > Math.abs(bullet.directionX) match
             case true => AABB(bulletBox.x - (bulletBox.width * EXPLOSION_MUTLIPLIER - bulletBox.width) / 2D, bulletBox.y, bulletBox.width * EXPLOSION_MUTLIPLIER, bulletBox.height)
             case _ => AABB(bulletBox.x, bulletBox.y - (bulletBox.height * EXPLOSION_MUTLIPLIER - bulletBox.height) / 2D, bulletBox.width, bulletBox.height * EXPLOSION_MUTLIPLIER)
-        PhysicsWorld.getBoxOverlaps(explosionBox, bullet.layerMasks, Seq(bullet))
+        physics.getBoxOverlaps(explosionBox, bullet.layerMasks, Seq(bullet))
             .flatMap:
                 case c: LevelObstacle with DamageableBehaviour => Option(c)
                 case _ => Option.empty

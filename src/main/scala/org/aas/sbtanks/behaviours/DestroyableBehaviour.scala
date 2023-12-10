@@ -21,8 +21,7 @@ trait DamageableBehaviour:
         isDamageable match
             case true =>
                 damaged(source, amount)
-                val result: this.type = applyDamage(source, amount)
-                result
+                applyDamage(source, amount)
             case _ => this
 
     protected def applyDamage(source: Any, amount: Int): this.type

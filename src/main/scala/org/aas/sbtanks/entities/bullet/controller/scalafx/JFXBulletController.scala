@@ -8,10 +8,11 @@ import org.aas.sbtanks.entities.bullet.view.scalafx.JFXBulletView
 import scalafx.scene.layout.Pane
 import scalafx.stage.Stage
 import org.aas.sbtanks.entities.bullet.controller.BulletController.CompleteBullet
+import org.aas.sbtanks.physics.PhysicsContainer
 
-class JFXBulletController(bullet: CompleteBullet, bulletView: JFXBulletView, speedMultiplier: Double, viewScale: Double, tileSize: Double)
+class JFXBulletController(using PhysicsContainer)(bullet: CompleteBullet, bulletView: JFXBulletView, speedMultiplier: Double, viewScale: Double, tileSize: Double)
     extends BulletController(bullet, bulletView, speedMultiplier, viewScale, tileSize)
 
 object JFXBulletController:
-    def factory(speedMultiplier: Double, viewScale: Double, tileSize: Double)(context: EntityRepositoryContext[?, ?, ?], bullet: CompleteBullet, bulletView: JFXBulletView) =
+    def factory(using PhysicsContainer)(speedMultiplier: Double, viewScale: Double, tileSize: Double)(context: EntityRepositoryContext[?, ?, ?], bullet: CompleteBullet, bulletView: JFXBulletView) =
         new JFXBulletController(bullet, bulletView, speedMultiplier, viewScale, tileSize)

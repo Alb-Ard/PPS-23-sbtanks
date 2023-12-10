@@ -6,6 +6,7 @@ import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.enemies.spawn.PositionProvider
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.physics.PhysicsContainer
+import scala.util.Random
 
 /**
  * Object responsible for creating enemy tanks based on a character code.
@@ -46,10 +47,8 @@ object EnemyFactory:
      * @return A new Tank whenever its possible to locate one or else an empty Option .
      */
     extension (builder: EnemyTankBuilder)
-        def withPosition(using physics: PhysicsContainer)(width: Double, height: Double) =
-            val positionProvider = (w: Double, h: Double) => PositionProvider(w, h)
-
-            positionProvider(width, height)(builder.collisionMask.toSeq, builder.collisionSizeX, builder.collisionSizeY).findFreePosition() match
+        def withPosition(using physics: PhysicsContainer, rng: Random)(width: Double, height: Double) =
+            PositionProvider(width, height)(builder.collisionMask.toSeq, builder.collisionSizeX, builder.collisionSizeY).findFreePosition() match
                 case Some(x, y) =>
                     val tank = builder.build()
                     tank.setPosition(x, y)

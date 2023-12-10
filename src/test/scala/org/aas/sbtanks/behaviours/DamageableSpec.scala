@@ -45,6 +45,17 @@ class DamageableSpec extends AnyFlatSpec with Matchers:
         damageable.setDamageable(false).damage(())
         wasDamaged should be (false)
     }
+    
+    it should "signal damage applied from the correct source" in {
+        var damageSource = Option.empty[Any]
+        val damageable = new Object() with DamageableBehaviour:
+            override protected def applyDamage(source: Any, amount: Int) =
+                damageSource = Option(source)
+                this
+        val damager = new Object()
+        damageable.setDamageable(true).damage(damager)
+        damageSource should be (Some(damager))
+    }
 
     it should "apply the correct amount of damage" in {
         var appliedDamage = Option.empty[Int]
@@ -52,6 +63,6 @@ class DamageableSpec extends AnyFlatSpec with Matchers:
             override protected def applyDamage(source: Any, amount: Int) =
                 appliedDamage = Option(amount)
                 this
-        damageable.setDamageable(true).damage(2)
+        damageable.setDamageable(true).damage((), 2)
         appliedDamage should be (Some(2))
     }
