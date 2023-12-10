@@ -23,6 +23,7 @@ class EnemyController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK
     with Steppable:
 
     enemyTank.setPosition(enemyTank.positionX, enemyTank.positionY)
+    enemyTank.setDirection(0.0, 0.0)
 
     override def step(delta: Double) =
         computeNewMovementState()

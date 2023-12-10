@@ -133,8 +133,13 @@ class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E
      * @return The current instance of PowerUpChainBinder after the modification.
      */
     override def chain(next: PowerUp[E]): this.type =
-        powerUpBindings = powerUpBindings.filter:
-            case (_, storedEntities) => storedEntities.nonEmpty
+        powerUpBindings = powerUpBindings
+            .map:
+                case (key, storedEntities) => key -> storedEntities.filter(entities.contains)
+            .filter:
+                case (_, updatedEntities) => updatedEntities.nonEmpty
+
+
 
         powerUpBindings += (next -> entities)
 

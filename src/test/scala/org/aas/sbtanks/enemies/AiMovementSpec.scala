@@ -72,7 +72,7 @@ class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
         newDir should be (tank.directionX, tank.directionX + 1.0)
 
 
-    "Tank ai movement" should "run across top directions only if no other options is available while right and left directions choices are random" in:
+    "Tank ai movement" should "should prioritize right or left directions random only when bottom direction is not possible" in:
         val physics = new Object() with PhysicsContainer
         given PhysicsContainer = physics
 
@@ -80,6 +80,30 @@ class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
             .createFromString(
                 "UUUUU" +
                     "UU-UU" +
+                    "U-P-U" +
+                    "UUUUU" +
+                    "UUUUU", 5
+            )
+            .getMainEntity
+            .asInstanceOf[MovementEntity]
+
+
+
+        var (newTopDir, topState) = AiMovementStateMachineUtils.computeAiState(tank, movementBias = 1)
+
+
+        newTopDir should  (be(Right) or be(Left))
+
+
+    "Tank ai movement" should "should only have a possibility to move top if bottom direction and right/left is not available" in :
+        val physics = new Object() with PhysicsContainer
+
+        given PhysicsContainer = physics
+
+        val tank: MovementEntity = MockLevelFactory(enemyFactory)
+            .createFromString(
+                "UUUUU" +
+                    "UUUUU" +
                     "U---U" +
                     "UUPUU" +
                     "UUUUU", 5
@@ -88,32 +112,10 @@ class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
             .asInstanceOf[MovementEntity]
 
 
-
-        val (newTopDir, topState) = AiMovementStateMachineUtils.computeAiState(tank)
-
-        newTopDir should be (Top)
+        var (newTopDir, topState) = AiMovementStateMachineUtils.computeAiState(tank, movementBias = 1, maxIteration = 20)
 
 
-
-        val newTopPos = (topState.positionX + newTopDir(0), topState.positionY + newTopDir(1))
-
-        (newTopPos(0), newTopPos(1)) should be(tank.positionX, tank.positionY - 1)
-
-
-
-
-
-        val (newRightOrLeftDir, rightOrLeftState) = AiMovementStateMachineUtils
-            .computeAiState(topState.setPosition(newTopPos._1, newTopPos._2).asInstanceOf[MovementEntity])
-
-
-        newRightOrLeftDir should (be(Right) or be(Left))
-
-        val newRightOrLeftPos = (rightOrLeftState.positionX + newRightOrLeftDir(0), topState.positionY + newRightOrLeftDir(1))
-
-        newRightOrLeftPos should (be(topState.positionX - 1, topState.positionY) or be(topState.positionX + 1, topState.positionY))
-
-
+        newTopDir should be(Top)
 
 
 
