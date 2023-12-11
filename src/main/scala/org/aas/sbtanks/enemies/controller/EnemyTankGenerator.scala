@@ -71,8 +71,12 @@ class EnemyTankGenerator(using PhysicsContainer)(entityRepository: EntityControl
                 generateFromBuilder(tanksQueue.dequeue())
         this
 
+    /**
+     * Takes an enemy tank from the provided builder and adds it to the entity repository after assigning a position to it.
+     *
+     * @param tankBuilder The builder for the enemy tank.
+     */
     private def generateFromBuilder(tankBuilder: EnemyTankBuilder) =
-
         given Random = Random
         tankBuilder
             .withPosition(width, height)

@@ -11,7 +11,7 @@ import scalafx.util.Duration
  * A trait representing an intermittently visible JavaFX node. This trait extends the `IntermittentVisible` trait
  * and is specifically designed to be mixed into JavaFX ImageView instances.
  *
- * @tparam JFXIntermittentVisibleNode self-type reference to ensure that this trait can only be mixed into constructs
+ * @tparam ImageView self-type reference to ensure that this trait can only be mixed into constructs
  *                                  that are also subtypes of ImageView.
  */
 trait JFXIntermittentVisibleNode extends IntermittentVisible:

@@ -9,6 +9,19 @@ import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.physics.{Collider, CollisionLayer, PhysicsContainer}
 import org.aas.sbtanks.player.{PlayerTank, PlayerTankBuilder}
 
+/**
+ * Case class for building instances of enemy tanks with various configuration options.
+ *
+ * @param x               The initial x-coordinate of the tank. Default is 0.
+ * @param y               The initial y-coordinate of the tank. Default is 0.
+ * @param tankType        The type of tank to be created. Default is BasicTankData.
+ * @param collisionSizeX  The x-size of the tank for collision detection. Default is 1.
+ * @param collisionSizeY  The y-size of the tank for collision detection. Default is 1.
+ * @param collisionLayer  The collision layer of the tank. Default is CollisionLayer.TanksLayer.
+ * @param collisionMask   The set of collision layers for collision masking. Default is the default mask from PlayerTankBuilder.
+ * @param isCharged       Indicates whether the tank is charged. Default is false.
+ * @param seeThoughBlocks The see-through block distance for line of sight. Default is 8.
+ */
 case class EnemyTankBuilder(x: Double = 0,
                             y: Double = 0,
                             tankType: TankTypeData = BasicTankData,
@@ -64,10 +77,20 @@ case class EnemyTankBuilder(x: Double = 0,
 
 
 object EnemyTankBuilder:
+
+    /**
+     * Priority target predicate for collision masking.
+     *
+     * @param collider The collider to check.
+     * @return True if the collider is a LevelObstacle which is also the player base else False
+     */
     val PRIORITY_TARGET_PREDICATE: Collider => Boolean =
         case levelObstacle: LevelObstacle if levelObstacle.obstacleType == LevelObstacle.PlayerBase => true
         case _ => false
 
+    /**
+     * Default collision mask for the enemy tanks
+     */
     val DEFAULT_COLLISION_MASK: Set[CollisionLayer] = Set(
         CollisionLayer.WallsLayer,
         CollisionLayer.NonWalkableLayer,

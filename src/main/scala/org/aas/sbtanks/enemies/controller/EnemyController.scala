@@ -17,11 +17,22 @@ import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer._
 import scalafx.scene.media.MediaPlayer
 import org.aas.sbtanks.physics.PhysicsContainer
 
+/**
+ * Controller class for managing enemy tank behavior and AI.
+ *
+ * @param context    The entity repository context.
+ * @param physics    The container for physics-related functionality.
+ * @param enemyTank  The enemy tank to.
+ * @param enemyView  The view associated with the enemy tank.
+ * @param viewScale  The scale factor for the view.
+ * @param tileSize   The size of each tile in the view.
+ */
 class EnemyController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS], physics: PhysicsContainer)(private val enemyTank: ControllableTank, private val enemyView: TankView, viewScale: Double, tileSize: Double)
     extends TankController(enemyTank, enemyView, viewScale, tileSize, Option.empty)
     with AiMovableController(enemyTank.asInstanceOf[Tank with MovementEntity with ShootingEntity], tileSize, () => enemyTank.tankData.speed)
     with Steppable:
 
+    // Initialize enemy tank position and direction
     enemyTank.setPosition(enemyTank.positionX, enemyTank.positionY)
     enemyTank.setDirection(0.0, 0.0)
 

@@ -17,6 +17,18 @@ import org.aas.sbtanks.player.PlayerTank
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.event.EventSource
 
+/**
+ * Controller class for managing the spawning behavior of enemy tanks.
+ *
+ * @param context       The entity repository context.
+ * @param entityRepo    The container for entity repository functionality.
+ * @param enemyTank     The enemy tank is spawning phase.
+ * @param enemyView     The view associated with the enemy spawn.
+ * @param viewScale     The scale factor for the view.
+ * @param tileSize      The size of each tile in the view.
+ * @param tankSpawn     The event source for tank spawning.
+ * @param animationSpeed The speed at which the animation should play.
+ */
 class EnemySpawnController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS])(
         entityRepo: EntityMvRepositoryContainer[AnyRef, Node],
         private val enemyTank: ControllableTank,
@@ -31,7 +43,7 @@ class EnemySpawnController[VSK, VS](using context: EntityRepositoryContext[Stage
     enemyView.move(enemyTank.positionX * viewScale, enemyTank.positionY * viewScale)
     enemyView.initSpawnAnimation()
 
-
+    
     override def step(delta: Double): this.type =
         timeToSpawn -= delta
         if timeToSpawn <= 0.0 then

@@ -35,7 +35,7 @@ import org.aas.sbtanks.physics.PhysicsContainer
  * @param pickup An event source to be notified on when a tank-related power-up is picked up or it disappaer
  * @param tankSpawn An event source to be notified on when a tank spawn in the level
  */
-class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], width: Double, height: Double, tankPowerUpsBinder: PowerUpChainBinder[Tank], pickup: EventSource[Option[PowerUp[Tank]]], tankSpawn: EventSource[Tank]) extends Steppable:
+class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvRepositoryContainer[AnyRef, Node], width: Double, height: Double, tankPowerUpsBinder: PowerUpChainBinder[Tank], pickup: EventSource[Option[PowerUp[Tank]]], tankSpawn: EventSource[Tank], tileSize: Double, viewScale: Double) extends Steppable:
     private val powerupFactory = new Object() with PickablePowerUpFactory()
 
     /**
@@ -81,7 +81,7 @@ class PowerUpBinderController(using PhysicsContainer)(entityRepo: EntityMvReposi
             val (p, imagePath) = powerupFactory.getRandomPowerUp(width, height)
             entityRepo.addModelView(
                 p,
-                Option(new JFXPowerUpView(JFXImageLoader.loadFromResources(imagePath, 16D, 4D)))
+                Option(new JFXPowerUpView(JFXImageLoader.loadFromResources(imagePath, tileSize, viewScale)))
             )
 
     /**

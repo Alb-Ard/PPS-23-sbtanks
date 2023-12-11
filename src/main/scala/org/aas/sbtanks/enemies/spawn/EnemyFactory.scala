@@ -19,14 +19,15 @@ object EnemyFactory:
      * Creates an enemy tank builder based on the specified character type.
      *
      * @param enemyTypeChar The character representing the type of enemy tank.
-     * @return An instance of the corresponding enemy tank type.
+     * @return An optional instance of the corresponding enemy tank type if character is valid.
      */
     private def createEnemyBuilder(enemyTypeChar: Char): Option[EnemyTankBuilder] =
         mapping.get(enemyTypeChar).map(new EnemyTankBuilder().setTankType(_))
 
     /**
-     * Creates a list of enemies based on a string of characters and their positions on a game board.
+     * Creates a list of enemies based on a string of characters and their positions on a game board based on the physic state of the world.
      *
+     * @param physic given instance for the PhysicContainer to support position choosing strategies 
      * @param input The input string containing characters representing enemy tank types.
      * @param eachCharged An optional parameter specifying the charging behavior for every Nth enemy. Default is 4.
      * @return A sequence of enemy tank builders only corresponding to the valid characters in the input string.

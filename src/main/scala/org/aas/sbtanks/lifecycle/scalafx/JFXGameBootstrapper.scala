@@ -89,7 +89,7 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
             enemyGenerator.foreach(entityRepository.removeController)
             binderController.foreach(entityRepository.removeController)
             enemyGenerator = Option(new EnemyTankGenerator(entityRepository, enemyString, level.size, level.size, JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE))
-            binderController = Option(new PowerUpBinderController(entityRepository, level.size, level.size, PowerUpChainBinder[Tank](), powerupPickupped, tankSpawned))
+            binderController = Option(new PowerUpBinderController(entityRepository, level.size, level.size, PowerUpChainBinder[Tank](), powerupPickupped, tankSpawned, JFXEntityMvRepositoryFactory.TILE_SIZE, JFXEntityMvRepositoryFactory.VIEW_SCALE))
             entityRepository.addController(enemyGenerator.get)
                 .addController(binderController.get)
             playerUiViewController.setEnemyCount(enemyGenerator.get.remainingEnemyCount) 
