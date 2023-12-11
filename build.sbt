@@ -11,7 +11,10 @@ Compile / mainClass := Some("org.aas.sbtanks.Main")
 assembly / mainClass := Some("org.aas.sbtanks.Main")
 assembly / test := {}
 
-
+ThisBuild / assemblyMergeStrategy := {
+    case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+    case x => MergeStrategy.first
+}
 
 libraryDependencies ++= Seq(
   "org.scalafx" %% "scalafx" % "20.0.0-R31",
