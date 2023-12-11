@@ -38,7 +38,7 @@ class BulletFactory:
                 override def applyDamage(source: Any, amount: Int) =
                     destroy(source)
                     this
-        .setBoundingBoxOffset(BULLET_COLLISION_OFFSET(0), BULLET_COLLISION_OFFSET(1))
+        .setBoundingBoxOffset(BULLET_COLLISION_OFFSET(0), BULLET_COLLISION_OFFSET(1)) 
 
     private def getOffsetFromSize(size: Double) =
         (1D - size) / 2D

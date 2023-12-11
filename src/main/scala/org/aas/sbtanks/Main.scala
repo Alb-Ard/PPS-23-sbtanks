@@ -83,7 +83,6 @@ object Main extends JFXApp3 with scalafx.Includes:
             case _ => Option.empty
         val endGameView = new JFXEndGameView(completedLevelCount, points, isGameOver, INTERFACE_SCALE, windowSize)
         endGameView.retryRequested += { _ =>
-            PointsManager.resetAmount()
             endSound.foreach(_.stop())
             launchGame()
             this

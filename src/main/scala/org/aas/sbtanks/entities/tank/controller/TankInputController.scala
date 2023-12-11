@@ -14,8 +14,17 @@ import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.common.Pausable
 import org.aas.sbtanks.physics.PhysicsContainer
 
-abstract class TankInputController[+A <: TankInputEvents, S <: TankControllerMoveSound](using PhysicsContainer)(tank: ControllableTank, view: TankView, speedMultiplier: Double, viewScale: Double, tileSize: Double, protected val inputEvents: A, protected override val moveSound: Option[S])
-    extends TankController(tank, view, viewScale, tileSize, moveSound)
+abstract class TankInputController[+A <: TankInputEvents, S <: TankControllerMoveSound](using PhysicsContainer)(
+        tank: ControllableTank, 
+        view: TankView, 
+        speedMultiplier: Double, 
+        viewScale: Double, 
+        tileSize: Double,
+        shootDelayTotal: Double,
+        protected val inputEvents: A, 
+        protected override val moveSound: Option[S]
+    )
+    extends TankController(tank, view, viewScale, tileSize, shootDelayTotal, moveSound)
     with Steppable
     with Pausable:
 

@@ -21,6 +21,7 @@ import org.aas.sbtanks.entities.bullet.view.BulletView
 import org.aas.sbtanks.entities.bullet.controller.BulletController.CompleteBullet
 import scalafx.util.Duration
 import scalafx.Includes._
+import scalafx.scene.Scene
 
 /**
  * a controller used to handle the player's tank, handling events such as key pressed and firing bullets.
@@ -34,18 +35,40 @@ import scalafx.Includes._
  * @tparam VSK
  * @tparam VS
  */
-class JFXPlayerTankController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS], physics: PhysicsContainer)(tank: ControllableTank, speedMultiplier: Double, view: TankView, viewScale: Double, tileSize: Double)
-    extends TankInputController(tank, view, speedMultiplier, viewScale, tileSize, JFXPlayerInputController(), Option(JFXMediaPlayer.play(JFXMediaPlayer.PLAYER_MOVE_SFX, (p: MediaPlayer) => p.setLooping(true).setLoopDuration(0.05D))))
+class JFXPlayerTankController[VSK, VS](
+        using context: EntityRepositoryContext[Stage, VSK, VS],
+        physics: PhysicsContainer
+    )(
+        tank: ControllableTank, 
+        speedMultiplier: Double, 
+        view: TankView, 
+        viewScale: Double, 
+        tileSize: Double,
+        shootDelayTotal: Double
+    )
+    extends TankInputController(tank, view, speedMultiplier, viewScale, tileSize, shootDelayTotal, JFXPlayerInputController(), Option.empty)
     with EntityRepositoryContextAware:
 
-    registerSceneEventHandlers(context.viewController)
+    registerSceneEventHandlers(context.viewController.scene.value)
 
-    private def registerSceneEventHandlers(stage: Stage) =
-        stage.addEventHandler(KeyEvent.KeyPressed, inputEvents.handleKeyPressEvent)
-        stage.addEventHandler(KeyEvent.KeyReleased, inputEvents.handleKeyReleasedEvent)
+    override def onRemoved() = 
+        unregisterSceneEventHandlers(context.viewController.scene.value)
+        super.onRemoved()
+
+    private def registerSceneEventHandlers(scene: Scene) =
+        scene.addEventHandler(KeyEvent.KeyPressed, inputEvents.handleKeyPressEvent)
+        scene.addEventHandler(KeyEvent.KeyReleased, inputEvents.handleKeyReleasedEvent)
+
+    private def unregisterSceneEventHandlers(scene: Scene) =
+        scene.removeEventHandler(KeyEvent.KeyPressed, inputEvents.handleKeyPressEvent)
+        scene.removeEventHandler(KeyEvent.KeyReleased, inputEvents.handleKeyReleasedEvent)
+
+    override protected def isPlayerBulletShooter = true
 
 object JFXPlayerTankController:
+    private val SHOOT_DELAY = 0.2D
+
     def factory(using physics: PhysicsContainer)(speedMultiplier: Double, viewScale: Double, tileSize: Double, bulletConsumer: (AnyRef, Node) => Any)(context: EntityRepositoryContext[Stage, ?, ?], tank: ControllableTank, view: TankView) =
-        val controller = new JFXPlayerTankController(using context)(tank, speedMultiplier, view, viewScale, tileSize)
+        val controller = new JFXPlayerTankController(using context)(tank, speedMultiplier, view, viewScale, tileSize, SHOOT_DELAY)
         controller.bulletShot += { (b, v) => bulletConsumer(b, v) }
         controller

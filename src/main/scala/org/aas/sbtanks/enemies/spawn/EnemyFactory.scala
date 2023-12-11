@@ -29,10 +29,10 @@ object EnemyFactory:
      *
      * @param physic given instance for the PhysicContainer to support position choosing strategies 
      * @param input The input string containing characters representing enemy tank types.
-     * @param eachCharged An optional parameter specifying the charging behavior for every Nth enemy. Default is 4.
+     * @param eachCharged An optional parameter specifying the charging behavior for every Nth enemy. Default is 4, set to 3 for demo.
      * @return A sequence of enemy tank builders only corresponding to the valid characters in the input string.
      */
-    def createFromString(using physics: PhysicsContainer)(input: String, eachCharged: Int = 1) =
+    def createFromString(using physics: PhysicsContainer)(input: String, eachCharged: Int = 3) =
         input.map(createEnemyBuilder)
             .zipWithIndex
             .map:
