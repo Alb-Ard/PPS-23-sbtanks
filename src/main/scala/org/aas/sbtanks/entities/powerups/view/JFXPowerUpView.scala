@@ -13,9 +13,11 @@ import org.aas.sbtanks.entities.powerups.view.scalaFx.JFXIntermittentVisibleNode
 
 
 
-class JFXPowerUpView(image: Image) extends ImageView(image) with PowerUpView with JFXMoveableView[ImageView] with JFXIntermittentVisibleNode:
+class JFXPowerUpView(image: Image) extends ImageView(image) with PowerUpView
+    with JFXMoveableView[ImageView]
+    with JFXIntermittentVisibleNode:
     
-    override def show(): Unit = this.animate()
+    override def show(duration: Double): Unit = this.animate(duration)
 
 
 

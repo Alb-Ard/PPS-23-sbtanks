@@ -30,7 +30,7 @@ class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage
     private var timeToDisappear: Double = 5.0
 
     view.move(powerUp.positionX * viewScale, powerUp.positionY * viewScale)
-    view.show()
+    view.show(timeToDisappear)
 
     println("ENTER POWERUP")
 
