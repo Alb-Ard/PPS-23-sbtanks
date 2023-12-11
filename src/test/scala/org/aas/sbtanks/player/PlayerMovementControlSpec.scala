@@ -13,8 +13,6 @@ import _root_.scalafx.scene.input.KeyCode.A
 import _root_.scalafx.scene.input.KeyCode.D
 import _root_.scalafx.scene.image.Image
 
-import org.aas.sbtanks.player.controller.scalafx.JFXPlayerInputController
-import org.aas.sbtanks.player.controller.scalafx.JFXPlayerTankController
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.entities.tank.view.scalafx.JFXTankView
 import org.aas.sbtanks.physics.PhysicsContainer

@@ -8,7 +8,6 @@ import org.aas.sbtanks.behaviours.CollisionBehaviour
 import org.aas.sbtanks.behaviours.ConstrainedMovementBehaviour
 import org.aas.sbtanks.physics.CollisionLayer
 import org.aas.sbtanks.behaviours.DamageableBehaviour
-import org.aas.sbtanks.entities.tank.TankExample.updatedTank
 import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
 import org.aas.sbtanks.physics.PhysicsContainer
 
@@ -18,6 +17,8 @@ case class PlayerTankBuilder(private val x: Double = 0,
     private val y: Double = 0,
     private val collisionSizeX: Double = 1,
     private val collisionSizeY: Double = 1,
+    private val collisionOffsetX: Double = 0,
+    private val collisionOffsetY: Double = 0,
     private val collisionLayer: CollisionLayer = CollisionLayer.TanksLayer,
     private val collisionMask: Set[CollisionLayer] = PlayerTankBuilder.DEFAULT_COLLISION_MASK):
 
@@ -26,6 +27,9 @@ case class PlayerTankBuilder(private val x: Double = 0,
 
     def setCollisionSize(x: Double = x, y: Double = y) =
         copy(collisionSizeX = x, collisionSizeY = y)
+
+    def setCollisionOffset(x: Double = x, y: Double = y) =
+        copy(collisionOffsetX = x, collisionOffsetY = y)
 
     def setCollisionLayer(layer: CollisionLayer) =
         copy(collisionLayer = layer)
@@ -40,25 +44,26 @@ case class PlayerTankBuilder(private val x: Double = 0,
         new PlayerTank()
             with PositionBehaviour(x, y)
             with ConstrainedMovementBehaviour
-            with DirectionBehaviour
+            with DirectionBehaviour(0, 0)
             with CollisionBehaviour(collisionSizeX, collisionSizeY, collisionLayer, collisionMask.toSeq)
             with DamageableBehaviour
             with TankMultipleShootingBehaviour:
-                override protected def applyDamage(amount: Int) = 
+                override protected def applyDamage(source: Any, amount: Int) =
                     updateTankData(tankData.updateHealth(_ - 1))
                     tankData.health match
                         case v if v <= 0 =>
-                            destroyed(())
+                            destroy(())
                             this
                         case _ =>
                             respawn()
                             this
                 def respawn() =
                     this.setPosition(startingX, startingY)
-
+        .setBoundingBoxOffset(collisionOffsetX, collisionOffsetY)
 
 object PlayerTankBuilder:
     val DEFAULT_COLLISION_MASK: Set[CollisionLayer] = Set(
         CollisionLayer.WallsLayer,
-        CollisionLayer.NonWalkableLayer
+        CollisionLayer.NonWalkableLayer,
+        CollisionLayer.TanksLayer
     )

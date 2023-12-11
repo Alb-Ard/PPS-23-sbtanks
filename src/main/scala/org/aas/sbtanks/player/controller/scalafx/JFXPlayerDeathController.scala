@@ -8,16 +8,31 @@ import org.aas.sbtanks.entities.obstacles.LevelObstacle.Trees.playerBase
 import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer
 import org.aas.sbtanks.entities.repository.context.{EntityRepositoryContext, EntityRepositoryContextAware}
 import org.aas.sbtanks.event.EventSource
-import org.aas.sbtanks.lifecycle.LevelSequencer
+import org.aas.sbtanks.lifecycle.{LevelSequencer, PointsManager}
 import org.aas.sbtanks.lifecycle.scalafx.JFXGameBootstrapper
-import org.aas.sbtanks.lifecycle.view.scalafx.JFXGameOverView
 import org.aas.sbtanks.player.PlayerTank
+import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer
 import scalafx.scene.Node
 import scalafx.scene.layout.Pane
 import scalafx.stage.Stage
+import org.aas.sbtanks.lifecycle.PointsContainer
 
-abstract class JFXPlayerDeathController[VSlotKey](using context: EntityRepositoryContext[Stage, VSlotKey, Pane])(repository: EntityMvRepositoryContainer[AnyRef, Node], levelSequencer: LevelSequencer[AnyRef, Node], uiSlotKey: VSlotKey)
+/**
+ * this abstract class is a controller used whenever the player reaches a state of game over, either by losing
+ * all player's lives or  when the player's base gets destroyed
+ * @param context The current context
+ * @param repository The repository containing all entities
+ * @param levelSequencer The Sequencer used to go from one level to the next one
+ * @param uiSlotKey
+ * @tparam VSlotKey
+ */
+class JFXPlayerDeathController[VSlotKey](using context: EntityRepositoryContext[Stage, VSlotKey, Pane], points: PointsContainer)(repository: EntityMvRepositoryContainer[AnyRef, Node], levelSequencer: LevelSequencer[AnyRef, Node], uiSlotKey: VSlotKey)
     extends EntityRepositoryContextAware with Steppable:
+
+    /**
+      * Event invoked when the player dies
+      */
+    val playerDied = EventSource[Unit]
 
     private var playerTank = Option.empty[PlayerTank with DamageableBehaviour]
     private var baseObstacle = Option.empty[LevelObstacle with DamageableBehaviour]
@@ -31,18 +46,15 @@ abstract class JFXPlayerDeathController[VSlotKey](using context: EntityRepositor
     }
     repository.entitiesOfModelType[PlayerTank with DamageableBehaviour].headOption.foreach(onModelCreated)
 
-    override def step(delta: Double) = 
-        this
+    override def step(delta: Double) = this
 
-    protected def setupGameoverContext(currentContext: EntityRepositoryContext[Stage, VSlotKey, Pane]): EntityRepositoryContext[Stage, VSlotKey, Pane]
+    private def gameover(source: Any) =
+        playerDied(())
 
-    protected def restart(currentContext: EntityRepositoryContext[Stage, VSlotKey, Pane]): this.type
-    private def gameover(u: Unit): Unit =
-        val gameOverView = new JFXGameOverView(levelSequencer, INTERFACE_SCALE, windowSize)
-        gameOverView.retryRequested += {_ => restart(context)}
-        gameOverView.exitRequested += {_ => System.exit(0)}
-        setupGameoverContext(context).viewSlots.get(uiSlotKey).foreach(c => c.children.add(gameOverView))
-
+    /**
+     * this def searches for any entity that is either a player tank or a player base and calls for gameover method.
+     * @param m entity that can reach game over.
+     */
     private def onModelCreated(m: AnyRef) = m match
         case p: PlayerTank with DamageableBehaviour =>
             playerTank.foreach(p => p.destroyed -= gameover)
@@ -53,5 +65,3 @@ abstract class JFXPlayerDeathController[VSlotKey](using context: EntityRepositor
             baseObstacle = Option(l)
             l.destroyed += gameover
         case _ => ()
-
-

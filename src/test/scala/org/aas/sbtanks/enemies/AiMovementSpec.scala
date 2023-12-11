@@ -6,6 +6,8 @@ import org.aas.sbtanks.enemies.ai.fsm.movement.AiMovementStateMachineUtils
 import org.aas.sbtanks.enemies.ai.{DirectionUtils, MovementEntity}
 import org.aas.sbtanks.entities.tank.controller.TankController.ControllableTank
 import org.aas.sbtanks.levels.MockLevelFactory
+import org.aas.sbtanks.physics.PhysicsWorld
+import org.aas.sbtanks.enemies.controller.AiMovableController
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -18,9 +20,12 @@ class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
 
     def enemyFactory(using p: PhysicsContainer)(x: Double, y: Double) = EnemyTankBuilder().setPosition(x, y).build()
 
+
     "tank " should "go right or left but not down or up" in:
         val physics = new Object() with PhysicsContainer
         given PhysicsContainer = physics
+
+
 
         val tank = MockLevelFactory(enemyFactory)
             .createFromString("UUUUUUU" +
@@ -60,13 +65,14 @@ class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
 
 
 
-        val (newPos, newState) = AiMovementStateMachineUtils.computeAiState(tank)
+
+        val (newDir, newState) = AiMovementStateMachineUtils.computeAiState(tank)
 
 
-        newPos should be (tank.positionX, tank.positionY + 1.0)
+        newDir should be (tank.directionX, tank.directionX + 1.0)
 
 
-    "Tank ai movement" should "run across top directions only if no other options is available while right and left directions choices are random" in:
+    "Tank ai movement" should "should prioritize right or left directions random only when bottom direction is not possible" in:
         val physics = new Object() with PhysicsContainer
         given PhysicsContainer = physics
 
@@ -74,6 +80,30 @@ class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
             .createFromString(
                 "UUUUU" +
                     "UU-UU" +
+                    "U-P-U" +
+                    "UUUUU" +
+                    "UUUUU", 5
+            )
+            .getMainEntity
+            .asInstanceOf[MovementEntity]
+
+
+
+        var (newTopDir, topState) = AiMovementStateMachineUtils.computeAiState(tank, movementBias = 1)
+
+
+        newTopDir should  (be(Right) or be(Left))
+
+
+    "Tank ai movement" should "should only have a possibility to move top if bottom direction and right/left is not available" in :
+        val physics = new Object() with PhysicsContainer
+
+        given PhysicsContainer = physics
+
+        val tank: MovementEntity = MockLevelFactory(enemyFactory)
+            .createFromString(
+                "UUUUU" +
+                    "UUUUU" +
                     "U---U" +
                     "UUPUU" +
                     "UUUUU", 5
@@ -82,21 +112,10 @@ class AiMovementSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEach:
             .asInstanceOf[MovementEntity]
 
 
-
-        val (newTopPos, topState) = AiMovementStateMachineUtils.computeAiState(tank)
-
-        newTopPos should be (tank.positionX, tank.positionY - 1)
+        var (newTopDir, topState) = AiMovementStateMachineUtils.computeAiState(tank, movementBias = 1, maxIteration = 20)
 
 
-
-
-        val (newRightOrLeftPos, rightOrLeftState) = AiMovementStateMachineUtils
-            .computeAiState(topState.setPosition(newTopPos._1, newTopPos._2).asInstanceOf[MovementEntity])
-
-
-        newRightOrLeftPos should (be(topState.positionX - 1, topState.positionY) or be(topState.positionX + 1, topState.positionY))
-
-
+        newTopDir should be(Top)
 
 
 

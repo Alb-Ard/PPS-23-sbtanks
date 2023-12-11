@@ -3,10 +3,10 @@ package org.aas.sbtanks.physics
 import org.aas.sbtanks.behaviours.CollisionBehaviour
 
 trait PhysicsContainer:
-    private var colliders = Seq.empty[Collider]
+    private var colliders = Set.empty[Collider]
 
     def registerCollider(collider: Collider) =
-        colliders = colliders :+ collider
+        colliders = colliders + collider
 
     def hasCollider(collider: Collider) = 
         colliders contains collider
@@ -15,7 +15,7 @@ trait PhysicsContainer:
         colliders = colliders.filterNot(collider.equals)
 
     def clearColliders() =
-        colliders = Seq.empty
+        colliders = Set.empty
 
     def getOverlaps(collider: Collider) =
         getBoxOverlaps(collider.boundingBox, collider.layerMasks, Seq(collider))
@@ -27,9 +27,10 @@ trait PhysicsContainer:
                 val clampedBox = box.normalized.clamped(0.1D)
                 colliders.filterNot(ignoredColliders.contains)
                     .filter(c => c.boundingBox.checkOverlap(clampedBox) && layers.contains(c.layer))
+                    .toSeq
 
     def refresh() =
-        colliders.map(c => (c, getOverlaps(c))).foreach((c, o) => c.overlapsChanged(o))
+        colliders.map(c => (c, getOverlaps(c))).foreach((c, o) => c.overlapsChanged(o.toSeq))
 
 
 object PhysicsWorld extends PhysicsContainer

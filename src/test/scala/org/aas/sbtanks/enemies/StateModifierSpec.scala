@@ -25,14 +25,14 @@ class StateModifierSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEac
     "A state modifier" should "be able to get the current value of the state regardless of the type of membership" in:
         val (returnIntValue, internalIntState) = IntModifier
             .getState
-            .runAndTranslate(InitialValue)
+            .runAndReturn(InitialValue)
 
         returnIntValue should be(InitialValue)
         internalIntState should be(InitialValue)
 
         val (returnTankValue, internalTankState) = TankModifier
             .getState
-            .runAndTranslate(tank)
+            .runAndReturn(tank)
 
         returnTankValue should be (tank)
         internalTankState should be(tank)
@@ -41,7 +41,7 @@ class StateModifierSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEac
     "A state modifier" should "be able to set the current value of the state regardless of the type of membership" in:
         val (returnIntValue, internalIntState) = IntModifier
             .setState(ModifiedValue)
-            .runAndTranslate(InitialValue)
+            .runAndReturn(InitialValue)
 
         returnIntValue should be(emptyReturnValue)
         internalIntState should be(ModifiedValue)
@@ -50,7 +50,7 @@ class StateModifierSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEac
 
         val (returnTankValue, internalTankState) = TankModifier
             .setState(newTank)
-            .runAndTranslate(tank)
+            .runAndReturn(tank)
 
         returnTankValue should be(emptyReturnValue)
         internalTankState should be(newTank)
@@ -58,7 +58,7 @@ class StateModifierSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEac
     "A state modifier" should "be able to modify the current value of the state regardless of the type of membership" in:
         val (returnIntValue, internalIntState) = IntModifier
             .modify(_ + AddedValue)
-            .runAndTranslate(InitialValue)
+            .runAndReturn(InitialValue)
 
         returnIntValue should be(emptyReturnValue)
         internalIntState should be(InitialValue + AddedValue)
@@ -67,7 +67,7 @@ class StateModifierSpec extends AnyFlatSpec with Matchers with BeforeAndAfterEac
     "A state modifier" should "be able to access its own parameters" in:
         val (returnTankValue, internalTankState) = TankModifier
             .gets(_.tankData)
-            .runAndTranslate(tank)
+            .runAndReturn(tank)
 
         returnTankValue should be(tank.tankData)
         internalTankState should be(tank)

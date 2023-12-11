@@ -3,6 +3,10 @@ package org.aas.sbtanks.entities.repository
 import org.aas.sbtanks.entities.repository.EntityMvRepositoryContainer
 import org.aas.sbtanks.common.Steppable
 import context.EntityRepositoryContext
+import org.aas.sbtanks.event.EventSource
+
+trait RemovableController:
+    def onRemoved(): Unit
 
 /**
  * Adds the ability to register controller factories, to automatically create controllers from models
@@ -71,7 +75,7 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
      * @return This repository
      */
     def removeController(controller: Controller): this.type = queueCommand { () =>
-        controllers = controllers.filterNot(c => c(1) == controller)
+        onControllerRemoved(controller)
     }
 
     /**
@@ -114,3 +118,8 @@ trait EntityControllerRepository[Model, View, Context <: EntityRepositoryContext
     protected def editControllers(modifier: (Option[Model], Controller) => Controller) = queueCommand { () =>
         controllers = controllers.map(c => (c(0), modifier(c(0), c(1))))
     }
+
+    protected def onControllerRemoved(controller: Controller): Unit =
+        controllers = controllers.filterNot(c => c(1) == controller)
+        if controller.isInstanceOf[RemovableController] then
+            controller.asInstanceOf[RemovableController].onRemoved()

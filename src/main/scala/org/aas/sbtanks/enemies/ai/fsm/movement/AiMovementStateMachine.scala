@@ -2,83 +2,110 @@ package org.aas.sbtanks.enemies.ai.fsm.movement
 
 import org.aas.sbtanks.enemies.ai.DirectionUtils.*
 import org.aas.sbtanks.enemies.ai.State.State
-import DirectionMove.{CanMoveTo, CannotMoveTo}
+import DirectionMovePolicy.{Try, Reset}
 import org.aas.sbtanks.enemies.ai.MovementEntity
 import org.aas.sbtanks.enemies.ai.fsm.{AbstractStateMachine, StateMachine, StateModifier}
 
 import scala.util.Random
 
-object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, DirectionMove]:
+/**
+ *  object representing a state machine for controlling the movement behavior of AI entities.
+ *  Extends AbstractStateMachine with ShootingEntity and FocusPolicy types.
+ */
+object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, DirectionMovePolicy]:
+    import AiMovementStateMachineUtils.*
 
-    override def transition(value: DirectionMove): State[MovementEntity, Unit] =
+    /**
+     * Transitions the state based on the given transition.
+     *
+     * @param value The direction move policy.
+     * @return A State datatype without result return representing the transition.
+     */
+    override def transition(value: DirectionMovePolicy): State[MovementEntity, Unit] =
         for
-            dir <- gets(x => (x.directionX.asInstanceOf[Double], x.directionY.asInstanceOf[Double]))
+            dir <- gets(x => (x.directionX, x.directionY))
             newDir <- (dir, value) match
-                case ((_, y), CanMoveTo) if y > 0.0 => pure(Bottom)
-                case ((_, y), CannotMoveTo) if y > 0.0 => Random.nextInt(2) match {
-                    case 0 => pure(Right)
-                    case 1 => pure(Left)
-                }
 
-                case ((x, _), CanMoveTo) if x > 0.0 => pure(Bottom)
-                case ((x, _), CannotMoveTo) if x > 0.0 => Random.nextInt(2) match {
-                    case 0 => pure(Left)
-                    case 1 => pure(Top)
-                }
+                case (Bottom, Reset) => pure(Bottom)
+                case (Bottom, Try) => if Random.nextBoolean() then pure(Right) else pure(Left)
 
-                case ((x, _), CanMoveTo) if x < 0.0 => pure(Bottom)
-                case ((x, _), CannotMoveTo) if x < 0.0 => Random.nextInt(2) match {
-                    case 0 => pure(Right)
-                    case 1 => pure(Top)
-                }
 
-                case ((_, y), CanMoveTo) if y < 0.0 => Random.nextInt(2) match {
-                    case 0 => pure(Right)
-                    case 1 => pure(Left)
-                }
-                case ((_, y), CannotMoveTo) if y < 0.0 => pure(Bottom)
+                case (Right, Reset) => pure(Right)
+                case (Right, Try) => if Random.nextBoolean() then pure(Bottom) else pure(Left)
 
-            _ <- modify(e => e.setDirection(newDir._1, newDir._2).asInstanceOf[MovementEntity])
+
+                case (Left, Reset) => pure(Left)
+                case (Left, Try) => if Random.nextBoolean() then pure(Bottom) else pure(Top)
+
+
+                case (Top, Reset) => pure(Top)
+                case (Top, Try) => pure(Bottom)
+
+                case _ => pure(Bottom)
+
+            _ <- modify(_.setDirection(newDir(0), newDir(1)).asInstanceOf[MovementEntity])
         yield
             ()
 
 
-
-    def checkMove(): State[MovementEntity, Option[(Double, Double)]] =
+    /**
+     * Checks if the entity can move based on the current state direction .
+     *
+     * @param scaleFactor The scale factor for movement check.
+     * @return A State datatype with the option of the next movement direction.
+     */
+    private def checkMove(scaleFactor: Double): State[MovementEntity, Option[(Double, Double)]] =
         for
             s0 <- getState
-            x <- gets(x => (x.directionX.asInstanceOf[Double], x.directionY.asInstanceOf[Double]))
-            if s0.testMoveRelative(x._1, x._2)
+            x <- gets(e => (e.directionX, e.directionY))
+            if s0.testMoveRelative(x(0) / scaleFactor, x(1) / scaleFactor)
         yield x
 
-    private def moveNext(): State[MovementEntity, (Double, Double)] =
+    /**
+     * Moves to the next valid position considering the remaining iterations and scale factor.
+     *
+     * @param remainingIterations The number of remaining iterations to attempt a move.
+     * @param scaleFactor         The scale factor for movement.
+     * @return A State datatype with the next valid movement direction.
+     */
+    private def moveNext(remainingIterations: Int, scaleFactor: Double): State[MovementEntity, (Double, Double)] =
         for
-            c <- checkMove()
+            c <- checkMove(scaleFactor)
             d <- c match
                 case Some(d) => pure(d)
-                case None => transition(CannotMoveTo).flatMap(_ => moveNext())
+                case None if remainingIterations > 0 =>
+                    transition(Try).flatMap(_ => moveNext(remainingIterations-1, scaleFactor))
+                case _ => pure(NoDirection)
         yield d
 
-    private def getNewCoord: State[MovementEntity, (Double, Double)] =
+    /**
+     * Computes the state by first reset transitioning to a state and then try for the next valid position.
+     *
+     * @param maxIteration The maximum number of iterations to attempt a move.
+     * @param scaleFactor  The scale factor for movement.
+     * @return A State monad with the computed movement direction.
+     */
+    def computeState(maxIteration: Int, scaleFactor: Double): State[MovementEntity,(Double, Double)] =
         for
-            d <- moveNext()
-            c <- gets(x => (x.positionX, x.positionY))
-            newPos <- d match
-                case Bottom => pure((c._1, c._2 + 1))
-                case Right => pure((c._1 + 1, c._2))
-                case Left => pure((c._1 - 1, c._2))
-                case Top => pure((c._1, c._2 - 1))
-        yield newPos
+            _ <- transition(Reset)
+            d <- moveNext(maxIteration, scaleFactor)
+        yield d
 
-
-    def computeState(): State[MovementEntity,(Double, Double)] =
-        for
-            _ <- transition(CanMoveTo)
-            newCoord <- getNewCoord
-        yield newCoord
-
-
+/**
+ * object to provide utility methods for computing AI movement states.
+ */
 object AiMovementStateMachineUtils:
-    def computeAiState(entity: MovementEntity): ((Double, Double), MovementEntity) =
-        AiMovementStateMachine.computeState().runAndTranslate(entity)
+    private val MAX_ITERATION_BEFORE_DEFAULT = 5
+    private val SCALE_FACTOR_MOVEMENT = 100D
+
+    /**
+     * Computes the AI state for movement based on the provided entity and parameters.
+     *
+     * @param entity       The movement entity.
+     * @param maxIteration The maximum number of iterations to attempt a move.
+     * @param movementBias The scale factor to apply for movement check.
+     * @return A tuple containing the computed movement direction and the updated movement entity.
+     */
+    def computeAiState(entity: MovementEntity, maxIteration: Int = MAX_ITERATION_BEFORE_DEFAULT, movementBias: Double = SCALE_FACTOR_MOVEMENT): ((Double, Double), MovementEntity) =
+        AiMovementStateMachine.computeState(maxIteration, movementBias).runAndReturn(entity)
 

@@ -13,6 +13,14 @@ class RayCastSpec extends AnyFlatSpec with Matchers:
         physics.horizontalRayCast(0, 0, Option.empty, CollisionLayer.values.toSeq, Seq.empty) should be (empty)
     }
 
+    it should "be able to do a infinite negative check" in {
+        val physics = new Object() with PhysicsContainer  
+        given PhysicsContainer = physics
+        val colliderInFront = MockCollider(-10, 1, 1, 1, CollisionLayer.TanksLayer)
+        physics.registerCollider(colliderInFront)
+        physics.horizontalRayCast(10, 1, Option(Raycast.INFINITE_NEGATIVE), CollisionLayer.values.toSeq, Seq.empty) should contain (colliderInFront)
+    }
+
     it should "not return any collisions when no objects are in its check area" in {
         val physics = new Object() with PhysicsContainer  
         given PhysicsContainer = physics
@@ -47,6 +55,14 @@ class RayCastSpec extends AnyFlatSpec with Matchers:
         val physics = new Object() with PhysicsContainer  
         given PhysicsContainer = physics
         physics.verticalRayCast(0, 0, Option.empty, CollisionLayer.values.toSeq, Seq.empty) should be (empty)
+    }
+
+    it should "be able to do a infinite negative check" in {
+        val physics = new Object() with PhysicsContainer  
+        given PhysicsContainer = physics
+        val colliderInFront = MockCollider(3, 1, 1, 1, CollisionLayer.TanksLayer)
+        physics.registerCollider(colliderInFront)
+        physics.verticalRayCast(3, 3, Option(Raycast.INFINITE_NEGATIVE), CollisionLayer.values.toSeq, Seq.empty) should contain (colliderInFront)
     }
 
     it should "not return any collisions when no objects are in its check area" in {

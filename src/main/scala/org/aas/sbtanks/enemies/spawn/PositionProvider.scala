@@ -5,6 +5,7 @@ import org.aas.sbtanks.physics.{AABB, PhysicsContainer}
 
 import scala.annotation.tailrec
 import org.aas.sbtanks.physics.CollisionLayer
+import scala.util.Random
 
 /**
  * A utility class responsible for providing positions for tanks in a game world,
@@ -15,10 +16,23 @@ import org.aas.sbtanks.physics.CollisionLayer
  * @param collisionMask     The mask to use when checking free positions
  * @param collisionSizeX    The width to use when checking free positions
  * @param collisionSizeY    The hieght to use when checking free positions
+ * @param physics           The physics container object to use when checking collisions
+ * @param rng               The random object used to extract positions
  */
-case class PositionProvider(width: Double, height: Double, strategy: PositionStrategy[(Double, Double), (Double, Double)])(collisionMask: Seq[CollisionLayer], collisionSizeX: Double, collisionSizeY: Double)(using physics: PhysicsContainer):
+case class PositionProvider(
+        width: Double,
+        height: Double,
+        strategy: PositionStrategy[(Double, Double), (Double, Double)]
+    )(
+        collisionMask: Seq[CollisionLayer], 
+        collisionSizeX: Double, 
+        collisionSizeY: Double
+    )(
+        using physics: PhysicsContainer, 
+        rng: Random = Random
+    ):
     /**
-     * Checks whether a position is free from collisions (it use the PhysicWorld singleton).
+     * Checks whether a position is free from collisions.
      *
      * @param x The x-coordinate of the position to check.
      * @param y The y-coordinate of the position to check.

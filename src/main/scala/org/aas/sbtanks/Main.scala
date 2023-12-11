@@ -15,7 +15,7 @@ import org.aas.sbtanks.lifecycle.{GameLoop, LevelSequencer, PointsManager, Saved
 import org.aas.sbtanks.entities.repository.context.scalafx.JFXEntityRepositoryContextInitializer
 import org.aas.sbtanks.common.ViewSlot
 import org.aas.sbtanks.level.LevelLoader
-import org.aas.sbtanks.lifecycle.view.scalafx.{JFXGameOverView, JFXMainMenu, JFXOptionsMenu, JFXPauseMenu}
+import org.aas.sbtanks.lifecycle.view.scalafx.{JFXEndGameView, JFXMainMenu, JFXOptionsMenu, JFXPauseMenu}
 import org.aas.sbtanks.lifecycle.scalafx.JFXGameBootstrapper
 import scalafx.application.Platform
 import scalafx.beans.property.IntegerProperty
@@ -24,9 +24,11 @@ import scalafx.util.Duration
 import scalafx.scene.media.MediaPlayer
 
 object Main extends JFXApp3 with scalafx.Includes:
-    val INTERFACE_SCALE = 4D
+    private type JFXContext = EntityRepositoryContext[Stage, ViewSlot, Pane]
+
+    private val INTERFACE_SCALE = 4D
     
-    val windowSize = (IntegerProperty(1280), IntegerProperty(720))
+    private val windowSize = (IntegerProperty(1280), IntegerProperty(720))
 
     override def start(): Unit =
         stage = new JFXApp3.PrimaryStage:
@@ -38,12 +40,11 @@ object Main extends JFXApp3 with scalafx.Includes:
                 stylesheets.add(getClass().getResource("/ui/style.css").toExternalForm())
         windowSize(0) <== stage.scene.value.window.value.width
         windowSize(1) <== stage.scene.value.window.value.height
-        given EntityRepositoryContext[Stage, ViewSlot, Pane] = EntityRepositoryContext(stage)
-        SavedDataManager.increaseHighScore(500)
+        given JFXContext = EntityRepositoryContext(stage)
         JFXMediaPlayer.loadSettingsFromDisk().precache()
-        launchMainMenu()
+        showMainMenu()
     
-    private def launchMainMenu(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(): Unit = 
+    private def showMainMenu(using context: JFXContext)(): Unit = 
         def startGame(): Unit = launchGame()
         def setHideMarker(mediaPlayer: MediaPlayer, name: String): Unit = 
             mediaPlayer.media.markers.addOne(name -> mediaPlayer.totalDuration.value.divide(2))
@@ -63,22 +64,38 @@ object Main extends JFXApp3 with scalafx.Includes:
                     mediaPlayer.media.markers.remove(hideMenuMarkerName)
                 case null => ()
         }
-        mainMenu.optionsRequested += { _ => launchOptionsMenu() }
+        mainMenu.optionsRequested += { _ => showOptionsMenu() }
         mainMenu.quitRequested += { _ => Platform.exit() }
 
-    private def launchGame(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(): Unit =
+    private def launchGame(using context: JFXContext)(): Unit =
         val bootstrapper = JFXGameBootstrapper(INTERFACE_SCALE, windowSize)
-        bootstrapper.gameEnded += { _ => launchMainMenu() }
-        bootstrapper.restartedGame += { _ => launchGame()}
+        bootstrapper.gameEnded += { args => args.endType match
+            case JFXGameBootstrapper.EndGameType.Lose => showEndMenu(args.completedLevelCount, args.points, true)
+            case JFXGameBootstrapper.EndGameType.Win => showEndMenu(args.completedLevelCount, args.points, false)
+            case _ => showMainMenu()
+        }
         bootstrapper.startGame()
 
+    private def showEndMenu(using context: JFXContext)(completedLevelCount: Int, points: Int, isGameOver: Boolean) =
+        context.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
+        val endSound = isGameOver match
+            case true => Option(JFXMediaPlayer.play(JFXMediaPlayer.GAME_OVER_SFX))
+            case _ => Option.empty
+        val endGameView = new JFXEndGameView(completedLevelCount, points, isGameOver, INTERFACE_SCALE, windowSize)
+        endGameView.retryRequested += { _ =>
+            endSound.foreach(_.stop())
+            launchGame()
+            this
+        }
+        endGameView.exitRequested += {_ => showMainMenu() }
+        context.viewSlots.get(ViewSlot.Ui).foreach(c => c.children.add(endGameView))
 
-    private def launchOptionsMenu(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(): Unit =
+    private def showOptionsMenu(using context: JFXContext)(): Unit =
         context.switch(JFXEntityRepositoryContextInitializer.ofView(ViewSlot.Ui))
         val optionsMenu = JFXOptionsMenu(INTERFACE_SCALE, windowSize)
         context.viewSlots(ViewSlot.Ui).children.add(optionsMenu)
         optionsMenu.mainMenuRequested += { _ =>
             JFXMediaPlayer.saveSettingsToDisk()
-            launchMainMenu() 
+            showMainMenu() 
         }
         optionsMenu.resetHighScoreRequested += { _ => SavedDataManager.resetHighScore() }

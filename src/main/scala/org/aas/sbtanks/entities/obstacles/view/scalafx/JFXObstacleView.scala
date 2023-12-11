@@ -7,7 +7,7 @@ import scalafx.scene.image.Image
 
 class JFXObstacleView(image: Image) extends ImageView(image)
     with ObstacleView
-    with JFXMoveableView
+    with JFXMoveableView[ImageView]
 
 object JFXObstacleView:
     def create(image: Image) =

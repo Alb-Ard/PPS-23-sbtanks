@@ -43,7 +43,18 @@ trait JFXSoundMixer:
       * @param lane The audio lane to use
       * @return The MediaPlayer used to play the audio
       */
-    def play(media: Media, lane: SoundMixerLane) =
+    def play(media: Media, lane: SoundMixerLane): MediaPlayer =
+        play(media, lane, _ => ())
+    
+    /**
+      * Plays the given media
+      *
+      * @param media The media to play
+      * @param lane The audio lane to use
+      * @param onBeforePlay A method executed before playing the media
+      * @return The MediaPlayer used to play the audio
+      */
+    def play[U](media: Media, lane: SoundMixerLane, onBeforePlay: MediaPlayer => U): MediaPlayer =
         val player = MediaPlayer(media)
         player.volume = getVolume(lane)
         activePlayers = activePlayers.updated(lane, activePlayers(lane) :+ player)
@@ -51,5 +62,6 @@ trait JFXSoundMixer:
             activePlayers = activePlayers.updated(lane, activePlayers(lane).filterNot(p => p == player))
             mediaEnded(media)
         }
+        onBeforePlay(player)
         player.play()
         player

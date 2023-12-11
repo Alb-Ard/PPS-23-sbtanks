@@ -11,7 +11,6 @@ import org.aas.sbtanks.entities.bullet.view.BulletView
 import org.aas.sbtanks.entities.bullet.view.scalafx.JFXBulletView
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.entities.tank.structure.Tank.BasicTank
-import org.aas.sbtanks.entities.tank.behaviours.TankShootingBehaviour
 import org.aas.sbtanks.entities.obstacles.LevelObstacle
 import org.aas.sbtanks.entities.bullet.MockBulletView
 
@@ -24,8 +23,8 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers {
             Seq(CollisionLayer.BulletsLayer, CollisionLayer.TanksLayer, CollisionLayer.WallsLayer))
         with DamageableBehaviour:
 
-        override def applyDamage(amount: Int) = 
-            destroyed(())
+        override def applyDamage(source: Any, amount: Int) =
+            destroy(())
             this
         
     abstract class MockTank(using PhysicsContainer)(startingX: Double, startingY: Double) extends BasicTank()
@@ -55,11 +54,11 @@ class BulletCollisionSpec extends AnyFlatSpec with Matchers {
         given PhysicsContainer = physics
         var wasTankDamaged = false
         val tank = new MockTank(0, 2):
-            override def applyDamage(amount: Int) = {
+            override def applyDamage(source: Any, amount: Int) = {
                 wasTankDamaged = true
                 updateTankData(tankData.updateHealth(_ - 1))
                 if (tankData.health <= 0)
-                    destroyed(())
+                    destroy(())
                 this
             }
         physics.registerCollider(tank)

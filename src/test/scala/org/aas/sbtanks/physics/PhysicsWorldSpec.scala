@@ -60,3 +60,15 @@ class physicsSpec extends AnyFlatSpec with Matchers:
         val mockCollider = MockCollider(0, 0, 10, 10, CollisionLayer.WallsLayer)
         physics.getBoxOverlaps(AABB(0, 0, 5, 5), CollisionLayer.values.toSeq, Seq(mockCollider)) should be (empty)
     }
+
+    "A directionable Collider" should "rotate its bounding box based on its rotation" in {
+        val physics = new Object() with PhysicsContainer 
+        given PhysicsContainer = physics
+        val mockCollider = MockDirectionalCollider(0, 0, 5, 10, CollisionLayer.BulletsLayer)
+        mockCollider.setDirection(0, 1)
+        mockCollider.boundingBox.width should be (5)
+        mockCollider.boundingBox.height should be (10)
+        mockCollider.setDirection(1, 0)
+        mockCollider.boundingBox.width should be (10)
+        mockCollider.boundingBox.height should be (5)
+    }

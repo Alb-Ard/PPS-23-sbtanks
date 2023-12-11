@@ -11,6 +11,11 @@ import scalafx.scene.paint.Color
 import scalafx.scene.image.ImageView
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
 
+/**
+ * a class that indicates the bullet's view.
+ *
+ * @param bulletImage the image of the bullet.
+ */
 class JFXBulletView(private val bulletImage: Image) extends ImageView(bulletImage)
     with BulletView
     with JFXDirectionableView
@@ -31,12 +36,6 @@ object testJFXBulletView extends JFXApp3 with scalafx.Includes:
         val bulletView = new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
         stage.scene.value.content.add(bulletView)
 
-
-
-
-
-
-
-
-
-
+object JFXBulletView:
+    def create(tileSize: Double, viewScale: Double) =
+        JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))

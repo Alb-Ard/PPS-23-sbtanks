@@ -32,7 +32,7 @@ trait CollisionBehaviour(using physics: PhysicsContainer)(sizeX: Double, sizeY: 
       * @param offsetX The x offset
       * @param offsetY The y offset
       */
-    def setOffset(offsetX: Double, offsetY: Double): this.type =
+    def setBoundingBoxOffset(offsetX: Double, offsetY: Double): this.type =
         offset = (offsetX, offsetY)
         this
 
@@ -53,7 +53,11 @@ trait CollisionBehaviour(using physics: PhysicsContainer)(sizeX: Double, sizeY: 
     /**
       * @inheritdoc
       */
-    override def boundingBox = AABB(positionX + offset(0), positionY + offset(0), sizeX, sizeY)
+    override def boundingBox = this match
+        case d: DirectionBehaviour if (Math.abs(d.lastValidDirectionX.getOrElse(0D)) > Math.abs(d.lastValidDirectionY.getOrElse(1D))) =>
+            AABB(positionX + offset(1), positionY + offset(0), sizeY, sizeX)
+        case _ =>
+            AABB(positionX + offset(0), positionY + offset(1), sizeX, sizeY)
 
     /**
      * @inheritdoc

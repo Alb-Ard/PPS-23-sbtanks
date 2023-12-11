@@ -23,7 +23,7 @@ trait PositionStrategy[+A, C]:
      * @param context The context used to determine the position.
      * @return The provided position.
      */
-    def providePosition(context: C): Option[A]
+    def providePosition(using rng: Random = Random)(context: C): Option[A]
 
 /**
  * A companion object for the `PositionStrategy` trait containing predefined strategies.
@@ -41,15 +41,15 @@ object PositionStrategy:
         private var remainingPositions = Seq.empty[Position]
 
         override def reset(context: (Double, Double)) = 
-            remainingPositions = (0 until context(1).toInt).flatMap(y => (0 until context(1).toInt / 2).map(x => (x, y)))
+            remainingPositions = (0 until context(0).toInt / 2).flatMap(y => (0 until context(1).toInt).map(x => (x, y)))
                 .map((x, y) => (x.toDouble, y.toDouble))
             this
             
-        override def providePosition(context: (Double, Double)): Option[(Double, Double)] =
+        override def providePosition(using rng: Random = Random)(context: (Double, Double)): Option[(Double, Double)] =
             remainingPositions.length match
                 case 0 => None
                 case n =>          
-                    val positionIndex = Random.nextInt(n)
+                    val positionIndex = rng.nextInt(n)
                     val position = remainingPositions(positionIndex)
                     remainingPositions = remainingPositions.filterNot(p => p == position)
                     Option(position)

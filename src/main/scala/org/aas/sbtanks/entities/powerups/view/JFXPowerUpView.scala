@@ -8,16 +8,27 @@ import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 import scalafx.scene.{Node, Scene}
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.util.Duration
-import javafx.scene.image as jfxsi
+import org.aas.sbtanks.common.view.JFXMoveableView
 import org.aas.sbtanks.entities.powerups.view.scalaFx.JFXIntermittentVisibleNode
 
 
+/**
+ * A graphical representation of a power-up in a JavaFX application. This class extends JavaFX's ImageView and
+ * includes traits for power-up functionality, moveable behavior, and intermittent visibility.
+ *
+ * @param image The image to be displayed for the power-up.
+ */
+class JFXPowerUpView(image: Image) extends ImageView(image) with PowerUpView
+    with JFXMoveableView[ImageView]
+    with JFXIntermittentVisibleNode:
 
-class JFXPowerUpView(private val image: Image) extends jfxsi.ImageView(image) with PowerUpView with JFXIntermittentVisibleNode:
+    /**
+     * Displays the power-up with an animation over a specified duration. This method simply delegate the work to IntermittentVisibleNode method
+     *
+     * @param duration The total duration of the animation in seconds.
+     */
+    override def show(duration: Double): Unit = this.animate(duration)
 
-    override def show(): Unit = this.animate()
-
-    override def destroy(): Unit = ???
 
 
 
@@ -29,18 +40,6 @@ object JFXPowerUpView:
 
 
 
-object PowerUpViewTest extends JFXApp3:
-
-
-    override def start(): Unit =
-        val view =  JFXPowerUpView("entities/powerups/powerup_star.png")
-
-        view.animate()
-
-        stage = new PrimaryStage:
-            title = "Power-Up View"
-            scene = new Scene:
-                content = ImageView(view)
 
 
 
