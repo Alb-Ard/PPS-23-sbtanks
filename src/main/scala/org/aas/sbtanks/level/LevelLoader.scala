@@ -18,7 +18,7 @@ class LevelLoader: //da qui leggerò i file txt (guarda le librerie che si occup
      * enemies for said level
      *
      * @param amount The amount of files it must read
-     * @return A tuple, where the first element is a Seq of all the level layouts, while the second element is a Seq of all enemies for each level
+     * @return A sequence of all levels, with layout, size and sequence of enemies for each level.
      */
     def getLevelSeq(amount: Int) =
         var levels = Seq.empty[(String, Int, String)]

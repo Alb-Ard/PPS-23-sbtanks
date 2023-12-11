@@ -10,6 +10,16 @@ import scalafx.stage.Stage
 import org.aas.sbtanks.entities.bullet.controller.BulletController.CompleteBullet
 import org.aas.sbtanks.physics.PhysicsContainer
 
+/**
+ * JFX implementation of BulletController.
+ *
+ * @param PhysicsContainer the physics container used by application.
+ * @param bullet a complete bullet's model that is moving
+ * @param bulletView a view of said bullet
+ * @param speedMultiplier a double value that determines the speed of the bullet in View
+ * @param viewScale the scale of the view
+ * @param tileSize the size of each tile of the view
+ */
 class JFXBulletController(using PhysicsContainer)(bullet: CompleteBullet, bulletView: JFXBulletView, speedMultiplier: Double, viewScale: Double, tileSize: Double)
     extends BulletController(bullet, bulletView, speedMultiplier, viewScale, tileSize)
 
