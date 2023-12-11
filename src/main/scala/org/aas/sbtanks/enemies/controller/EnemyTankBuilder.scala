@@ -2,11 +2,12 @@ package org.aas.sbtanks.enemies.controller
 
 import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehaviour, DamageableBehaviour, DirectionBehaviour, PositionBehaviour}
 import org.aas.sbtanks.enemies.ai.shooting.LineOfSight
+import org.aas.sbtanks.enemies.controller.EnemyTankBuilder.PRIORITY_TARGET_PREDICATE
+import org.aas.sbtanks.entities.obstacles.LevelObstacle
 import org.aas.sbtanks.entities.tank.factories.{BasicTankData, TankTypeData}
 import org.aas.sbtanks.entities.tank.structure.Tank
-import org.aas.sbtanks.physics.CollisionLayer
+import org.aas.sbtanks.physics.{Collider, CollisionLayer, PhysicsContainer}
 import org.aas.sbtanks.player.{PlayerTank, PlayerTankBuilder}
-import org.aas.sbtanks.physics.PhysicsContainer
 
 case class EnemyTankBuilder(x: Double = 0,
                             y: Double = 0,
@@ -49,7 +50,7 @@ case class EnemyTankBuilder(x: Double = 0,
             with ConstrainedMovementBehaviour
             with DirectionBehaviour
             with CollisionBehaviour(collisionSizeX, collisionSizeY, collisionLayer, collisionMask.toSeq)
-            with LineOfSight(Seq(CollisionLayer.WallsLayer), Seq.empty, seeThoughBlocks)
+            with LineOfSight(PRIORITY_TARGET_PREDICATE)(Seq(CollisionLayer.WallsLayer), Seq.empty, seeThoughBlocks, collisionSizeX / 2)
             with DamageableBehaviour:
             override protected def applyDamage(source: Any, amount: Int) =
                 updateTankData(tankData.updateHealth(_ - 1))
@@ -63,6 +64,10 @@ case class EnemyTankBuilder(x: Double = 0,
 
 
 object EnemyTankBuilder:
+    val PRIORITY_TARGET_PREDICATE: Collider => Boolean =
+        case levelObstacle: LevelObstacle if levelObstacle.obstacleType == LevelObstacle.PlayerBase => true
+        case _ => false
+
     val DEFAULT_COLLISION_MASK: Set[CollisionLayer] = Set(
         CollisionLayer.WallsLayer,
         CollisionLayer.NonWalkableLayer,

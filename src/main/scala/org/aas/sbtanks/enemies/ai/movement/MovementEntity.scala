@@ -4,8 +4,7 @@ import org.aas.sbtanks.behaviours.{CollisionBehaviour, ConstrainedMovementBehavi
 import org.aas.sbtanks.entities.tank.structure.Tank
 
 /**
- * Represents an entity that exhibits a movement behavior, has a position, and supports
- * line of sight functionality.
+ * Represents an entity that exhibits a movement behavior, has a position and a direction, and a collision behaviour.
  */
 type MovementEntity = DirectionBehaviour
     with PositionBehaviour

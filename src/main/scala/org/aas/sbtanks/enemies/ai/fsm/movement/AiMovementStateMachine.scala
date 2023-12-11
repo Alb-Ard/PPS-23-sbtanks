@@ -27,21 +27,15 @@ object AiMovementStateMachine extends AbstractStateMachine[MovementEntity, Direc
             newDir <- (dir, value) match
 
                 case (Bottom, Reset) => pure(Bottom)
-                case (Bottom, Try) => Random.nextInt(2) match
-                    case 0 => pure(Right)
-                    case 1 => pure(Left)
+                case (Bottom, Try) => if Random.nextBoolean() then pure(Right) else pure(Left)
 
 
                 case (Right, Reset) => pure(Right)
-                case (Right, Try) => Random.nextInt(2) match
-                    case 0 => pure(Bottom)
-                    case _ => pure(Left)
+                case (Right, Try) => if Random.nextBoolean() then pure(Bottom) else pure(Left)
 
 
                 case (Left, Reset) => pure(Left)
-                case (Left, Try) => Random.nextInt(2) match
-                    case 0 => pure(Bottom)
-                    case _ => pure(Top)
+                case (Left, Try) => if Random.nextBoolean() then pure(Bottom) else pure(Top)
 
 
                 case (Top, Reset) => pure(Top)

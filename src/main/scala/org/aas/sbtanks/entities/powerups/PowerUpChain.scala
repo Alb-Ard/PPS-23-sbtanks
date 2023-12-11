@@ -150,10 +150,10 @@ class PowerUpChainBinder[E] extends PowerUpChain[E](Seq.empty) with DualBinder[E
         this
 
     /**
-     * Unchains a new power-up and updates entity bindings accordingly, it extend its parent chain functionalities
+     * Unchains a new power-up and updates the powerup mappings accordingly, it extend its parent chain functionalities
      * 
      *
-     * @param next The power-up to chain.
+     * @param last The power-up to unchain.
      * @return The current instance of PowerUpChainBinder after the modification.
      */
     override def unchain(last: PowerUp[E]): this.type =

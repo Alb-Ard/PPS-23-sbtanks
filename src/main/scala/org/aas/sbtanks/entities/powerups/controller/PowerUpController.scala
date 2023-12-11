@@ -32,8 +32,6 @@ class PowerUpController[VSK, VS, E](using context: EntityRepositoryContext[Stage
     view.move(powerUp.positionX * viewScale, powerUp.positionY * viewScale)
     view.show(timeToDisappear)
 
-    println("ENTER POWERUP")
-
     /**
      * Handles the overlapping collision event of the power-up with other entities.
      * It's used to remove its own mv wether a powerup is picked-up by the player tank
