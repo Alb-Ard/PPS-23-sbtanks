@@ -35,7 +35,7 @@ import scalafx.Includes._
  * @tparam VS
  */
 class JFXPlayerTankController[VSK, VS](using context: EntityRepositoryContext[Stage, VSK, VS], physics: PhysicsContainer)(tank: ControllableTank, speedMultiplier: Double, view: TankView, viewScale: Double, tileSize: Double)
-    extends TankInputController(tank, view, speedMultiplier, viewScale, tileSize, JFXPlayerInputController(), JFXMediaPlayer.play(JFXMediaPlayer.PLAYER_MOVE_SFX, (p: MediaPlayer) => p.setLooping(true).setLoopDuration(0.05D)))
+    extends TankInputController(tank, view, speedMultiplier, viewScale, tileSize, JFXPlayerInputController(), Option(JFXMediaPlayer.play(JFXMediaPlayer.PLAYER_MOVE_SFX, (p: MediaPlayer) => p.setLooping(true).setLoopDuration(0.05D))))
     with EntityRepositoryContextAware:
 
     registerSceneEventHandlers(context.viewController)
