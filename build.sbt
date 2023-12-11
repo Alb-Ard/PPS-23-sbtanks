@@ -9,7 +9,7 @@ lazy val sbtanks = (project in file(".")).
 
 Compile / mainClass := Some("org.aas.sbtanks.Main")
 assembly / mainClass := Some("org.aas.sbtanks.Main")
-assembly / test := {}
+assembly / test := Some("org.ass.sbtanks")
 
 ThisBuild / assemblyMergeStrategy := {
     case PathList("META-INF", xs @ _*) => MergeStrategy.discard
