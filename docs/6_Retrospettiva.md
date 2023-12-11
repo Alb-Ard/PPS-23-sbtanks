@@ -18,17 +18,23 @@ Con l'avanzare dello sviluppo, si sono aggiunte alcune voci riguardanti ciò che
 - Alcune singole *user story* riguardanti i menù e la parte di *UI*.
 # 6.2 Andamento degli sprint e iterazioni
 ## 6.2.1 Sprint 1 - Dal 16 al 29 ottobre
-| Backlog item             | Assignee      | D0 | D1 | D2 | D3 | D4 | D5 | D6 | D7 | D8 | D9 | D10 | D11 | D12 | D13 | D14 |
-|--------------------------| ------------- |----|----|----|----|----|----|----|----|----|----|-----|-----|-----|-----|-----|
-| Tank Data Structure      | Stefano Guidi | 3  | 2  | 0  |    |    |    |    |    |    |    |     |     |     |     |     |
-| Enemy Tank Type          | Stefano Guidi | 2  | 2  | 0  |    |    |    |    |    |    |    |     |     |     |     |     |
-| Power-up functionalities | Stefano Guidi | 8  | 8  | 8  | 8  | 6  | 4  | 3  | 3  | 3  | 2  | 2   | 0   |     |     |     |
-| Power-up data types      | Stefano Guidi | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 2  | 2  | 0   |     |     |     |     |
-| Power-up view            | Stefano Guidi | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3  | 3   | 3   | 3   | 2   | 0   |
-| Bullet Structure         | Andrea Bianchi | 5  | 5  | 3  | 3  | 3  | 3  | 1  | 1  | 3  | 3  | 3   | 2   | 1   | 0   |     |
-| Bullet Entity            | Andrea Bianchi | 3  | 3  | 3  | 3  | 3  | 3  | 2  | 2  | 2  | 2  | 2   | 2   | 3   | 3   | 3   |
-| Tank Shooting            | Andrea Bianchi | 2  | 2  | 2  | 2  | 2  | 2  | 2  | 2  | 2  | 5  | 5   | 5   | 5   | 3   | 0   |
-| Tank Damage/Elimination  | Andrea Bianchi | 5  | 5  | 5  | 5  | 5  | 5  | 5  | 5  | 5  | 5  | 5   | 5   | 5   | 5   | 5   |
+| Backlog item             | Assignee        | D0  | D1  | D2  | D3  | D4  | D5  | D6  | D7  | D8  | D9  | D10 | D11 | D12 | D13 | D14 |
+| ------------------------ | --------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Player tank type         | Alberto Arduini | 1   | 1   | 1   | 1   | 1   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   |
+| Player input controller  | Alberto Arduini | 5   | 3   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 0   | 0   | 0   | 0   | 0   | 0   |
+| Tank movement            | Alberto Arduini | 3   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   |
+| Level collision          | Alberto Arduini | 5   | 5   | 2   | 2   | 2   | 2   | 1   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   |
+| Obstacle definitions     | Alberto Arduini | 2   | 2   | 5   | 5   | 5   | 5   | 5   | 3   | 3   | 3   | 0   | 0   | 0   | 0   | 0   |
+| Tank view                | Alberto Arduini | 2   | 2   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 0   | 
+| Tank Data Structure      | Stefano Guidi   | 3   | 2   | 0   |     |     |     |     |     |     |     |     |     |     |     |     |
+| Enemy Tank Type          | Stefano Guidi   | 2   | 2   | 0   |     |     |     |     |     |     |     |     |     |     |     |     |
+| Power-up functionalities | Stefano Guidi   | 8   | 8   | 8   | 8   | 6   | 4   | 3   | 3   | 3   | 2   | 2   | 0   |     |     |     |
+| Power-up data types      | Stefano Guidi   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 2   | 2   | 0   |     |     |     |     |
+| Power-up view            | Stefano Guidi   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 3   | 2   | 0   |
+| Bullet Structure         | Andrea Bianchi  | 5   | 5   | 3   | 3   | 3   | 3   | 1   | 1   | 3   | 3   | 3   | 2   | 1   | 0   |     |
+| Bullet Entity            | Andrea Bianchi  | 3   | 3   | 3   | 3   | 3   | 3   | 2   | 2   | 2   | 2   | 2   | 2   | 3   | 3   | 3   |
+| Tank Shooting            | Andrea Bianchi  | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 2   | 5   | 5   | 5   | 5   | 3   | 0   |
+| Tank Damage/Elimination  | Andrea Bianchi  | 5   | 5   | 5   | 5   | 5   | 5   | 5   | 5   | 5   | 5   | 5   | 5   | 5   | 5   | 5   |
 
 ***N.B.:** In questa tabella e nelle prossime a seguire i valori per singolo giorno sono riportati come numero di sprint point*
 Il primo sprint ha prodotto le basi necessarie su cui si sarebbe poi sviluppata l'applicazione.
@@ -77,7 +83,7 @@ Delle 3 user story a cui ho lavorato in queste due settimane, le prime due sono 
 Purtroppo, l'ultima di queste, quella incentrata sul game over, è quella che ha più sofferto a causa dei problemi precedentemente citati: i numerosi imprevisti che hanno portato via *intere giornate di lavoro* mi hanno costretto a dedicare il tempo rimanente per il completamento dei task delle precedenti User Story.
 Sono riuscito comunque a realizzare degli iniziali mockup per uno di questi e ho qualche idea per una possibile implementazione in grado di soddisfare quanto richiesto.
 
-## 6.2.2.3 Stefano Guidi
+### 6.2.2.3 Stefano Guidi
 Questo sprint ci sono state diverse problematiche. In questa fase ci si è concentrati sulla realizzazione di un sistema di AI per il movimento dei nemici e delle tipologie di powerup (feature introdotta alla fine dello sprint precedente). La realizzazione è risultata complicata a causa della genericità dei requisiti del dominio (il gioco originale presentava potenziamenti di natura molto diversa tra loro), inoltre essendo il progetto ancora in fase iniziale alcune funzionalità necessarie ad implementarlo era ancora mancanti, si è cercato pertanto di concentrarsi sulle caratteristiche comuni per costruire un sistema robusto sul quale possa risultare semplice aggiungere elementi mancanti in sprint successivi. 
 Per quanto riguarda l'AI del movimento non si è riusciti a completare la realizzazione a causa di diverse motivazione (e.g. problemi nella correttezza dello unit testing e consistenza di alcuni stati del nemico), pertanto si è scelto di portare per la fine dello sprint una prima versione minimale ma funzionante per ottimizzare per quanto possibile il valore percepito per la fine dello sprint.
 ## 6.2.3 Sprint 3 - Dal 13 al 26 novembre
@@ -148,6 +154,7 @@ Nel tempo rimanente ci si è occupati di sviluppare il sistema AI di focus shoot
 Per quest'ultimo sprint mi sono concentrato sugli ultimi aspetti dell'interfaccia utente, in modo da poter avere il ciclo di vita dell'applicazione completo.
 In particolare, ho implementato l'astrazione del game loop e dell'inizializzazione del gioco, oltre che i menù iniziali e di pausa.
 Infine, mi sono occupato dell'integrazione finale di tutti i sistemi di gioco, aiutato per ogni feature dall'implementatore originale e facendo eventuali modifiche di adattamento dove necessario.
+Ho avuto alcune difficolta, soprattutto negli ultimi giorni dello sprint, per vari problemi di salute e personali, cosa che mi ha molto rallentato nello sviluppo, anche se sono riuscito a svolgere la maggior parte del lavoro pianificato in tempo.
 ### 6.2.4.2 Review Andrea Bianchi
 L'ultimo sprint è stato quello decisivo: ho passato la prima metà a realizzare i componenti finali, quali la *lettura di dati da un file esterno al programma*
 e la creazione di un *nuovo menù* secondario contenente una serie di svariate *opzioni* per il giocatore.
