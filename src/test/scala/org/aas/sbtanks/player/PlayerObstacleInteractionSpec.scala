@@ -30,7 +30,7 @@ class PlayerObstacleInteractionSpec extends AnyFeatureSpec with GivenWhenThen wi
             repository.addModelView(playerTank, Option.empty)
             
             And("A tank controller")
-            val playerController = MockJFXPlayerTankController(playerTank)
+            val playerController = MockJFXPlayerTankController(playerTank, Option.empty)
 
             And("A solid obstacle at position (0, 2)")
             val obstacle = LevelObstacle.SteelWall(0, 2)(0)
@@ -67,7 +67,7 @@ class PlayerObstacleInteractionSpec extends AnyFeatureSpec with GivenWhenThen wi
             repository.addModelView(playerTank, Option.empty)
 
             And("A tank controller")
-            val playerController = MockJFXPlayerTankController(playerTank)
+            val playerController = MockJFXPlayerTankController(playerTank, Option.empty)
 
             And("A non solid obstacle at position (0, 2)")
             val obstacle = LevelObstacle.Trees(0, 2)(0)

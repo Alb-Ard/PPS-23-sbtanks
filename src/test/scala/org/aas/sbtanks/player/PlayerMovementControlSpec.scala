@@ -38,7 +38,7 @@ class PlayerMovementControlSpec extends AnyFeatureSpec with GivenWhenThen with M
             playerTank.positionY should be (startingPosition(1))
 
             And("A player controller for that tank")
-            val controller = MockJFXPlayerTankController(playerTank)
+            val controller = MockJFXPlayerTankController(playerTank, Option.empty)
 
             When("The player presses a movement input")
             controller.simulateInput(MockJFXPlayerTankController.MOVE_RIGHT_INPUT)
