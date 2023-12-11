@@ -52,8 +52,8 @@ object JFXEntityMvRepositoryFactory:
       */
     type DefaultEntityRepository = JFXEntityMvRepositoryContainer 
         with EntityControllerRepository[AnyRef, Node, DefaultContext]
-        with EntityViewAutoManager[Node]
         with EntityControllerReplacer[AnyRef, Node, DefaultContext]
+        with EntityViewAutoManager[Node]
         with DestroyableEntityAutoManager[AnyRef, Node]
         with EntityRepositoryTagger[AnyRef, Node, Int]
         with EntityColliderAutoManager[AnyRef, Node]
@@ -81,8 +81,8 @@ object JFXEntityMvRepositoryFactory:
     def create(using context: DefaultContext, physics: PhysicsContainer)(enableDebug: Boolean = false): DefaultEntityRepository =
         new JFXEntityMvRepositoryContainer()
             with JFXEntityControllerRepository
-            with JFXEntityViewAutoManager(ViewSlot.Game)
             with EntityControllerReplacer[AnyRef, Node, DefaultContext]
+            with JFXEntityViewAutoManager(ViewSlot.Game)
             with DestroyableEntityAutoManager[AnyRef, Node]
             with EntityRepositoryTagger[AnyRef, Node, Int]
             with EntityColliderAutoManager[AnyRef, Node]

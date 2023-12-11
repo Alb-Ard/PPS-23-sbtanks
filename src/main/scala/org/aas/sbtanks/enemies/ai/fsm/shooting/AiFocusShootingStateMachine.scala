@@ -60,7 +60,7 @@ object AiFocusShootingStateMachine extends AbstractStateMachine[ShootingEntity, 
  * object to provide utility methods for computing AI shooting focus states.
  */
 object AiShootingStateMachineUtils:
-    def fixedOnPriorityTarget(entity: ShootingEntity): Option[ShootingEntity] =
+    def notFixedOnPriorityTarget(entity: ShootingEntity): Option[ShootingEntity] =
         Option(AiFocusShootingStateMachine.isTargetInFocus.runAndReturn(entity))
             .withFilter:
                 case (hasFocus, _) => !hasFocus

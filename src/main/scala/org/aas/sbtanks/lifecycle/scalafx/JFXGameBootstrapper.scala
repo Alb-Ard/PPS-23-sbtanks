@@ -118,11 +118,13 @@ class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot
     
     def endGame(endType: EndGameType): this.type =
         gameLoop.setPaused(true)
-        entityRepository.clear()
+        entityRepository.clear().executeQueuedCommands()
         cleanup.foreach(_())
         val completedLevelCount = levelSequencer.completedLevelCount
         levelSequencer.reset()
-        gameEnded(GameEndedArgs(endType, completedLevelCount, summon[PointsContainer].amount))
+        val points = summon[PointsContainer].amount
+        summon[PointsContainer].resetAmount()
+        gameEnded(GameEndedArgs(endType, completedLevelCount, points))
         this
 
 object JFXGameBootstrapper:

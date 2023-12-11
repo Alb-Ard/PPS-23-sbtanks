@@ -3,7 +3,7 @@ package org.aas.sbtanks.enemies.controller
 import org.aas.sbtanks.common.Steppable
 import org.aas.sbtanks.enemies.ai.MovementEntity
 import org.aas.sbtanks.enemies.ai.fsm.movement.AiMovementStateMachineUtils.computeAiState
-import org.aas.sbtanks.enemies.ai.fsm.shooting.AiShootingStateMachineUtils.fixedOnPriorityTarget
+import org.aas.sbtanks.enemies.ai.fsm.shooting.AiShootingStateMachineUtils.notFixedOnPriorityTarget
 import org.aas.sbtanks.enemies.ai.shooting.ShootingEntity
 import org.aas.sbtanks.entities.tank.structure.Tank
 
@@ -23,8 +23,7 @@ trait AiMovableController(val entity: Tank with MovementEntity with ShootingEnti
      * it updates the entity's movement accordingly.
      */
     def computeNewMovementState() =
-    
-        fixedOnPriorityTarget(entity)
+        notFixedOnPriorityTarget(entity)
             .map(e => computeAiState(e.asInstanceOf[MovementEntity], movementBias = offset))
             .foreach((d, e) => e.moveRelative(d(0) * speedSupplier() * (1 / offset), d(1) * speedSupplier() * (1 / offset)))
         this

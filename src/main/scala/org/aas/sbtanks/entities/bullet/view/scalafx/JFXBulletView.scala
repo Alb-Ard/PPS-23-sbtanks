@@ -36,12 +36,6 @@ object testJFXBulletView extends JFXApp3 with scalafx.Includes:
         val bulletView = new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))
         stage.scene.value.content.add(bulletView)
 
-
-
-
-
-
-
-
-
-
+object JFXBulletView:
+    def create(tileSize: Double, viewScale: Double) =
+        JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale))

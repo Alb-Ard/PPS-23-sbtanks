@@ -20,14 +20,21 @@ import org.aas.sbtanks.entities.bullet.view.scalafx.JFXBulletView
 import org.aas.sbtanks.resources.scalafx.JFXMediaPlayer
 import org.aas.sbtanks.physics.PhysicsContainer
 import org.aas.sbtanks.resources.scalafx.JFXImageLoader
+import org.aas.sbtanks.entities.repository.RemovableController
 
 type TankControllerMoveSound = {
     def play(): Unit
     def stop(): Unit
 }
 
-trait TankController[S <: TankControllerMoveSound](using PhysicsContainer)(tank: ControllableTank, tankView: TankView, viewScale: Double, tileSize: Double, protected val moveSound: Option[S]) extends Steppable:
-    private val SHOOT_DELAY_AMOUNT = 0.2D
+trait TankController[S <: TankControllerMoveSound](using PhysicsContainer)(
+        tank: ControllableTank, 
+        tankView: TankView, 
+        viewScale: Double,
+        tileSize: Double,
+        shootDelayTotal: Double,
+        protected val moveSound: Option[S]
+    ) extends Steppable with RemovableController:
 
     val bulletShot = EventSource[(CompleteBullet, JFXBulletView)]
 
@@ -46,18 +53,21 @@ trait TankController[S <: TankControllerMoveSound](using PhysicsContainer)(tank:
     }
     tank.damageableChanged += tankView.isDamageable
     tankView.isDamageable(tank.isDamageable)
-    tank.setDirection(0, 1)
+    tank.setDirection(0, 0)
+    moveSound.foreach(_.stop())
 
     override def step(delta: Double) = 
         shootDelay += delta
         this
 
+    protected def isPlayerBulletShooter = true
+
     protected def shoot() = 
-        if shootDelay >= SHOOT_DELAY_AMOUNT then
-            val bullet = tank.shoot(isPlayerBullet = true)
+        if shootDelay >= shootDelayTotal then
+            val bullet = tank.shoot(isPlayerBullet = isPlayerBulletShooter)
                 .map(b => (
                     b,
-                    new JFXBulletView(JFXImageLoader.loadFromResources("entities/bullet/bullet.png", tileSize, viewScale)),
+                    JFXBulletView.create(tileSize, viewScale),
                 ))
                 .foreach((b, v) =>
                     v.move(b.positionX * tileSize * viewScale, b.positionY * tileSize * viewScale)
@@ -66,6 +76,10 @@ trait TankController[S <: TankControllerMoveSound](using PhysicsContainer)(tank:
             JFXMediaPlayer.play(JFXMediaPlayer.BULLET_SFX)
             shootDelay = 0
         this
+    
+    override def onRemoved() = 
+        tank.setDirection(0, 0)
+        moveSound.foreach(_.stop())
 
 object TankController:    
     type ControllableTank = Tank

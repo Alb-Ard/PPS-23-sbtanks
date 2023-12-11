@@ -8,6 +8,7 @@ import org.aas.sbtanks.entities.tank.factories.{BasicTankData, TankTypeData}
 import org.aas.sbtanks.entities.tank.structure.Tank
 import org.aas.sbtanks.physics.{Collider, CollisionLayer, PhysicsContainer}
 import org.aas.sbtanks.player.{PlayerTank, PlayerTankBuilder}
+import org.aas.sbtanks.entities.tank.behaviours.TankMultipleShootingBehaviour
 
 /**
  * Case class for building instances of enemy tanks with various configuration options.
@@ -63,6 +64,7 @@ case class EnemyTankBuilder(x: Double = 0,
             with ConstrainedMovementBehaviour
             with DirectionBehaviour
             with CollisionBehaviour(collisionSizeX, collisionSizeY, collisionLayer, collisionMask.toSeq)
+            with TankMultipleShootingBehaviour
             with LineOfSight(PRIORITY_TARGET_PREDICATE)(Seq(CollisionLayer.WallsLayer), Seq.empty, seeThoughBlocks, collisionSizeX / 2)
             with DamageableBehaviour:
             override protected def applyDamage(source: Any, amount: Int) =
