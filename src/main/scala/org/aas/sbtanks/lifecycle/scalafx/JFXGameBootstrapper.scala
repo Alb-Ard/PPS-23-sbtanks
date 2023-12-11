@@ -43,7 +43,7 @@ import org.aas.sbtanks.player.PlayerTank
   */
 class JFXGameBootstrapper(using context: EntityRepositoryContext[Stage, ViewSlot, Pane])(interfaceScale: Double, windowSize: (IntegerProperty, IntegerProperty)):
     private val TANK_ANIMATION_SPEED = 16D
-    private val IS_DEBUG = true
+    private val IS_DEBUG = false
 
     /**
      * An event that is invoked when the game has ended.
